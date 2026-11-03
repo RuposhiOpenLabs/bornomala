@@ -37,7 +37,8 @@ const ID_MENU_TRAY: usize = 202;
 const ID_MENU_KEYBOARD: usize = 203;
 const ID_MENU_SETTINGS: usize = 204;
 const ID_MENU_ABOUT: usize = 205;
-const ID_MENU_EXIT: usize = 206;
+const ID_MENU_UPDATE: usize = 206;
+const ID_MENU_EXIT: usize = 207;
 
 #[allow(dead_code)]
 pub struct FloatingToolbar {
@@ -455,6 +456,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 add_menu_item(hmenu, ID_MENU_KEYBOARD, "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...");
                 add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...");
                 add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...");
+                add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...");
                 add_sep(hmenu);
                 add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)");
 
@@ -499,6 +501,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
             add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)", false);
             add_sep(hmenu);
             add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...", false);
+            add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...", false);
             add_sep(hmenu);
             add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)", false);
 
@@ -566,6 +569,9 @@ unsafe extern "system" fn toolbar_wnd_proc(
                         লাইসেন্স: Mozilla Public License 2.0 (MPL-2.0)"
                     );
                     MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
+                }
+                ID_MENU_UPDATE => {
+                    super::updater::trigger_manual_update_check("0.1.0");
                 }
                 ID_MENU_EXIT => {
                     PostQuitMessage(0);

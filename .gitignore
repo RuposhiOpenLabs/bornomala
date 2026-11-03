@@ -21,6 +21,7 @@ out/
 
 # Local test, fuzzing, and analysis artifacts
 *.proptest-regressions
+update_prefs.json
 ref/
 extracted_*
 analysis/

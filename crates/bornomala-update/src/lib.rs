@@ -63,12 +63,30 @@ impl ReleaseManifest {
     }
 }
 
+pub fn hex_to_bytes(hex: &str) -> Result<Vec<u8>, UpdateError> {
+    let clean = hex.trim();
+    if clean.len() % 2 != 0 {
+        return Err(UpdateError::InvalidPublicKey("Odd hex string length".into()));
+    }
+    (0..clean.len())
+        .step_by(2)
+        .map(|i| {
+            u8::from_str_radix(&clean[i..i + 2], 16)
+                .map_err(|e| UpdateError::InvalidPublicKey(e.to_string()))
+        })
+        .collect()
+}
+
+pub fn bytes_to_hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|b| format!("{:02x}", b)).collect()
+}
+
 /// Official public verification keys.
 /// Supports a primary key and secondary backup key for key rotation.
 pub const OFFICIAL_PRIMARY_PUBKEY_HEX: &str =
-    "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2";
+    "a2a14a7da567c9f3b98cbeec403867953c8e9d7875ba3fdc04f51685262b99c0";
 pub const OFFICIAL_BACKUP_PUBKEY_HEX: &str =
-    "b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3";
+    "942cf675615a88c781ea26cee0852ce8ca928ff4ee9d5a4d2dfe6ed7f359e219";
 
 pub struct IntegrityVerifier {
     primary_key: VerifyingKey,
@@ -76,6 +94,16 @@ pub struct IntegrityVerifier {
 }
 
 impl IntegrityVerifier {
+    pub fn official() -> Result<Self, UpdateError> {
+        let prim_bytes = hex_to_bytes(OFFICIAL_PRIMARY_PUBKEY_HEX)?;
+        let back_bytes = hex_to_bytes(OFFICIAL_BACKUP_PUBKEY_HEX)?;
+        let mut p_arr = [0u8; 32];
+        let mut b_arr = [0u8; 32];
+        p_arr.copy_from_slice(&prim_bytes);
+        b_arr.copy_from_slice(&back_bytes);
+        Self::new(&p_arr, Some(&b_arr))
+    }
+
     pub fn new(primary_key_bytes: &[u8; 32], backup_key_bytes: Option<&[u8; 32]>) -> Result<Self, UpdateError> {
         let primary_key = VerifyingKey::from_bytes(primary_key_bytes)
             .map_err(|e| UpdateError::InvalidPublicKey(e.to_string()))?;
@@ -117,7 +145,8 @@ impl IntegrityVerifier {
     /// Compares two semver strings to guarantee strict progression (`remote > installed`).
     pub fn is_version_strictly_greater(installed: &str, remote: &str) -> bool {
         let parse_version = |v: &str| -> Vec<u64> {
-            v.split('.')
+            v.trim_start_matches(|c| c == 'v' || c == 'V')
+                .split('.')
                 .map(|p| p.chars().take_while(|c| c.is_ascii_digit()).collect::<String>())
                 .filter_map(|s| s.parse::<u64>().ok())
                 .collect()
@@ -142,7 +171,7 @@ impl IntegrityVerifier {
 
             match ReleaseManifest::compute_file_sha256(&file_path) {
                 Ok(hash) => {
-                    if hash != entry.sha256 {
+                    if !hash.eq_ignore_ascii_case(&entry.sha256) {
                         tampered_files.push(format!("{} (hash mismatch)", entry.path));
                     }
                 }
@@ -157,6 +186,206 @@ impl IntegrityVerifier {
         } else {
             Err(UpdateError::Tampered(tampered_files))
         }
+    }
+
+    /// Verifies downloaded file against SHA-256 and optional Ed25519 signature.
+    pub fn verify_downloaded_payload(
+        &self,
+        file_path: &Path,
+        expected_sha256: Option<&str>,
+        ed25519_sig_hex: Option<&str>,
+    ) -> Result<String, UpdateError> {
+        let computed_hash = ReleaseManifest::compute_file_sha256(file_path)?;
+
+        // 1. Verify SHA-256 hash match
+        if let Some(expected) = expected_sha256 {
+            if !computed_hash.eq_ignore_ascii_case(expected) {
+                return Err(UpdateError::HashMismatch {
+                    path: file_path.to_string_lossy().to_string(),
+                    expected: expected.to_string(),
+                    actual: computed_hash,
+                });
+            }
+        }
+
+        // 2. Verify Ed25519 signature over hash if provided
+        if let Some(sig_hex) = ed25519_sig_hex {
+            let sig_bytes = hex_to_bytes(sig_hex)?;
+            self.verify_manifest_signature(computed_hash.as_bytes(), &sig_bytes)?;
+        }
+
+        Ok(computed_hash)
+    }
+}
+
+/// GitHub Release API Structures
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GitHubReleaseAsset {
+    pub name: String,
+    pub size: u64,
+    pub browser_download_url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GitHubRelease {
+    pub tag_name: String,
+    pub name: Option<String>,
+    pub body: Option<String>,
+    #[serde(default)]
+    pub draft: bool,
+    #[serde(default)]
+    pub prerelease: bool,
+    #[serde(default)]
+    pub assets: Vec<GitHubReleaseAsset>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateCandidate {
+    pub version: String,
+    pub title: String,
+    pub release_notes: String,
+    pub download_url: String,
+    pub asset_name: String,
+    pub asset_size: u64,
+    pub expected_sha256: Option<String>,
+    pub ed25519_signature: Option<String>,
+}
+
+pub struct UpdateChecker;
+
+impl UpdateChecker {
+    pub const GITHUB_LATEST_RELEASE_URL: &str =
+        "https://api.github.com/repos/RuposhiOpenLabs/bornomala/releases/latest";
+
+    /// Extracts release candidate from a GitHub release JSON string.
+    /// Only returns Some if:
+    /// 1. Not draft and not prerelease (must be stable!).
+    /// 2. Version is strictly greater than currently installed version.
+    /// 3. Contains a downloadable setup/update executable asset.
+    pub fn parse_latest_release(
+        json_str: &str,
+        installed_version: &str,
+    ) -> Result<Option<UpdateCandidate>, UpdateError> {
+        let release: GitHubRelease = serde_json::from_str(json_str)?;
+
+        if release.draft || release.prerelease {
+            return Ok(None);
+        }
+
+        let clean_version = release.tag_name.trim_start_matches(|c| c == 'v' || c == 'V');
+        if !IntegrityVerifier::is_version_strictly_greater(installed_version, clean_version) {
+            return Ok(None);
+        }
+
+        // Find primary executable setup asset (e.g. Bornomala-Setup-v...exe or *.exe)
+        let primary_asset = release
+            .assets
+            .iter()
+            .find(|a| a.name.ends_with(".exe") && a.name.contains("Setup"))
+            .or_else(|| release.assets.iter().find(|a| a.name.ends_with(".exe")));
+
+        let asset = match primary_asset {
+            Some(a) => a,
+            None => return Ok(None),
+        };
+
+        let body = release.body.unwrap_or_default();
+        let expected_sha256 = Self::extract_token(&body, "BORNOMALA_SHA256:");
+        let ed25519_signature = Self::extract_token(&body, "BORNOMALA_SIG:");
+
+        Ok(Some(UpdateCandidate {
+            version: clean_version.to_string(),
+            title: release.name.unwrap_or_else(|| format!("Bornomala v{}", clean_version)),
+            release_notes: body,
+            download_url: asset.browser_download_url.clone(),
+            asset_name: asset.name.clone(),
+            asset_size: asset.size,
+            expected_sha256,
+            ed25519_signature,
+        }))
+    }
+
+    fn extract_token(body: &str, prefix: &str) -> Option<String> {
+        if let Some(idx) = body.find(prefix) {
+            let rest = &body[idx + prefix.len()..];
+            let token = rest
+                .split_whitespace()
+                .next()?
+                .trim_matches(|c| c == '-' || c == '>' || c == '<' || c == '"' || c == '\'');
+            if !token.is_empty() {
+                return Some(token.to_string());
+            }
+        }
+        None
+    }
+}
+
+/// User Update Preferences (Skipped versions, postponement for current session, timestamp)
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdatePreferences {
+    pub skipped_version: Option<String>,
+    pub postponed_version: Option<String>,
+    pub last_checked_timestamp: u64,
+}
+
+impl UpdatePreferences {
+    pub fn default_path() -> PathBuf {
+        if let Ok(appdata) = std::env::var("APPDATA") {
+            PathBuf::from(appdata).join("Bornomala").join("update_prefs.json")
+        } else {
+            PathBuf::from("update_prefs.json")
+        }
+    }
+
+    pub fn load_from(path: &Path) -> Self {
+        if let Ok(data) = fs::read_to_string(path) {
+            if let Ok(prefs) = serde_json::from_str(&data) {
+                return prefs;
+            }
+        }
+        Self::default()
+    }
+
+    pub fn load() -> Self {
+        Self::load_from(&Self::default_path())
+    }
+
+    pub fn save_to(&self, path: &Path) -> Result<(), io::Error> {
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        let data = serde_json::to_string_pretty(self)?;
+        fs::write(path, data)
+    }
+
+    pub fn save(&self) -> Result<(), io::Error> {
+        Self::save_to(self, &Self::default_path())
+    }
+
+    /// Determines whether to display update popup to user.
+    /// Returns false if:
+    /// - Version matches `skipped_version`.
+    /// - User clicked "Later" in this same session (`shown_in_current_session == true`).
+    pub fn should_notify(&self, new_version: &str, shown_in_current_session: bool) -> bool {
+        if let Some(ref skipped) = self.skipped_version {
+            if skipped == new_version {
+                return false;
+            }
+        }
+        if shown_in_current_session {
+            return false;
+        }
+        true
+    }
+
+    pub fn set_skip_version(&mut self, version: &str) {
+        self.skipped_version = Some(version.to_string());
+        let _ = self.save();
+    }
+
+    pub fn set_postponed(&mut self, version: &str) {
+        self.postponed_version = Some(version.to_string());
+        let _ = self.save();
     }
 }
 

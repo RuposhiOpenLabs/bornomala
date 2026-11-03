@@ -101,6 +101,8 @@ pub const WM_BORNOMALA_UPDATE_MODE: u32 = WM_USER + 101;
 pub const WM_BORNOMALA_SHOW_CONVERTER: u32 = WM_USER + 102;
 pub const WM_BORNOMALA_RESTORE_TOOLBAR: u32 = WM_USER + 201;
 pub const WM_BORNOMALA_OPEN_CONVERTER: u32 = WM_USER + 202;
+pub const WM_BORNOMALA_UPDATE_AVAILABLE: u32 = WM_USER + 301;
+pub const WM_BORNOMALA_TRIGGER_UPDATE_CHECK: u32 = WM_USER + 302;
 
 pub const PS_SOLID: i32 = 0;
 pub const PS_NULL: i32 = 5;
@@ -436,6 +438,8 @@ extern "system" {
     pub fn SetWindowRgn(hWnd: HWND, hRgn: usize, bRedraw: BOOL) -> i32;
     pub fn ClientToScreen(hWnd: HWND, lpPoint: *mut POINT) -> BOOL;
     pub fn MessageBoxW(hWnd: HWND, lpText: *const u16, lpCaption: *const u16, uType: u32) -> i32;
+    pub fn GetDlgItem(hDlg: HWND, nIDDlgItem: i32) -> HWND;
+    pub fn EnableWindow(hWnd: HWND, bEnable: BOOL) -> BOOL;
     pub fn SetTextColor(hdc: HDC, color: COLORREF) -> COLORREF;
     pub fn SetBkColor(hdc: HDC, color: COLORREF) -> COLORREF;
     pub fn SetBkMode(hdc: HDC, mode: i32) -> i32;
@@ -458,6 +462,18 @@ extern "system" {
     pub fn SelectObject(hdc: HDC, h: usize) -> usize;
     pub fn DeleteObject(ho: usize) -> BOOL;
     pub fn CreateCompatibleDC(hdc: HDC) -> HDC;
+    pub fn CreateCompatibleBitmap(hdc: HDC, cx: i32, cy: i32) -> HBITMAP;
+    pub fn BitBlt(
+        hdcDest: HDC,
+        xDest: i32,
+        yDest: i32,
+        wDest: i32,
+        hDest: i32,
+        hdcSrc: HDC,
+        xSrc: i32,
+        ySrc: i32,
+        rop: u32,
+    ) -> BOOL;
     pub fn DeleteDC(hdc: HDC) -> BOOL;
     pub fn CreateDIBSection(
         hdc: HDC,
@@ -516,6 +532,47 @@ extern "system" {
     pub fn CreateMutexW(lpMutexAttributes: *mut c_void, bInitialOwner: BOOL, lpName: *const u16) -> usize;
     pub fn GetLastError() -> u32;
     pub fn CloseHandle(hObject: usize) -> BOOL;
+}
+
+// WinINet Constants
+pub const INTERNET_OPEN_TYPE_PRECONFIG: u32 = 0;
+pub const INTERNET_FLAG_RELOAD: u32 = 0x80000000;
+pub const INTERNET_FLAG_NO_CACHE_WRITE: u32 = 0x04000000;
+pub const INTERNET_FLAG_SECURE: u32 = 0x00800000;
+pub const HTTP_QUERY_CONTENT_LENGTH: u32 = 19;
+pub const HTTP_QUERY_FLAG_NUMBER: u32 = 0x20000000;
+
+#[link(name = "wininet")]
+extern "system" {
+    pub fn InternetOpenW(
+        lpszAgent: *const u16,
+        dwAccessType: u32,
+        lpszProxy: *const u16,
+        lpszProxyBypass: *const u16,
+        dwFlags: u32,
+    ) -> usize;
+    pub fn InternetOpenUrlW(
+        hInternet: usize,
+        lpszUrl: *const u16,
+        lpszHeaders: *const u16,
+        dwHeadersLength: u32,
+        dwFlags: u32,
+        dwContext: usize,
+    ) -> usize;
+    pub fn InternetReadFile(
+        hFile: usize,
+        lpBuffer: *mut c_void,
+        dwNumberOfBytesToRead: u32,
+        lpdwNumberOfBytesRead: *mut u32,
+    ) -> BOOL;
+    pub fn HttpQueryInfoW(
+        hRequest: usize,
+        dwInfoLevel: u32,
+        lpvBuffer: *mut c_void,
+        lpdwBufferLength: *mut u32,
+        lpdwIndex: *mut u32,
+    ) -> BOOL;
+    pub fn InternetCloseHandle(hInternet: usize) -> BOOL;
 }
 
 #[link(name = "msimg32")]

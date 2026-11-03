@@ -19,6 +19,7 @@ const ID_MENU_CONVERTER: usize = 2005;
 const ID_MENU_TOOLBAR: usize = 2006;
 const ID_MENU_GITHUB: usize = 2007;
 const ID_MENU_ABOUT: usize = 2008;
+const ID_MENU_UPDATE: usize = 2010;
 const ID_MENU_EXIT: usize = 2009;
 
 #[allow(dead_code)]
@@ -163,6 +164,7 @@ impl SystemTray {
 
                     add_item(hmenu, ID_MENU_GITHUB, "🌐 সোর্স কোড ও ডকুমেন্টেশন (GitHub)", false, false);
                     add_item(hmenu, ID_MENU_ABOUT, "ℹ বর্ণমালা পরিচিতি (About)", false, false);
+                    add_item(hmenu, ID_MENU_UPDATE, "🔄 আপডেট পরীক্ষা করুন (Check for Updates)...", false, false);
                     add_sep(hmenu);
 
                     add_item(hmenu, ID_MENU_EXIT, "❌ সম্পূর্ণ প্রস্থান করুন (Exit)", false, false);
@@ -210,6 +212,9 @@ impl SystemTray {
                     let url = to_wide("https://github.com/RuposhiOpenLabs");
                     ShellExecuteW(0, open_op.as_ptr(), url.as_ptr(), std::ptr::null(), std::ptr::null(), SW_SHOWNORMAL);
                 }
+            }
+            ID_MENU_UPDATE => {
+                super::updater::trigger_manual_update_check("0.1.0");
             }
             ID_MENU_EXIT => {
                 unsafe {

@@ -8,6 +8,7 @@ pub mod hook;
 pub mod splash;
 pub mod toolbar;
 pub mod tray;
+pub mod updater;
 
 use api::*;
 use converter::ConverterWindow;
@@ -124,6 +125,9 @@ pub fn run_app(converter_only: bool, _startup_mode: bool) {
             SetForegroundWindow(FloatingToolbar::get_hwnd());
         });
 
+        // 6. Start asynchronous background GitHub update check
+        updater::init_update_checker("0.1.0");
+
         // Standard Win32 Message Loop
         let mut msg: MSG = std::mem::zeroed();
         while GetMessageW(&mut msg, 0, 0, 0) > 0 {
@@ -180,6 +184,11 @@ unsafe extern "system" fn main_event_wnd_proc(
 
         WM_BORNOMALA_OPEN_CONVERTER => {
             ConverterWindow::open();
+            0
+        }
+
+        WM_BORNOMALA_TRIGGER_UPDATE_CHECK => {
+            updater::trigger_manual_update_check("0.1.0");
             0
         }
 
