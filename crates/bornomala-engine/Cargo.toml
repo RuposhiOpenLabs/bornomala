@@ -1,0 +1,21 @@
+[package]
+name = "bornomala-engine"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Pure Rust core typing and conversion engine for Bornomala (বর্ণমালা)"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+unicode-normalization = { workspace = true }
+thiserror = { workspace = true }
+chrono = { workspace = true, optional = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+
+[features]
+default = ["chrono"]
+chrono = ["dep:chrono"]

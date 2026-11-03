@@ -1,0 +1,323 @@
+{
+  "metadata": {
+    "id": "classic_unicode",
+    "name": "Classic Unicode",
+    "name_bn": "ক্লাসিক ইউনিকোড",
+    "output_mode": "unicode",
+    "provenance": "Reverse engineered from reference Suite layout XML (Confidence Level B)"
+  },
+  "shortcut": {
+    "Alt": true,
+    "Ctrl": true,
+    "Shift": false,
+    "KeyCode": 86
+  },
+  "keys": {
+    "32": {
+      "Normal": " ",
+      "Shift": " "
+    },
+    "222": {
+      "Normal": "’",
+      "Shift": "”"
+    },
+    "220": {
+      "Normal": "ৎ",
+      "Shift": "ঃ"
+    },
+    "189": {
+      "Normal": "-",
+      "Shift": "Ñ"
+    },
+    "192": {
+      "Normal": "‘",
+      "Shift": "“"
+    },
+    "48": {
+      "Normal": "০",
+      "Shift": ")"
+    },
+    "57": {
+      "Normal": "৯",
+      "Shift": "("
+    },
+    "56": {
+      "Normal": "৮",
+      "Shift": "*"
+    },
+    "55": {
+      "Normal": "৭",
+      "Shift": "ঁ"
+    },
+    "54": {
+      "Normal": "৬",
+      "Shift": "঳"
+    },
+    "53": {
+      "Normal": "৫",
+      "Shift": "%"
+    },
+    "52": {
+      "Normal": "৪",
+      "Shift": "৳"
+    },
+    "51": {
+      "Normal": "৩",
+      "Shift": "#"
+    },
+    "50": {
+      "Normal": "২",
+      "Shift": "৥"
+    },
+    "49": {
+      "Normal": "১",
+      "Shift": "!"
+    },
+    "80": {
+      "Normal": "ড়",
+      "Shift": "ঢ়"
+    },
+    "79": {
+      "Normal": "গ",
+      "Shift": "ঘ"
+    },
+    "73": {
+      "Normal": "হ",
+      "Shift": "ঞ"
+    },
+    "85": {
+      "Normal": "জ",
+      "Shift": "ঝ"
+    },
+    "89": {
+      "Normal": "চ",
+      "Shift": "ছ"
+    },
+    "84": {
+      "Normal": "ট",
+      "Shift": "ঠ"
+    },
+    "82": {
+      "Normal": "প",
+      "Shift": "ফ"
+    },
+    "69": {
+      "Normal": "ড",
+      "Shift": "ঢ"
+    },
+    "87": {
+      "Normal": "য",
+      "Shift": "য়"
+    },
+    "81": {
+      "Normal": "ঙ",
+      "Shift": "ং"
+    },
+    "77": {
+      "Normal": "ম",
+      "Shift": "শ"
+    },
+    "78": {
+      "Normal": "স",
+      "Shift": "ষ"
+    },
+    "66": {
+      "Normal": "ন",
+      "Shift": "ণ"
+    },
+    "86": {
+      "Normal": "র",
+      "Shift": "ল"
+    },
+    "67": {
+      "Normal": "ে",
+      "Shift": "ৈ"
+    },
+    "88": {
+      "Normal": "ও",
+      "Shift": "ৗ"
+    },
+    "90": {
+      "Normal": "্র",
+      "Shift": "্য"
+    },
+    "76": {
+      "Normal": "দ",
+      "Shift": "ধ"
+    },
+    "75": {
+      "Normal": "ত",
+      "Shift": "থ"
+    },
+    "74": {
+      "Normal": "ক",
+      "Shift": "খ"
+    },
+    "72": {
+      "Normal": "ব",
+      "Shift": "ভ"
+    },
+    "71": {
+      "Normal": "্",
+      "Shift": "।"
+    },
+    "70": {
+      "Normal": "া",
+      "Shift": "অ"
+    },
+    "68": {
+      "Normal": "ি",
+      "Shift": "ী"
+    },
+    "83": {
+      "Normal": "ু",
+      "Shift": "ূ"
+    },
+    "65": {
+      "Normal": "ৃ",
+      "Shift": "র্"
+    }
+  },
+  "juks": [
+    {
+      "Seq": "্ি",
+      "Out": "ই"
+    },
+    {
+      "Seq": "্ী",
+      "Out": "ঈ"
+    },
+    {
+      "Seq": "্ু",
+      "Out": "উ"
+    },
+    {
+      "Seq": "্ূ",
+      "Out": "ঊ"
+    },
+    {
+      "Seq": "্ৃ",
+      "Out": "ঋ"
+    },
+    {
+      "Seq": "্ে",
+      "Out": "এ"
+    },
+    {
+      "Seq": "্ৈ",
+      "Out": "ঐ"
+    },
+    {
+      "Seq": "্ৗ",
+      "Out": "ঔ"
+    },
+    {
+      "Seq": "ৌ",
+      "Out": "ৌ"
+    },
+    {
+      "Seq": "ো",
+      "Out": "ো"
+    },
+    {
+      "Seq": "্া",
+      "Out": "আ"
+    },
+    {
+      "Seq": "অা",
+      "Out": "আ"
+    },
+    {
+      "Seq": "েঁৗ",
+      "Out": "ৌঁ"
+    },
+    {
+      "Seq": "েঁা",
+      "Out": "োঁ"
+    },
+    {
+      "Seq": "ঁা",
+      "Out": "াঁ"
+    },
+    {
+      "Seq": "ঁু",
+      "Out": "ুঁ"
+    },
+    {
+      "Seq": "ঁূ",
+      "Out": "ূঁ"
+    },
+    {
+      "Seq": "ঁৃ",
+      "Out": "ৃঁ"
+    },
+    {
+      "Seq": "র‌্য",
+      "Out": "র‌্য"
+    },
+    {
+      "Seq": "্্",
+      "Out": "্‌"
+    },
+    {
+      "Seq": "ু্র",
+      "Out": "্রু"
+    },
+    {
+      "Seq": "ু্য",
+      "Out": "্যু"
+    },
+    {
+      "Seq": "ূ্র",
+      "Out": "্রূ"
+    },
+    {
+      "Seq": "ূ্য",
+      "Out": "্যূ"
+    },
+    {
+      "Seq": "ৃ্র",
+      "Out": "্রৃ"
+    },
+    {
+      "Seq": "ৃ্য",
+      "Out": "্যৃ"
+    },
+    {
+      "Seq": "েো",
+      "Out": " ো"
+    },
+    {
+      "Seq": "েৌ",
+      "Out": "ৌ"
+    },
+    {
+      "Seq": " ু",
+      "Out": " ‍ু"
+    },
+    {
+      "Seq": " ূ",
+      "Out": " ‍ূ"
+    },
+    {
+      "Seq": " ৃ",
+      "Out": " ‍ৃ"
+    },
+    {
+      "Seq": " ”",
+      "Out": " “"
+    },
+    {
+      "Seq": " ’",
+      "Out": " ‘"
+    },
+    {
+      "Seq": "র‌ে্য",
+      "Out": " র‌্যে"
+    },
+    {
+      "Seq": "র‌ৈ্য",
+      "Out": " র‌্যৈ"
+    }
+  ]
+}

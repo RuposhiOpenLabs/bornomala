@@ -1,0 +1,32 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/bornomala-engine",
+    "crates/bornomala-cli",
+    "crates/bornomala-lab",
+    "crates/bornomala-tsf",
+    "crates/bornomala-ui",
+    "crates/bornomala-update",
+    "crates/bornomala-spec-tools",
+    "crates/bornomala-app",
+]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Ryan Shelby <ryan@ruposhi.org>"]
+edition = "2021"
+license = "MPL-2.0"
+repository = "https://github.com/RuposhiOpenLabs/bornomala"
+homepage = "https://github.com/RuposhiOpenLabs/bornomala"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+unicode-normalization = "0.1"
+thiserror = "1.0"
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+rand_core = { version = "0.6", features = ["std"] }
+sha2 = "0.10"
+proptest = "1.4"
+tempfile = "3.10"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }

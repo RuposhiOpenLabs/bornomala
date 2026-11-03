@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="580" viewBox="0 0 640 580">
+  <rect width="640" height="580" rx="12" fill="#111713" stroke="#2C3A30" stroke-width="2"/>
+  
+  <rect width="640" height="56" rx="12" fill="#1B241E"/>
+  <text x="24" y="35" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#E6EDE8">বর্ণমালা কনফিগারেশন ও পছন্দসমূহ</text>
+
+  <g transform="translate(24, 76)">
+    <!-- Setting 1: Default Mode -->
+    <text x="0" y="18" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">ডিফল্ট টাইপিং মোড</text>
+    <rect x="0" y="28" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <circle cx="24" cy="49" r="6" fill="#008764"/>
+    <text x="40" y="54" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">ইউনিকোড ফিক্সড লেআউট (Classic Unicode) [F12 বা Ctrl+Alt+V]</text>
+
+    <!-- Setting 2: Backspace Behavior -->
+    <text x="0" y="96" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">ব্যাকস্পেস মুছে ফেলার পদ্ধতি</text>
+    <rect x="0" y="106" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <circle cx="24" cy="127" r="6" fill="#008764"/>
+    <text x="40" y="132" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">অখণ্ড যুক্তবর্ণ ডিলিট (Atomic) (প্রস্তাবিত ও নির্ভুল)</text>
+
+    <!-- Setting 3: Numeral switch -->
+    <text x="0" y="174" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">ডিফল্ট সংখ্যা প্যাটার্ন</text>
+    <rect x="0" y="184" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <circle cx="24" cy="205" r="6" fill="#008764"/>
+    <text x="40" y="210" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">বাংলা সংখ্যা (০, ১, ২, ৩...) ডিফল্ট হিসেবে চালু</text>
+
+    <!-- Setting 4: Per App memory -->
+    <text x="0" y="252" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">অ্যাপ্লিকেশন ভিত্তিক মোড সংরক্ষণ</text>
+    <rect x="0" y="262" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <rect x="18" y="275" width="34" height="18" rx="9" fill="#008764"/>
+    <circle cx="43" cy="284" r="7" fill="#FFFFFF"/>
+    <text x="64" y="289" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">প্রতিটি অ্যাপ্লিকেশনের টাইপিং মোড আলাদাভাবে মনে রাখুন</text>
+
+    <!-- Setting 5: Auto Startup -->
+    <text x="0" y="330" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">কম্পিউটার চালুর সাথে সাথে বর্ণমালা চালু করুন (Auto Startup)</text>
+    <rect x="0" y="340" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <rect x="18" y="353" width="34" height="18" rx="9" fill="#008764"/>
+    <circle cx="43" cy="362" r="7" fill="#FFFFFF"/>
+    <text x="64" y="367" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">উইন্ডোজ স্টার্টআপে বর্ণমালা স্বয়ংক্রিয়ভাবে ব্যাকগ্রাউন্ডে চালু হবে</text>
+
+    <!-- Setting 6: Startup Splash Screen -->
+    <text x="0" y="408" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#E6EDE8">স্টার্টআপে স্প্ল্যাশ স্ক্রিন প্রদর্শন (Startup Splash Screen)</text>
+    <rect x="0" y="418" width="592" height="42" rx="8" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <rect x="18" y="431" width="34" height="18" rx="9" fill="#008764"/>
+    <circle cx="43" cy="440" r="7" fill="#FFFFFF"/>
+    <text x="64" y="445" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">অ্যাপ চালুর সময় বিজয়/একুশের ন্যায় ২.৫ সেকেন্ড স্প্ল্যাশ স্ক্রিন দেখাবে</text>
+  </g>
+
+  <!-- Bottom Action -->
+  <rect x="476" y="520" width="140" height="38" rx="8" fill="#008764"/>
+  <text x="546" y="544" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">সংরক্ষণ করুন</text>
+</svg>

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "conv_single_words",
+    "desc": "Convert বাংলা to SutonnyMJ ANSI and back",
+    "unicode": "বাংলা",
+    "ansi": "evsjv",
+    "confidence": "Level B",
+    "provenance": "Converter.exe findNext & findNextJukta"
+  },
+  {
+    "id": "conv_prebase_ikar",
+    "desc": "Convert কি to SutonnyMJ ANSI and back",
+    "unicode": "কি",
+    "ansi": "wK",
+    "confidence": "Level B",
+    "provenance": "Converter.exe 9BF (w) pre-base reordering"
+  },
+  {
+    "id": "conv_prebase_ekar",
+    "desc": "Convert কে to SutonnyMJ ANSI and back",
+    "unicode": "কে",
+    "ansi": "‡K",
+    "confidence": "Level B",
+    "provenance": "Converter.exe 9C7 (‡) pre-base reordering"
+  },
+  {
+    "id": "conv_split_okar",
+    "desc": "Convert কো to SutonnyMJ ANSI and back",
+    "unicode": "কো",
+    "ansi": "‡Kv",
+    "confidence": "Level B",
+    "provenance": "Converter.exe 9CB split kar (‡ + v)"
+  },
+  {
+    "id": "conv_conjunct_kka",
+    "desc": "Convert ক্ক to SutonnyMJ ANSI and back",
+    "unicode": "ক্ক",
+    "ansi": "³",
+    "confidence": "Level B",
+    "provenance": "Converter.exe findNextJukta"
+  },
+  {
+    "id": "conv_sentence",
+    "desc": "Full sentence round-trip test",
+    "unicode": "আমার সোনার বাংলা, আমি তোমায় ভালোবাসি।",
+    "ansi": "Avgvi ‡mvbvi evsjv, Avwg ‡Zvgvq fv‡jvevwm|",
+    "confidence": "Level B",
+    "provenance": "Standard SutonnyMJ classic test sentence"
+  }
+]

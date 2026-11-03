@@ -1,0 +1,20 @@
+[package]
+name = "bornomala-ui"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "User interface, theme system, localization, and on-screen keyboard for Bornomala"
+
+[[bin]]
+name = "render-screenshots"
+path = "src/bin/render_screenshots.rs"
+
+[dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+bornomala-update = { path = "../bornomala-update" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

@@ -1,0 +1,161 @@
+[
+  {
+    "id": "uni_basic_consonant",
+    "desc": "Single consonant ক",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "j"
+    ],
+    "expected_output": "ক",
+    "expected_codepoints": [
+      "U+0995"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 74 + Converter.exe 995"
+  },
+  {
+    "id": "uni_vowel_ikar_reordering",
+    "desc": "Pre-base i-kar typed before consonant: d (i-kar) + j (ka) -> কি",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "d",
+      "j"
+    ],
+    "expected_output": "কি",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09BF"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 68, 74 + engine normalization"
+  },
+  {
+    "id": "uni_vowel_ekar_reordering",
+    "desc": "Pre-base e-kar typed before consonant: c (e-kar) + j (ka) -> কে",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "c",
+      "j"
+    ],
+    "expected_output": "কে",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09C7"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 67, 74"
+  },
+  {
+    "id": "uni_vowel_okar_split",
+    "desc": "Two-part o-kar typed as e-kar + a-kar: c (e-kar) + j (ka) + f (a-kar) -> কো",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "c",
+      "j",
+      "f"
+    ],
+    "expected_output": "কো",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09CB"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml Juk c+f -> কো"
+  },
+  {
+    "id": "uni_conjunct_k_ka",
+    "desc": "Hasanta conjunct: j (ka) + g (hasanta) + j (ka) -> ক্ক",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "j",
+      "g",
+      "j"
+    ],
+    "expected_output": "ক্ক",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09CD",
+      "U+0995"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 74, 71"
+  },
+  {
+    "id": "uni_conjunct_k_ssa",
+    "desc": "Hasanta conjunct: j (ka) + g (hasanta) + N (ssa) -> ক্ষ",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "j",
+      "g",
+      "N"
+    ],
+    "expected_output": "ক্ষ",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09CD",
+      "U+09B7"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml"
+  },
+  {
+    "id": "uni_reph",
+    "desc": "Reph: A (Shift+a = র্) + j (ka) -> র্ক",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "A",
+      "j"
+    ],
+    "expected_output": "র্ক",
+    "expected_codepoints": [
+      "U+09B0",
+      "U+09CD",
+      "U+0995"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml Shift+A"
+  },
+  {
+    "id": "uni_independent_vowel_aa",
+    "desc": "Independent vowel আ: g (hasanta) + f (a-kar) -> আ",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "g",
+      "f"
+    ],
+    "expected_output": "আ",
+    "expected_codepoints": [
+      "U+0986"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml Juk g+f"
+  },
+  {
+    "id": "uni_taka_sign",
+    "desc": "Taka sign: Shift+4 ($)",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "$"
+    ],
+    "expected_output": "৳",
+    "expected_codepoints": [
+      "U+09F3"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 52 Shift"
+  },
+  {
+    "id": "uni_danda_sign",
+    "desc": "Danda sign: Shift+g (G)",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "G"
+    ],
+    "expected_output": "।",
+    "expected_codepoints": [
+      "U+0964"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Unicode.xml KeyCode 71 Shift"
+  }
+]

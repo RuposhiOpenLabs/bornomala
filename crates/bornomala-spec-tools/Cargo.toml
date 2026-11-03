@@ -1,0 +1,12 @@
+[package]
+name = "bornomala-spec-tools"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Analysis, vector generation, and differential test tools for Bornomala"
+
+[dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+serde = { workspace = true }
+serde_json = { workspace = true }

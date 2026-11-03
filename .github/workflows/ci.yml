@@ -1,0 +1,44 @@
+name: Bornomala CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-verify:
+    name: Test & Specification Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu, x86_64-pc-windows-gnu, i686-pc-windows-gnu, aarch64-pc-windows-gnullvm
+          components: clippy, rustfmt
+
+      - name: Install MinGW cross-compilation packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
+
+      - name: Run Workspace Tests
+        run: cargo test --workspace
+
+      - name: Validate Ground-Truth Specification Test Vectors
+        run: cargo run -p bornomala-spec-tools
+
+      - name: Render UI Screenshots
+        run: cargo run -p bornomala-ui --bin render-screenshots
+
+      - name: Cross-Compile Windows x86_64 TSF COM DLL
+        run: cargo build -p bornomala-tsf --target x86_64-pc-windows-gnu --release
+
+      - name: Cross-Compile Windows i686 (32-bit) TSF COM DLL
+        run: cargo build -p bornomala-tsf --target i686-pc-windows-gnu --release
+
+      - name: Check Windows ARM64 TSF COM DLL
+        run: cargo check -p bornomala-tsf --target aarch64-pc-windows-gnullvm

@@ -1,0 +1,5 @@
+1 ICON "../../installer/bornomala.ico"
+101 ICON "src/win32/assets/tray_uni.ico"
+102 ICON "src/win32/assets/tray_ansi.ico"
+103 ICON "src/win32/assets/tray_pho.ico"
+104 ICON "src/win32/assets/tray_en.ico"

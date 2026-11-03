@@ -1,0 +1,13 @@
+[package]
+name = "bornomala-cli"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Command-line tool for Bornomala text conversions and script execution"
+
+[dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+bornomala-ui = { path = "../bornomala-ui" }
+serde = { workspace = true }
+serde_json = { workspace = true }

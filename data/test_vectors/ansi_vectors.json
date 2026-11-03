@@ -1,0 +1,64 @@
+[
+  {
+    "id": "ansi_basic_ka",
+    "desc": "Classic ANSI ka: j -> K",
+    "mode": "classic_ansi",
+    "input_keys": [
+      "j"
+    ],
+    "expected_output": "K",
+    "expected_codepoints": [
+      "U+004B"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Classic.xml KeyCode 74 -> K"
+  },
+  {
+    "id": "ansi_ikar_prebase",
+    "desc": "Classic ANSI i-kar typed first: d (w) + j (K) -> wK",
+    "mode": "classic_ansi",
+    "input_keys": [
+      "d",
+      "j"
+    ],
+    "expected_output": "wK",
+    "expected_codepoints": [
+      "U+0077",
+      "U+004B"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Classic.xml KeyCode 68 -> w, 74 -> K"
+  },
+  {
+    "id": "ansi_conjunct_kka",
+    "desc": "Classic ANSI conjunct kka: j (K) + g (&) + j (K) -> °",
+    "mode": "classic_ansi",
+    "input_keys": [
+      "j",
+      "g",
+      "j"
+    ],
+    "expected_output": "°",
+    "expected_codepoints": [
+      "U+00B0"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Classic.xml Juk K&K -> °"
+  },
+  {
+    "id": "ansi_conjunct_kssa",
+    "desc": "Classic ANSI conjunct kssa: j (K) + g (&) + m (g) -> ´",
+    "mode": "classic_ansi",
+    "input_keys": [
+      "j",
+      "g",
+      "m"
+    ],
+    "expected_output": "´",
+    "expected_codepoints": [
+      "U+00B4"
+    ],
+    "confidence": "Level B",
+    "provenance": "Layout Classic.xml Juk K&g -> ´"
+  }
+]

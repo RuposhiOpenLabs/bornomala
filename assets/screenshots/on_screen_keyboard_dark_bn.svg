@@ -1,0 +1,345 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="340" viewBox="0 0 840 340">
+  <rect width="840" height="340" rx="12" fill="#111713" stroke="#2C3A30" stroke-width="2"/>
+  <rect width="840" height="44" rx="12" fill="#1B241E"/>
+  <text x="20" y="28" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8">অন-স্ক্রিন কিবোর্ড লেআউট</text>
+  <rect x="700" y="8" width="120" height="28" rx="6" fill="#008764"/>
+  <text x="760" y="27" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ইউনিকোড</text>
+  <g transform="translate(20, 56)">
+    <g transform="translate(0, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">`</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">~</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">1</text>
+    </g>
+    <g transform="translate(58, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">1</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">!</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">১</text>
+    </g>
+    <g transform="translate(116, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">2</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">৥</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">২</text>
+    </g>
+    <g transform="translate(174, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">3</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">#</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৩</text>
+    </g>
+    <g transform="translate(232, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">4</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">৳</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৪</text>
+    </g>
+    <g transform="translate(290, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">5</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">%</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৫</text>
+    </g>
+    <g transform="translate(348, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">6</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">৲</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৬</text>
+    </g>
+    <g transform="translate(406, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">7</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঁ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৭</text>
+    </g>
+    <g transform="translate(464, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">8</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">*</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৮</text>
+    </g>
+    <g transform="translate(522, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">9</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">(</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">৯</text>
+    </g>
+    <g transform="translate(580, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">0</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">)</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">০</text>
+    </g>
+    <g transform="translate(638, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">-</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">_</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">-</text>
+    </g>
+    <g transform="translate(696, 0)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">=</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">+</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">=</text>
+    </g>
+    <g transform="translate(754, 0)">
+      <rect width="76" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">BS</text>
+      <text x="70" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">←</text>
+      <text x="38" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">←</text>
+    </g>
+    <g transform="translate(0, 54)">
+      <rect width="70" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Tab</text>
+      <text x="64" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">⇥</text>
+      <text x="35" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">⇥</text>
+    </g>
+    <g transform="translate(76, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Q</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ং</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ঙ</text>
+    </g>
+    <g transform="translate(134, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">W</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">য়</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">য</text>
+    </g>
+    <g transform="translate(192, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">E</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঢ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ড</text>
+    </g>
+    <g transform="translate(250, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">R</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ফ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">প</text>
+    </g>
+    <g transform="translate(308, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">T</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঠ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ট</text>
+    </g>
+    <g transform="translate(366, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Y</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ছ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">চ</text>
+    </g>
+    <g transform="translate(424, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">U</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঝ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">জ</text>
+    </g>
+    <g transform="translate(482, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">I</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঞ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">হ</text>
+    </g>
+    <g transform="translate(540, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">O</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঘ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">গ</text>
+    </g>
+    <g transform="translate(598, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">P</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঢ়</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ড়</text>
+    </g>
+    <g transform="translate(656, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">[</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">{</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">[</text>
+    </g>
+    <g transform="translate(714, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">]</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">}</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">]</text>
+    </g>
+    <g transform="translate(772, 54)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">\</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">|</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">\</text>
+    </g>
+    <g transform="translate(0, 108)">
+      <rect width="80" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Caps</text>
+      <text x="74" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">⇪</text>
+      <text x="40" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">⇪</text>
+    </g>
+    <g transform="translate(86, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">A</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">র্</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ৃ</text>
+    </g>
+    <g transform="translate(144, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">S</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ূ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ু</text>
+    </g>
+    <g transform="translate(202, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">D</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ী</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ি</text>
+    </g>
+    <g transform="translate(260, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">F</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">অ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">া</text>
+    </g>
+    <g transform="translate(318, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">G</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">।</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">্</text>
+    </g>
+    <g transform="translate(376, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">H</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ভ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ব</text>
+    </g>
+    <g transform="translate(434, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">J</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">খ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ক</text>
+    </g>
+    <g transform="translate(492, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">K</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">থ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ত</text>
+    </g>
+    <g transform="translate(550, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">L</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ধ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">দ</text>
+    </g>
+    <g transform="translate(608, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">;</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">:</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">;</text>
+    </g>
+    <g transform="translate(666, 108)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">&apos;</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">&quot;</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">&apos;</text>
+    </g>
+    <g transform="translate(724, 108)">
+      <rect width="84" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Enter</text>
+      <text x="78" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">↵</text>
+      <text x="42" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">↵</text>
+    </g>
+    <g transform="translate(0, 162)">
+      <rect width="96" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Shift</text>
+      <text x="90" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">⇧</text>
+      <text x="48" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">⇧</text>
+    </g>
+    <g transform="translate(102, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Z</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">্র</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">্য</text>
+    </g>
+    <g transform="translate(160, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">X</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ঔ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ও</text>
+    </g>
+    <g transform="translate(218, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">C</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ৈ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ে</text>
+    </g>
+    <g transform="translate(276, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">V</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ল</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">র</text>
+    </g>
+    <g transform="translate(334, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">B</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ণ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ন</text>
+    </g>
+    <g transform="translate(392, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">N</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">ষ</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">শ</text>
+    </g>
+    <g transform="translate(450, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">M</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">স</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">ণ</text>
+    </g>
+    <g transform="translate(508, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">,</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">&lt;</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">,</text>
+    </g>
+    <g transform="translate(566, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">.</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">&gt;</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">.</text>
+    </g>
+    <g transform="translate(624, 162)">
+      <rect width="52" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">/</text>
+      <text x="46" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">?</text>
+      <text x="26" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">/</text>
+    </g>
+    <g transform="translate(682, 162)">
+      <rect width="96" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+      <text x="6" y="14" font-family="sans-serif" font-size="9" fill="#8B9E91">Shift</text>
+      <text x="90" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#8B9E91" text-anchor="end">⇧</text>
+      <text x="48" y="36" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#E6EDE8" text-anchor="middle">⇧</text>
+    </g>
+    <!-- Bottom control row -->
+    <rect x="0" y="216" width="80" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <text x="40" y="246" font-family="sans-serif" font-size="12" fill="#E6EDE8" text-anchor="middle">Ctrl</text>
+
+    <rect x="86" y="216" width="80" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <text x="126" y="246" font-family="sans-serif" font-size="12" fill="#E6EDE8" text-anchor="middle">Alt</text>
+
+    <rect x="172" y="216" width="360" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <text x="352" y="246" font-family="sans-serif, 'SolaimanLipi'" font-size="14" fill="#E6EDE8" text-anchor="middle">স্পেসবার (Spacebar)</text>
+
+    <rect x="538" y="216" width="80" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <text x="578" y="246" font-family="sans-serif" font-size="12" fill="#E6EDE8" text-anchor="middle">AltGr</text>
+
+    <rect x="624" y="216" width="80" height="48" rx="6" fill="#008764" stroke="#2C3A30" stroke-width="1"/>
+    <text x="664" y="246" font-family="sans-serif, 'SolaimanLipi'" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">হসন্ত (্)</text>
+
+    <rect x="710" y="216" width="90" height="48" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>
+    <text x="755" y="246" font-family="sans-serif, 'SolaimanLipi'" font-size="14" fill="#E6EDE8" text-anchor="middle">দাঁড়ি (।)</text>
+  </g>
+</svg>

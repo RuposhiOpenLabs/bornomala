@@ -1,0 +1,18 @@
+[package]
+name = "bornomala-tsf"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Windows Text Services Framework (TSF) in-process COM DLL for Bornomala"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

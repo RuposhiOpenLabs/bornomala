@@ -1,0 +1,17 @@
+[package]
+name = "bornomala-app"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Bornomala Native Windows GUI Application (Floating Bar, Splash, Converter, Tray & Hotkeys)"
+
+[[bin]]
+name = "bornomala"
+path = "src/main.rs"
+
+[dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+bornomala-ui = { path = "../bornomala-ui" }
+serde = { workspace = true }
+serde_json = { workspace = true }

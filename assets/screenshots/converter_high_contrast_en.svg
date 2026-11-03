@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="480" viewBox="0 0 760 480">
+  <rect width="760" height="480" rx="12" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+  
+  <!-- Header Bar -->
+  <rect width="760" height="56" rx="12" fill="#00FF66"/>
+  <text x="24" y="35" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF">Unicode &amp; ANSI (SutonnyMJ) Converter</text>
+  
+  <!-- Direction Toggle Indicator -->
+  <g transform="translate(440, 12)">
+    <rect width="296" height="32" rx="6" fill="rgba(255,255,255,0.15)"/>
+    <text x="148" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ইউনিকোড ➔ এএনএসআই (সুতোন্নীএমজে)</text>
+  </g>
+
+  <!-- Left Box: Unicode Text Area -->
+  <g transform="translate(24, 76)">
+    <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF">Unicode Bangla Text</text>
+    <rect y="24" width="336" height="260" rx="8" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="14" y="56" font-family="sans-serif, 'SolaimanLipi'" font-size="14" fill="#FFFFFF">আমার সোনার বাংলা, আমি তোমায় ভালোবাসি।</text>
+  </g>
+
+  <!-- Center Action Button -->
+  <g transform="translate(368, 180)">
+    <circle cx="12" cy="12" r="22" fill="#00FF66" stroke="#FFFFFF" stroke-width="1"/>
+    <text x="12" y="19" font-family="sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">⇄</text>
+  </g>
+
+  <!-- Right Box: ANSI Text Area -->
+  <g transform="translate(400, 76)">
+    <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF">Legacy ANSI / SutonnyMJ Text</text>
+    <rect y="24" width="336" height="260" rx="8" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="14" y="56" font-family="sans-serif, monospace" font-size="14" fill="#FFFFFF">Avgvi †mvbvi evsjv, Avwg †Zvgvq fv‡jvevwm|</text>
+  </g>
+
+  <!-- Status & Message -->
+  <rect x="24" y="372" width="712" height="36" rx="6" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1"/>
+  <circle cx="40" cy="390" r="5" fill="#28A745"/>
+  <text x="54" y="395" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="#FFFFFF">Ready (lossless mapping verified)</text>
+
+  <!-- Bottom Buttons -->
+  <g transform="translate(24, 422)">
+    <rect x="0" y="0" width="140" height="38" rx="8" fill="#00FF66"/>
+    <text x="70" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Convert</text>
+
+    <rect x="152" y="0" width="140" height="38" rx="8" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="222" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Switch Direction ⇄</text>
+
+    <rect x="304" y="0" width="140" height="38" rx="8" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="374" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#FFFFFF" text-anchor="middle">Copy to Clipboard</text>
+
+    <rect x="456" y="0" width="120" height="38" rx="8" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="516" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#FF3333" text-anchor="middle">Clear Text</text>
+  </g>
+</svg>

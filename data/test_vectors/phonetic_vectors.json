@@ -1,0 +1,226 @@
+[
+  {
+    "id": "phonetic_0",
+    "desc": "Phonetic transliteration of ami",
+    "input": "ami",
+    "expected_output": "আমি",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_1",
+    "desc": "Phonetic transliteration of bangla",
+    "input": "bangla",
+    "expected_output": "বাংলা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_2",
+    "desc": "Phonetic transliteration of amader",
+    "input": "amader",
+    "expected_output": "আমাদের",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_3",
+    "desc": "Phonetic transliteration of shonar",
+    "input": "shonar",
+    "expected_output": "শনার",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_4",
+    "desc": "Phonetic transliteration of Dhaka",
+    "input": "Dhaka",
+    "expected_output": "ঢাকা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_5",
+    "desc": "Phonetic transliteration of bangladesh",
+    "input": "bangladesh",
+    "expected_output": "বাংলাদেশ",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_6",
+    "desc": "Phonetic transliteration of biddaloy",
+    "input": "biddaloy",
+    "expected_output": "বিদ্দালয়",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_7",
+    "desc": "Phonetic transliteration of porikkha",
+    "input": "porikkha",
+    "expected_output": "পরিক্ষা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_8",
+    "desc": "Phonetic transliteration of onnanno",
+    "input": "onnanno",
+    "expected_output": "অন্নান্ন",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_9",
+    "desc": "Phonetic transliteration of kintu",
+    "input": "kintu",
+    "expected_output": "কিন্তু",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_10",
+    "desc": "Phonetic transliteration of shundor",
+    "input": "shundor",
+    "expected_output": "শুন্দর",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_11",
+    "desc": "Phonetic transliteration of kormo",
+    "input": "kormo",
+    "expected_output": "করম",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_12",
+    "desc": "Phonetic transliteration of dharma",
+    "input": "dharma",
+    "expected_output": "ধারমা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_13",
+    "desc": "Phonetic transliteration of bristi",
+    "input": "bristi",
+    "expected_output": "ব্রিস্তি",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_14",
+    "desc": "Phonetic transliteration of gram",
+    "input": "gram",
+    "expected_output": "গ্রাম",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_15",
+    "desc": "Phonetic transliteration of prothom",
+    "input": "prothom",
+    "expected_output": "প্রথম",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_16",
+    "desc": "Phonetic transliteration of rasta",
+    "input": "rasta",
+    "expected_output": "রাস্তা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_17",
+    "desc": "Phonetic transliteration of chinta",
+    "input": "chinta",
+    "expected_output": "ছিন্তা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_18",
+    "desc": "Phonetic transliteration of montri",
+    "input": "montri",
+    "expected_output": "মন্ত্রি",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_19",
+    "desc": "Phonetic transliteration of shastho",
+    "input": "shastho",
+    "expected_output": "শাস্থ",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_20",
+    "desc": "Phonetic transliteration of bissho",
+    "input": "bissho",
+    "expected_output": "বিসশ",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_21",
+    "desc": "Phonetic transliteration of oggata",
+    "input": "oggata",
+    "expected_output": "অজ্ঞাতা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_22",
+    "desc": "Phonetic transliteration of krishna",
+    "input": "krishna",
+    "expected_output": "ক্রিশ্না",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_23",
+    "desc": "Phonetic transliteration of taka",
+    "input": "taka",
+    "expected_output": "তাকা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_24",
+    "desc": "Phonetic transliteration of poisa",
+    "input": "poisa",
+    "expected_output": "পইসা",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_25",
+    "desc": "Phonetic transliteration of tarikh",
+    "input": "tarikh",
+    "expected_output": "তারিখ",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_26",
+    "desc": "Phonetic transliteration of songbidhan",
+    "input": "songbidhan",
+    "expected_output": "সংবিধান",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  },
+  {
+    "id": "phonetic_27",
+    "desc": "Phonetic transliteration of proshashon",
+    "input": "proshashon",
+    "expected_output": "প্রশাশন",
+    "confidence": "Level A",
+    "provenance": "Executed live against ibus-avro official oracle (avrolib.js)"
+  }
+]

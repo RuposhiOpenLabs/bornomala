@@ -1,0 +1,18 @@
+[package]
+name = "bornomala-update"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Ed25519 signature, SHA-256 hash verification, rollback protection, and tamper detection library"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+ed25519-dalek = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+rand_core = { workspace = true }
