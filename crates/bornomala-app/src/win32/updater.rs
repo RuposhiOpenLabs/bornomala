@@ -992,10 +992,38 @@ unsafe extern "system" fn wizard_wnd_proc(
                 let payload = WIZARD_PAYLOAD.lock().map(|p| p.clone()).unwrap_or_default();
 
                 std::thread::spawn(move || {
-                    // 1. Close existing running instance of bornomala.exe
-                    let _ = std::process::Command::new("taskkill")
-                        .args(["/F", "/IM", "bornomala.exe", "/T"])
-                        .status();
+                    // 1. Close existing running instance of bornomala.exe safely via Win32 API
+                    unsafe {
+                        let main_cls = to_wide("BornomalaAppClass");
+                        let main_h = FindWindowW(main_cls.as_ptr(), std::ptr::null());
+                        if main_h != 0 {
+                            SendMessageW(main_h, WM_CLOSE, 0, 0);
+                            let mut pid: u32 = 0;
+                            GetWindowThreadProcessId(main_h, &mut pid);
+                            if pid != 0 && pid != std::process::id() {
+                                let hproc = OpenProcess(0x0001, 0, pid);
+                                if hproc != 0 {
+                                    TerminateProcess(hproc, 0);
+                                    CloseHandle(hproc);
+                                }
+                            }
+                        }
+
+                        let tb_cls = to_wide("BornomalaToolbarClass");
+                        let tb_h = FindWindowW(tb_cls.as_ptr(), std::ptr::null());
+                        if tb_h != 0 {
+                            SendMessageW(tb_h, WM_CLOSE, 0, 0);
+                            let mut pid: u32 = 0;
+                            GetWindowThreadProcessId(tb_h, &mut pid);
+                            if pid != 0 && pid != std::process::id() {
+                                let hproc = OpenProcess(0x0001, 0, pid);
+                                if hproc != 0 {
+                                    TerminateProcess(hproc, 0);
+                                    CloseHandle(hproc);
+                                }
+                            }
+                        }
+                    }
 
                     std::thread::sleep(std::time::Duration::from_millis(600));
 

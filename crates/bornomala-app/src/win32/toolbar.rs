@@ -531,6 +531,11 @@ unsafe extern "system" fn toolbar_wnd_proc(
             0
         }
 
+        WM_CLOSE => {
+            PostQuitMessage(0);
+            0
+        }
+
         WM_DESTROY => {
             if FONT_TITLE != 0 { DeleteObject(FONT_TITLE); FONT_TITLE = 0; }
             if FONT_PILL != 0 { DeleteObject(FONT_PILL); FONT_PILL = 0; }

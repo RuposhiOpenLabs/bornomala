@@ -234,6 +234,11 @@ unsafe extern "system" fn main_event_wnd_proc(
             0
         }
 
+        WM_CLOSE => {
+            DestroyWindow(hwnd);
+            0
+        }
+
         WM_DESTROY => {
             PostQuitMessage(0);
             0

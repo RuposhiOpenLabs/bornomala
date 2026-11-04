@@ -91,17 +91,78 @@ LangString ^Font ${LANG_ENGLISH} "Nirmala UI"
 LangString ^FontSize ${LANG_ENGLISH} "9"
 
 ; ----------------------------------------------------------------------------
+; Helper Macro: Safely Close Running Bornomala Instances Without taskkill.exe
+; (Direct Win32 API calls prevent external taskkill.exe and framedynos.dll errors)
+; ----------------------------------------------------------------------------
+!macro CloseRunningInstancesMacro UN
+Function ${UN}CloseRunningInstances
+  Push $0
+  Push $1
+  Push $2
+
+  ; 1. Check Main App Window (BornomalaAppClass)
+  FindWindow $0 "BornomalaAppClass" ""
+  StrCmp $0 0 check_tb_${UN}
+    SendMessage $0 16 0 0 ; WM_CLOSE
+    Sleep 250
+    ; If still alive, terminate process cleanly via PID
+    System::Call 'user32::GetWindowThreadProcessId(p r0, *i .r1)'
+    StrCmp $1 0 check_tb_${UN}
+    System::Call 'kernel32::OpenProcess(i 0x0001, i 0, i r1) p .r2'
+    StrCmp $2 0 check_tb_${UN}
+    System::Call 'kernel32::TerminateProcess(p r2, i 0)'
+    System::Call 'kernel32::CloseHandle(p r2)'
+
+check_tb_${UN}:
+  ; 2. Check Floating Toolbar Window (BornomalaToolbarClass)
+  FindWindow $0 "BornomalaToolbarClass" ""
+  StrCmp $0 0 check_conv_${UN}
+    SendMessage $0 16 0 0 ; WM_CLOSE
+    Sleep 200
+    System::Call 'user32::GetWindowThreadProcessId(p r0, *i .r1)'
+    StrCmp $1 0 check_conv_${UN}
+    System::Call 'kernel32::OpenProcess(i 0x0001, i 0, i r1) p .r2'
+    StrCmp $2 0 check_conv_${UN}
+    System::Call 'kernel32::TerminateProcess(p r2, i 0)'
+    System::Call 'kernel32::CloseHandle(p r2)'
+
+check_conv_${UN}:
+  FindWindow $0 "BornomalaConverterClass" ""
+  StrCmp $0 0 check_sett_${UN}
+    SendMessage $0 16 0 0
+
+check_sett_${UN}:
+  FindWindow $0 "BornomalaSettingsClass" ""
+  StrCmp $0 0 check_abt_${UN}
+    SendMessage $0 16 0 0
+
+check_abt_${UN}:
+  FindWindow $0 "BornomalaAboutClass" ""
+  StrCmp $0 0 done_close_${UN}
+    SendMessage $0 16 0 0
+
+done_close_${UN}:
+  Pop $2
+  Pop $1
+  Pop $0
+FunctionEnd
+!macroend
+
+!insertmacro CloseRunningInstancesMacro ""
+!insertmacro CloseRunningInstancesMacro "un."
+
+; ----------------------------------------------------------------------------
 ; Initialization Callback: Enable 64-bit Registry & File System Redirection
 ; ----------------------------------------------------------------------------
 Function .onInit
   SetRegView 64
-  ; Close any running instances so files are never locked during installation
-  ExecWait 'taskkill /F /IM bornomala.exe /T'
-  ExecWait 'taskkill /F /IM bornomala-cli.exe /T'
+  ; Close any running instances gracefully without taskkill.exe
+  Call CloseRunningInstances
 FunctionEnd
 
 Function un.onInit
   SetRegView 64
+  Call un.CloseRunningInstances
 FunctionEnd
 
 ; ----------------------------------------------------------------------------
@@ -156,9 +217,8 @@ Section "Bornomala Core Engine & TSF (প্রয়োজনীয়)" SecCor
   
   ; Ensure any previous running instances are terminated so files are not locked
   DetailPrint "পূর্বের চালু থাকা ইনস্ট্যান্স বন্ধ করা হচ্ছে..."
-  ExecWait 'taskkill /F /IM bornomala.exe /T'
-  ExecWait 'taskkill /F /IM bornomala-cli.exe /T'
-  Sleep 300
+  Call CloseRunningInstances
+  Sleep 200
 
   ; Write Native Windows GUI Application & Libraries
   File "/oname=bornomala.exe" "../target/x86_64-pc-windows-gnu/release/bornomala.exe"

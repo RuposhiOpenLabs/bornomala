@@ -559,6 +559,11 @@ extern "system" {
     pub fn CreateMutexW(lpMutexAttributes: *mut c_void, bInitialOwner: BOOL, lpName: *const u16) -> usize;
     pub fn GetLastError() -> u32;
     pub fn CloseHandle(hObject: usize) -> BOOL;
+
+    // Process & Thread Management
+    pub fn GetWindowThreadProcessId(hWnd: HWND, lpdwProcessId: *mut u32) -> u32;
+    pub fn OpenProcess(dwDesiredAccess: u32, bInheritHandle: BOOL, dwProcessId: u32) -> usize;
+    pub fn TerminateProcess(hProcess: usize, uExitCode: u32) -> BOOL;
 }
 
 // WinINet Constants
