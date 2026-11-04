@@ -91,65 +91,110 @@ LangString ^Font ${LANG_ENGLISH} "Nirmala UI"
 LangString ^FontSize ${LANG_ENGLISH} "9"
 
 ; ----------------------------------------------------------------------------
-; Helper Macro: Safely Close Running Bornomala Instances Without taskkill.exe
+; Helper Function: Safely Close Running Bornomala Instances Without taskkill.exe
 ; (Direct Win32 API calls prevent external taskkill.exe and framedynos.dll errors)
 ; ----------------------------------------------------------------------------
-!macro CloseRunningInstancesMacro UN
-Function ${UN}CloseRunningInstances
+Function CloseRunningInstances
   Push $0
   Push $1
   Push $2
 
   ; 1. Check Main App Window (BornomalaAppClass)
   FindWindow $0 "BornomalaAppClass" ""
-  StrCmp $0 0 check_tb_${UN}
+  StrCmp $0 0 check_tb
     SendMessage $0 16 0 0 ; WM_CLOSE
     Sleep 250
     ; If still alive, terminate process cleanly via PID
     System::Call 'user32::GetWindowThreadProcessId(p r0, *i .r1)'
-    StrCmp $1 0 check_tb_${UN}
+    StrCmp $1 0 check_tb
     System::Call 'kernel32::OpenProcess(i 0x0001, i 0, i r1) p .r2'
-    StrCmp $2 0 check_tb_${UN}
+    StrCmp $2 0 check_tb
     System::Call 'kernel32::TerminateProcess(p r2, i 0)'
     System::Call 'kernel32::CloseHandle(p r2)'
 
-check_tb_${UN}:
+check_tb:
   ; 2. Check Floating Toolbar Window (BornomalaToolbarClass)
   FindWindow $0 "BornomalaToolbarClass" ""
-  StrCmp $0 0 check_conv_${UN}
+  StrCmp $0 0 check_conv
     SendMessage $0 16 0 0 ; WM_CLOSE
     Sleep 200
     System::Call 'user32::GetWindowThreadProcessId(p r0, *i .r1)'
-    StrCmp $1 0 check_conv_${UN}
+    StrCmp $1 0 check_conv
     System::Call 'kernel32::OpenProcess(i 0x0001, i 0, i r1) p .r2'
-    StrCmp $2 0 check_conv_${UN}
+    StrCmp $2 0 check_conv
     System::Call 'kernel32::TerminateProcess(p r2, i 0)'
     System::Call 'kernel32::CloseHandle(p r2)'
 
-check_conv_${UN}:
+check_conv:
   FindWindow $0 "BornomalaConverterClass" ""
-  StrCmp $0 0 check_sett_${UN}
+  StrCmp $0 0 check_sett
     SendMessage $0 16 0 0
 
-check_sett_${UN}:
+check_sett:
   FindWindow $0 "BornomalaSettingsClass" ""
-  StrCmp $0 0 check_abt_${UN}
+  StrCmp $0 0 check_abt
     SendMessage $0 16 0 0
 
-check_abt_${UN}:
+check_abt:
   FindWindow $0 "BornomalaAboutClass" ""
-  StrCmp $0 0 done_close_${UN}
+  StrCmp $0 0 done_close
     SendMessage $0 16 0 0
 
-done_close_${UN}:
+done_close:
   Pop $2
   Pop $1
   Pop $0
 FunctionEnd
-!macroend
 
-!insertmacro CloseRunningInstancesMacro ""
-!insertmacro CloseRunningInstancesMacro "un."
+; ----------------------------------------------------------------------------
+; Uninstaller Callback: Verify That Bornomala Is NOT Running
+; If running, show an error message and require the user to completely close it.
+; ----------------------------------------------------------------------------
+Function un.EnsureNotRunning
+  Push $0
+
+  un_check_loop:
+    ; 1. Check Single-Instance Named Mutex
+    System::Call 'kernel32::OpenMutex(i 0x00100000, i 0, t "Bornomala_SingleInstance_Mutex") p .r0'
+    IntCmp $0 0 un_check_windows
+      ; Mutex exists - application is active!
+      System::Call 'kernel32::CloseHandle(p r0)'
+      Goto un_is_running
+
+  un_check_windows:
+    ; 2. Check Application Window Classes
+    FindWindow $0 "BornomalaAppClass" ""
+    IntCmp $0 0 +2
+      Goto un_is_running
+
+    FindWindow $0 "BornomalaToolbarClass" ""
+    IntCmp $0 0 +2
+      Goto un_is_running
+
+    FindWindow $0 "BornomalaConverterClass" ""
+    IntCmp $0 0 +2
+      Goto un_is_running
+
+    FindWindow $0 "BornomalaSettingsClass" ""
+    IntCmp $0 0 +2
+      Goto un_is_running
+
+    FindWindow $0 "BornomalaAboutClass" ""
+    IntCmp $0 0 un_not_running
+      Goto un_is_running
+
+  un_is_running:
+    MessageBox MB_RETRYCANCEL|MB_ICONSTOP \
+      "বর্ণমালা (Bornomala) বর্তমানে চালু রয়েছে!$\r$\n$\r$\nঅ্যাপ্লিকেশনটি পুরোপুরি বন্ধ না করলে ফাইল আনইনস্টল করা সম্ভব নয়।$\r$\nঅনুগ্রহ করে টাস্কবার/টুলবার থেকে বর্ণমালা বন্ধ (Exit) করুন এবং 'Retry' চাপুন।$\r$\n$\r$\nBornomala is currently running!$\r$\nPlease completely close/exit Bornomala from taskbar/tray and click Retry.$\r$\nClick Cancel to abort uninstallation." \
+      IDRETRY un_check_loop IDCANCEL un_do_abort
+
+  un_do_abort:
+    Pop $0
+    Abort
+
+  un_not_running:
+    Pop $0
+FunctionEnd
 
 ; ----------------------------------------------------------------------------
 ; Initialization Callback: Enable 64-bit Registry & File System Redirection
@@ -162,7 +207,8 @@ FunctionEnd
 
 Function un.onInit
   SetRegView 64
-  Call un.CloseRunningInstances
+  ; Enforce that Bornomala must be closed before uninstallation begins
+  Call un.EnsureNotRunning
 FunctionEnd
 
 ; ----------------------------------------------------------------------------
@@ -350,6 +396,10 @@ SectionEnd
 Section "Uninstall"
   SetShellVarContext all
   SetRegView 64
+
+  ; Guard: Enforce Bornomala must be closed before files are removed
+  Call un.EnsureNotRunning
+
   DetailPrint "TSF টেক্সট সার্ভিস আনরেজিস্টার করা হচ্ছে..."
   ${If} ${RunningX64}
     ${DisableX64FSRedirection}
@@ -361,6 +411,7 @@ Section "Uninstall"
 
   ; Remove Auto-Startup registry
   DeleteRegValue HKLM "${PRODUCT_AUTORUN_KEY}" "Bornomala"
+  DeleteRegValue HKCU "${PRODUCT_AUTORUN_KEY}" "Bornomala"
 
   ; Remove Application & Uninstall Registry Keys
   DeleteRegKey HKLM "${PRODUCT_UNINST_KEY}"
