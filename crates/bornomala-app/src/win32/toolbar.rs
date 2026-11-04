@@ -5,7 +5,6 @@
 use super::api::*;
 use super::assets::{self, IconId};
 use super::converter::ConverterWindow;
-use super::dock::TrayDock;
 use bornomala_engine::InputScheme;
 use std::sync::atomic::{AtomicU32, Ordering};
 
@@ -107,7 +106,6 @@ impl FloatingToolbar {
     pub fn show() {
         unsafe {
             if TOOLBAR_HWND != 0 {
-                TrayDock::hide();
                 ShowWindow(TOOLBAR_HWND, SW_SHOW);
                 SetWindowPos(
                     TOOLBAR_HWND,
@@ -117,6 +115,13 @@ impl FloatingToolbar {
                 );
                 InvalidateRect(TOOLBAR_HWND, std::ptr::null(), TRUE);
                 UpdateWindow(TOOLBAR_HWND);
+
+                // User opened the toolbar; persist preference so it doesn't stay hidden
+                let mut cfg = bornomala_engine::AppConfig::load();
+                if cfg.toolbar_minimized {
+                    cfg.toolbar_minimized = false;
+                    let _ = cfg.save();
+                }
             }
         }
     }
@@ -137,7 +142,6 @@ impl FloatingToolbar {
             if TOOLBAR_HWND != 0 {
                 InvalidateRect(TOOLBAR_HWND, std::ptr::null(), TRUE);
             }
-            TrayDock::update_mode();
         }
     }
 
@@ -405,17 +409,9 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 return 0;
             }
 
-            // 3. Clicked Settings button
+            // 3. Clicked Settings button: Open Settings & Configuration Window
             if in_rect(&RECT_BTN_SETTINGS) {
-                let title = to_wide("বর্ণমালা — কনফিগারেশন ও সেটিংস");
-                let msg = to_wide(
-                    "বর্ণমালা সেটিংস ও কনফিগারেশন:\n\n\
-                    • অটো-স্টার্টআপ: উইন্ডোজ বুটের সাথে স্বয়ংক্রিয়ভাবে ব্যাকগ্রাউন্ডে চালু\n\
-                    • নোটিফিকেশন ট্রে: সিস্টেম ট্রে-তে সার্বক্ষণিক সচল\n\
-                    • লো-লেভেল কী-হুকিং: অফলাইন সুরক্ষিত ইনপুট ইন্টারসেপশন\n\
-                    • দ্বিমুখী কনভার্টার: মেনু (☰) আইকন থেকে দ্রুত অ্যাক্সেসযোগ্য"
-                );
-                MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
+                super::settings::SettingsWindow::open();
                 return 0;
             }
 
@@ -500,6 +496,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
             add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...", false);
             add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)", false);
             add_sep(hmenu);
+            add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...", false);
             add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...", false);
             add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...", false);
             add_sep(hmenu);
@@ -547,15 +544,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
                 }
                 ID_MENU_SETTINGS => {
-                    let title = to_wide("বর্ণমালা — কনফিগারেশন ও সেটিংস");
-                    let msg = to_wide(
-                        "বর্ণমালা সেটিংস ও কনফিগারেশন:\n\n\
-                        • অটো-স্টার্টআপ: উইন্ডোজ বুটের সাথে স্বয়ংক্রিয়ভাবে ব্যাকগ্রাউন্ডে চালু\n\
-                        • নোটিফিকেশন ট্রে: সিস্টেম ট্রে-তে সার্বক্ষণিক সচল\n\
-                        • লো-লেভেল কী-হুকিং: অফলাইন সুরক্ষিত ইনপুট ইন্টারসেপশন\n\
-                        • দ্বিমুখী কনভার্টার: মেনু (☰) আইকন থেকে দ্রুত অ্যাক্সেসযোগ্য"
-                    );
-                    MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
+                    super::settings::SettingsWindow::open();
                 }
                 ID_MENU_ABOUT => {
                     let title = to_wide("বর্ণমালা (Bornomala) v0.1.0");

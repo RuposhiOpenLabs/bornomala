@@ -1,4 +1,5 @@
 pub mod ansi_engine;
+pub mod config;
 pub mod conveniences;
 pub mod converter;
 pub mod events;
@@ -7,6 +8,7 @@ pub mod phonetic;
 pub mod unicode_engine;
 
 pub use ansi_engine::AnsiClassicEngine;
+pub use config::{AppConfig, CustomRule};
 pub use conveniences::{
     amount_to_bangla_words, amount_to_english_words, convert_digits, get_preloaded_fonts,
     gregorian_to_bangla, AppProfileManager, AutostartManager, BanglaDate, FontConflictAction,

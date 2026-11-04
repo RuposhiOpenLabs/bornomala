@@ -3,8 +3,8 @@
 pub mod api;
 pub mod assets;
 pub mod converter;
-pub mod dock;
 pub mod hook;
+pub mod settings;
 pub mod splash;
 pub mod toolbar;
 pub mod tray;
@@ -12,7 +12,6 @@ pub mod updater;
 
 use api::*;
 use converter::ConverterWindow;
-use dock::TrayDock;
 use hook::KeyboardHook;
 use splash::SplashWindow;
 use toolbar::FloatingToolbar;
@@ -21,12 +20,24 @@ use tray::SystemTray;
 static mut MAIN_HWND: HWND = 0;
 static mut SYSTEM_TRAY: Option<SystemTray> = None;
 
+pub fn get_main_hwnd() -> HWND {
+    unsafe { MAIN_HWND }
+}
+
 pub fn minimize_toolbar_to_tray() {
     unsafe {
         FloatingToolbar::minimize();
-        TrayDock::show();
+
+        // Persist preference: user chose to send to system tray
+        let mut cfg = bornomala_engine::AppConfig::load();
+        if !cfg.toolbar_minimized {
+            cfg.toolbar_minimized = true;
+            let _ = cfg.save();
+        }
+
         if let Some(ref mut tray) = SYSTEM_TRAY {
             tray.notify_minimized();
+            tray.update_tooltip(FloatingToolbar::get_scheme());
         }
     }
 }
@@ -106,27 +117,47 @@ pub fn run_app(converter_only: bool, _startup_mode: bool) {
         // 1. Initialize Authentic SVG Bitmap Assets & Tray Icons
         assets::init_assets(0);
 
-        // 2. Initialize System Tray Notification Icon & Dock Widget (default English)
-        TrayDock::create(hinst);
+        // Load user configuration
+        let cfg = bornomala_engine::AppConfig::load();
+        let initial_scheme = match cfg.default_mode.as_str() {
+            "unicode" => bornomala_engine::InputScheme::ClassicUnicode,
+            "ansi" => bornomala_engine::InputScheme::ClassicAnsi,
+            "phonetic" => bornomala_engine::InputScheme::Phonetic,
+            _ => bornomala_engine::InputScheme::PassThrough,
+        };
+
+        // 2. Initialize System Tray Notification Icon (No Dock pill widget!)
         let mut tray = SystemTray::new(hwnd, hinst);
-        tray.update_tooltip(bornomala_engine::InputScheme::PassThrough);
+        tray.update_tooltip(initial_scheme);
         SYSTEM_TRAY = Some(tray);
 
-        // 3. Initialize Low-Level Keyboard Hook & Global Hotkeys (F12, Ctrl+Alt+V, etc.)
+        // 3. Initialize Low-Level Keyboard Hook & Global Hotkeys
         KeyboardHook::init(hwnd, hinst);
 
-        // 4. Create the Top Floating Toolbar (initially hidden)
+        // 4. Create the Top Floating Toolbar
         let _tb = FloatingToolbar::create(hinst);
+        FloatingToolbar::set_scheme(initial_scheme);
 
-        // 5. Show the authentic Bengali 500x500 Startup Splash Screen in center of desktop
-        let _splash = SplashWindow::show(hinst, || {
-            // Splash auto-hide/click callback: Reveal the elegant parchment top toolbar!
-            FloatingToolbar::show();
-            SetForegroundWindow(FloatingToolbar::get_hwnd());
-        });
+        // 5. Respect user preference: Stay in System Tray or show floating toolbar
+        if cfg.toolbar_minimized {
+            // Stay minimized in the Windows System Tray notification area!
+            // No floating bar or splash screen is popped up.
+        } else {
+            if cfg.show_splash_screen {
+                let _splash = SplashWindow::show(hinst, || {
+                    FloatingToolbar::show();
+                    SetForegroundWindow(FloatingToolbar::get_hwnd());
+                });
+            } else {
+                FloatingToolbar::show();
+                SetForegroundWindow(FloatingToolbar::get_hwnd());
+            }
+        }
 
-        // 6. Start asynchronous background GitHub update check
-        updater::init_update_checker("0.1.0");
+        // 6. Start asynchronous background GitHub update check if enabled
+        if cfg.auto_check_updates {
+            updater::init_update_checker("0.1.0");
+        }
 
         // Standard Win32 Message Loop
         let mut msg: MSG = std::mem::zeroed();
@@ -184,6 +215,11 @@ unsafe extern "system" fn main_event_wnd_proc(
 
         WM_BORNOMALA_OPEN_CONVERTER => {
             ConverterWindow::open();
+            0
+        }
+
+        WM_BORNOMALA_OPEN_SETTINGS => {
+            settings::SettingsWindow::open();
             0
         }
 

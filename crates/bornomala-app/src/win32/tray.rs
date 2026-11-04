@@ -20,6 +20,7 @@ const ID_MENU_TOOLBAR: usize = 2006;
 const ID_MENU_GITHUB: usize = 2007;
 const ID_MENU_ABOUT: usize = 2008;
 const ID_MENU_UPDATE: usize = 2010;
+const ID_MENU_SETTINGS: usize = 2011;
 const ID_MENU_EXIT: usize = 2009;
 
 #[allow(dead_code)]
@@ -86,7 +87,6 @@ impl SystemTray {
                 self.nid.hIcon = hicon;
             }
             Shell_NotifyIconW(NIM_MODIFY, &self.nid);
-            super::dock::TrayDock::update_mode();
         }
     }
 
@@ -160,6 +160,7 @@ impl SystemTray {
 
                     add_item(hmenu, ID_MENU_TOOLBAR, "📌 ফ্লোটিং বার দেখান/লুকান (Toggle Bar)", false, false);
                     add_item(hmenu, ID_MENU_CONVERTER, "🔄 বাংলা রূপান্তরকারী (Converter)...", false, false);
+                    add_item(hmenu, ID_MENU_SETTINGS, "⚙ কনফিগারেশন ও সেটিংস (Settings)...", false, false);
                     add_sep(hmenu);
 
                     add_item(hmenu, ID_MENU_GITHUB, "🌐 সোর্স কোড ও ডকুমেন্টেশন (GitHub)", false, false);
@@ -198,6 +199,9 @@ impl SystemTray {
             }
             ID_MENU_CONVERTER => {
                 super::converter::ConverterWindow::open();
+            }
+            ID_MENU_SETTINGS => {
+                super::settings::SettingsWindow::open();
             }
             ID_MENU_GITHUB => {
                 unsafe {

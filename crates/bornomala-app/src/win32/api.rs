@@ -58,6 +58,16 @@ pub const ES_AUTOHSCROLL: u32 = 0x0080;
 pub const ES_WANTRETURN: u32 = 0x1000;
 pub const BS_PUSHBUTTON: u32 = 0x0000;
 pub const BS_DEFPUSHBUTTON: u32 = 0x0001;
+pub const BS_AUTOCHECKBOX: u32 = 0x0003;
+pub const BS_AUTORADIOBUTTON: u32 = 0x0009;
+pub const BM_GETCHECK: u32 = 0x00F0;
+pub const BM_SETCHECK: u32 = 0x00F1;
+pub const BST_UNCHECKED: isize = 0;
+pub const BST_CHECKED: isize = 1;
+
+pub const WM_CTLCOLORSTATIC: u32 = 0x0138;
+pub const WM_CTLCOLOREDIT: u32 = 0x0133;
+pub const WM_CTLCOLORBTN: u32 = 0x0135;
 
 // Window Messages
 pub const WM_NULL: u32 = 0x0000;
@@ -101,6 +111,7 @@ pub const WM_BORNOMALA_UPDATE_MODE: u32 = WM_USER + 101;
 pub const WM_BORNOMALA_SHOW_CONVERTER: u32 = WM_USER + 102;
 pub const WM_BORNOMALA_RESTORE_TOOLBAR: u32 = WM_USER + 201;
 pub const WM_BORNOMALA_OPEN_CONVERTER: u32 = WM_USER + 202;
+pub const WM_BORNOMALA_OPEN_SETTINGS: u32 = WM_USER + 203;
 pub const WM_BORNOMALA_UPDATE_AVAILABLE: u32 = WM_USER + 301;
 pub const WM_BORNOMALA_TRIGGER_UPDATE_CHECK: u32 = WM_USER + 302;
 
@@ -440,6 +451,7 @@ extern "system" {
     pub fn SendInput(cInputs: u32, pInputs: *const INPUT, cbSize: i32) -> u32;
 
     // GDI
+    pub fn GetStockObject(i: i32) -> usize;
     pub fn CreateSolidBrush(color: COLORREF) -> HBRUSH;
     pub fn CreatePen(iStyle: i32, cWidth: i32, color: COLORREF) -> usize;
     pub fn FillRect(hDC: HDC, lprc: *const RECT, hbr: HBRUSH) -> i32;

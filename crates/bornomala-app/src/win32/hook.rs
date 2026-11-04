@@ -12,6 +12,47 @@ const ID_HOTKEY_UNICODE: i32 = 2;
 const ID_HOTKEY_ANSI: i32 = 3;
 const ID_HOTKEY_ENGLISH: i32 = 4;
 const ID_HOTKEY_CTRL_SPACE: i32 = 5;
+const ID_HOTKEY_CONVERTER: i32 = 6;
+
+fn parse_hotkey_str(s: &str) -> Option<(u32, u32)> {
+    let s = s.trim();
+    if s.is_empty() {
+        return None;
+    }
+    let parts: Vec<&str> = s.split('+').map(|p| p.trim()).collect();
+    let mut mods = 0u32;
+    let mut key_part = "";
+
+    for part in parts {
+        let lower = part.to_lowercase();
+        match lower.as_str() {
+            "ctrl" | "control" => mods |= MOD_CONTROL,
+            "alt" => mods |= MOD_ALT,
+            "shift" => mods |= MOD_SHIFT,
+            "win" | "windows" => mods |= MOD_WIN,
+            _ => key_part = part,
+        }
+    }
+
+    let vk = match key_part.to_uppercase().as_str() {
+        "F1" => 0x70, "F2" => 0x71, "F3" => 0x72, "F4" => 0x73,
+        "F5" => 0x74, "F6" => 0x75, "F7" => 0x76, "F8" => 0x77,
+        "F9" => 0x78, "F10" => 0x79, "F11" => 0x7A, "F12" => 0x7B,
+        "SPACE" => VK_SPACE,
+        "RETURN" | "ENTER" => VK_RETURN,
+        s if s.len() == 1 => {
+            let c = s.chars().next().unwrap();
+            if c.is_ascii_alphanumeric() {
+                c.to_ascii_uppercase() as u32
+            } else {
+                return None;
+            }
+        }
+        _ => return None,
+    };
+
+    Some((mods, vk))
+}
 
 static mut HOOK_HANDLE: HHOOK = 0;
 static mut GLOBAL_ENGINE: Option<Mutex<BornomalaEngine>> = None;
@@ -26,21 +67,23 @@ pub struct KeyboardHook;
 impl KeyboardHook {
     pub fn init(hwnd: HWND, hinstance: HINSTANCE) {
         unsafe {
-            GLOBAL_ENGINE = Some(Mutex::new(BornomalaEngine::new(InputScheme::ClassicUnicode)));
+            let cfg = bornomala_engine::AppConfig::load();
+            let initial_scheme = match cfg.default_mode.as_str() {
+                "unicode" => InputScheme::ClassicUnicode,
+                "ansi" => InputScheme::ClassicAnsi,
+                "phonetic" => InputScheme::Phonetic,
+                _ => InputScheme::PassThrough,
+            };
 
-            // Register Global Mode Switch Hotkeys
-            // F12 & Ctrl + Space: Phonetic Toggle
-            RegisterHotKey(hwnd, ID_HOTKEY_F12, 0, VK_F12);
-            RegisterHotKey(hwnd, ID_HOTKEY_CTRL_SPACE, MOD_CONTROL, VK_SPACE);
+            let mut engine = BornomalaEngine::new(initial_scheme);
+            for rule in &cfg.custom_rules {
+                if rule.enabled {
+                    engine.expander_mut().insert_snippet(rule.trigger.clone(), rule.replacement.clone());
+                }
+            }
+            GLOBAL_ENGINE = Some(Mutex::new(engine));
 
-            // Ctrl + Alt + V: Classic Unicode
-            RegisterHotKey(hwnd, ID_HOTKEY_UNICODE, MOD_CONTROL | MOD_ALT, 'V' as u32);
-
-            // Ctrl + Alt + B: Classic SutonnyMJ ANSI
-            RegisterHotKey(hwnd, ID_HOTKEY_ANSI, MOD_CONTROL | MOD_ALT, 'B' as u32);
-
-            // Ctrl + Alt + E: English
-            RegisterHotKey(hwnd, ID_HOTKEY_ENGLISH, MOD_CONTROL | MOD_ALT, 'E' as u32);
+            Self::register_all_hotkeys(hwnd, &cfg);
 
             // Install low-level keyboard hook
             HOOK_HANDLE = SetWindowsHookExW(
@@ -49,6 +92,65 @@ impl KeyboardHook {
                 hinstance,
                 0,
             );
+        }
+    }
+
+    fn register_all_hotkeys(hwnd: HWND, cfg: &bornomala_engine::AppConfig) {
+        unsafe {
+            if let Some((mods, vk)) = parse_hotkey_str(&cfg.hotkey_phonetic) {
+                RegisterHotKey(hwnd, ID_HOTKEY_F12, mods, vk);
+            } else {
+                RegisterHotKey(hwnd, ID_HOTKEY_F12, 0, VK_F12);
+            }
+            RegisterHotKey(hwnd, ID_HOTKEY_CTRL_SPACE, MOD_CONTROL, VK_SPACE);
+
+            if let Some((mods, vk)) = parse_hotkey_str(&cfg.hotkey_unicode) {
+                RegisterHotKey(hwnd, ID_HOTKEY_UNICODE, mods, vk);
+            } else {
+                RegisterHotKey(hwnd, ID_HOTKEY_UNICODE, MOD_CONTROL | MOD_ALT, 'V' as u32);
+            }
+
+            if let Some((mods, vk)) = parse_hotkey_str(&cfg.hotkey_ansi) {
+                RegisterHotKey(hwnd, ID_HOTKEY_ANSI, mods, vk);
+            } else {
+                RegisterHotKey(hwnd, ID_HOTKEY_ANSI, MOD_CONTROL | MOD_ALT, 'B' as u32);
+            }
+
+            if let Some((mods, vk)) = parse_hotkey_str(&cfg.hotkey_english) {
+                RegisterHotKey(hwnd, ID_HOTKEY_ENGLISH, mods, vk);
+            } else {
+                RegisterHotKey(hwnd, ID_HOTKEY_ENGLISH, MOD_CONTROL | MOD_ALT, 'E' as u32);
+            }
+
+            if let Some((mods, vk)) = parse_hotkey_str(&cfg.hotkey_converter) {
+                RegisterHotKey(hwnd, ID_HOTKEY_CONVERTER, mods, vk);
+            } else {
+                RegisterHotKey(hwnd, ID_HOTKEY_CONVERTER, MOD_CONTROL | MOD_ALT, 'C' as u32);
+            }
+        }
+    }
+
+    pub fn reload_config(hwnd: HWND) {
+        unsafe {
+            UnregisterHotKey(hwnd, ID_HOTKEY_F12);
+            UnregisterHotKey(hwnd, ID_HOTKEY_CTRL_SPACE);
+            UnregisterHotKey(hwnd, ID_HOTKEY_UNICODE);
+            UnregisterHotKey(hwnd, ID_HOTKEY_ANSI);
+            UnregisterHotKey(hwnd, ID_HOTKEY_ENGLISH);
+            UnregisterHotKey(hwnd, ID_HOTKEY_CONVERTER);
+
+            let cfg = bornomala_engine::AppConfig::load();
+            Self::register_all_hotkeys(hwnd, &cfg);
+
+            if let Some(ref engine_mutex) = GLOBAL_ENGINE {
+                if let Ok(mut engine) = engine_mutex.lock() {
+                    for rule in &cfg.custom_rules {
+                        if rule.enabled {
+                            engine.expander_mut().insert_snippet(rule.trigger.clone(), rule.replacement.clone());
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -71,6 +173,9 @@ impl KeyboardHook {
             ID_HOTKEY_ENGLISH => {
                 FloatingToolbar::set_scheme(InputScheme::PassThrough);
             }
+            ID_HOTKEY_CONVERTER => {
+                super::converter::ConverterWindow::open();
+            }
             _ => {}
         }
     }
@@ -86,6 +191,7 @@ impl KeyboardHook {
             UnregisterHotKey(hwnd, ID_HOTKEY_UNICODE);
             UnregisterHotKey(hwnd, ID_HOTKEY_ANSI);
             UnregisterHotKey(hwnd, ID_HOTKEY_ENGLISH);
+            UnregisterHotKey(hwnd, ID_HOTKEY_CONVERTER);
         }
     }
 }
