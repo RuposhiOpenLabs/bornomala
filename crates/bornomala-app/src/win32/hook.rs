@@ -165,10 +165,20 @@ impl KeyboardHook {
                 }
             }
             ID_HOTKEY_UNICODE => {
-                FloatingToolbar::set_scheme(InputScheme::ClassicUnicode);
+                let cur = FloatingToolbar::get_scheme();
+                if cur == InputScheme::ClassicUnicode {
+                    FloatingToolbar::set_scheme(InputScheme::PassThrough);
+                } else {
+                    FloatingToolbar::set_scheme(InputScheme::ClassicUnicode);
+                }
             }
             ID_HOTKEY_ANSI => {
-                FloatingToolbar::set_scheme(InputScheme::ClassicAnsi);
+                let cur = FloatingToolbar::get_scheme();
+                if cur == InputScheme::ClassicAnsi {
+                    FloatingToolbar::set_scheme(InputScheme::PassThrough);
+                } else {
+                    FloatingToolbar::set_scheme(InputScheme::ClassicAnsi);
+                }
             }
             ID_HOTKEY_ENGLISH => {
                 FloatingToolbar::set_scheme(InputScheme::PassThrough);

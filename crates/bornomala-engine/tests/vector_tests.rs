@@ -234,3 +234,42 @@ fn test_preloaded_fonts_catalog() {
     assert!(ps_user.contains("SutonnyMJ Regular.ttf"));
     assert!(ps_user.contains("HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"));
 }
+
+#[test]
+fn test_mode_toggle_hotkeys_return_to_default_pass_through() {
+    let mut engine = BornomalaEngine::new(InputScheme::PassThrough);
+    assert_eq!(engine.active_scheme(), InputScheme::PassThrough);
+
+    // 1. Press Ctrl+Alt+V from default English -> switches to Classic Unicode
+    let key_ctrl_alt_v = KeyEvent::new_down(86, Some('v'), false, true, true);
+    let action1 = engine.process_key(&key_ctrl_alt_v);
+    assert!(action1.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::ClassicUnicode);
+
+    // 2. Press Ctrl+Alt+V again -> switches back to default English (PassThrough)
+    let action2 = engine.process_key(&key_ctrl_alt_v);
+    assert!(action2.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::PassThrough);
+
+    // 3. Press Ctrl+Alt+B from default English -> switches to Classic ANSI (Bijoy)
+    let key_ctrl_alt_b = KeyEvent::new_down(66, Some('b'), false, true, true);
+    let action3 = engine.process_key(&key_ctrl_alt_b);
+    assert!(action3.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::ClassicAnsi);
+
+    // 4. Press Ctrl+Alt+B again -> switches back to default English (PassThrough)
+    let action4 = engine.process_key(&key_ctrl_alt_b);
+    assert!(action4.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::PassThrough);
+
+    // 5. Press F12 from default English -> switches to Phonetic
+    let key_f12 = KeyEvent::new_down(123, None, false, false, false);
+    let action5 = engine.process_key(&key_f12);
+    assert!(action5.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::Phonetic);
+
+    // 6. Press F12 again -> switches back to default English (PassThrough)
+    let action6 = engine.process_key(&key_f12);
+    assert!(action6.consumed);
+    assert_eq!(engine.active_scheme(), InputScheme::PassThrough);
+}
