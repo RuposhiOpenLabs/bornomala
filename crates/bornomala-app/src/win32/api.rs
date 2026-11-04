@@ -117,9 +117,10 @@ pub const SW_SHOWNORMAL: i32 = 1;
 pub const SW_SHOW: i32 = 5;
 pub const SW_RESTORE: i32 = 9;
 
-// System Metrics
+// System Metrics & SPI
 pub const SM_CXSCREEN: i32 = 0;
 pub const SM_CYSCREEN: i32 = 1;
+pub const SPI_GETWORKAREA: u32 = 0x0030;
 
 // Drawing & GDI
 pub const TRANSPARENT: i32 = 1;
@@ -386,6 +387,18 @@ extern "system" {
     ) -> HWND;
     pub fn DestroyWindow(hWnd: HWND) -> BOOL;
     pub fn FindWindowW(lpClassName: *const u16, lpWindowName: *const u16) -> HWND;
+    pub fn FindWindowExW(
+        hWndParent: HWND,
+        hWndChildAfter: HWND,
+        lpszClass: *const u16,
+        lpszWindow: *const u16,
+    ) -> HWND;
+    pub fn SystemParametersInfoW(
+        uiAction: u32,
+        uiParam: u32,
+        pvParam: *mut c_void,
+        fWinIni: u32,
+    ) -> BOOL;
     pub fn ShowWindow(hWnd: HWND, nCmdShow: i32) -> BOOL;
     pub fn IsWindowVisible(hWnd: HWND) -> BOOL;
     pub fn UpdateWindow(hWnd: HWND) -> BOOL;
@@ -408,6 +421,7 @@ extern "system" {
     pub fn GetSystemMetrics(nIndex: i32) -> i32;
     pub fn SetForegroundWindow(hWnd: HWND) -> BOOL;
     pub fn BringWindowToTop(hWnd: HWND) -> BOOL;
+    pub fn SetCapture(hWnd: HWND) -> HWND;
     pub fn ReleaseCapture() -> BOOL;
     pub fn TrackMouseEvent(lpEventTrack: *mut TRACKMOUSEEVENT) -> BOOL;
     pub fn CreateIconIndirect(piconinfo: *const ICONINFO) -> HICON;

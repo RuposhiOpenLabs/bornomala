@@ -1,10 +1,12 @@
 //! Mini Taskbar Dock Widget for Bornomala.
-//! Renders the exact prototype [ [ব] | EN ] tray button docked above the Windows taskbar.
+//! Renders the exact prototype [ [ব] | EN ] tray button docked DIRECTLY IN the Windows taskbar.
+//! Positioned inside the taskbar, adjacent to the System Tray notification area.
 //! Provides instant 1-click restore to the full floating toolbar.
 
 use super::api::*;
 use super::assets::{self, IconId};
 use super::toolbar::{FloatingToolbar, CURRENT_SCHEME};
+use std::ffi::c_void;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 pub const DOCK_WIDTH: i32 = 82;
@@ -13,6 +15,10 @@ pub const DOCK_HEIGHT: i32 = 28;
 static mut DOCK_HWND: HWND = 0;
 static mut FONT_DOCK: HFONT = 0;
 static IS_HOVERED: AtomicBool = AtomicBool::new(false);
+static IS_DRAGGING: AtomicBool = AtomicBool::new(false);
+static mut DRAG_START_X: i32 = 0;
+static mut DRAG_START_Y: i32 = 0;
+static mut DRAG_START_WIN_X: i32 = 0;
 
 pub struct TrayDock;
 
@@ -37,13 +43,10 @@ impl TrayDock {
                 font_name.as_ptr(),
             );
 
-            // Position at bottom-right, just above taskbar tray
-            let screen_w = GetSystemMetrics(SM_CXSCREEN);
-            let screen_h = GetSystemMetrics(SM_CYSCREEN);
-            let x = screen_w - DOCK_WIDTH - 16;
-            let y = screen_h - DOCK_HEIGHT - 48; // Sits neatly above Windows taskbar
+            // Compute exact position INSIDE the Windows taskbar
+            let (x, y) = Self::get_taskbar_position(DOCK_WIDTH, DOCK_HEIGHT);
 
-            let title = to_wide("Bornomala Tray Dock");
+            let title = to_wide("Bornomala Taskbar Dock");
             let hwnd = CreateWindowExW(
                 WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
                 class_name.as_ptr(),
@@ -60,9 +63,12 @@ impl TrayDock {
             );
 
             if hwnd != 0 {
-                let rgn = CreateRoundRectRgn(0, 0, DOCK_WIDTH + 1, DOCK_HEIGHT + 1, 10, 10);
+                let rgn = CreateRoundRectRgn(0, 0, DOCK_WIDTH + 1, DOCK_HEIGHT + 1, 8, 8);
                 SetWindowRgn(hwnd, rgn, TRUE);
                 DOCK_HWND = hwnd;
+
+                // Monitor taskbar layout changes periodically (every 1.5s)
+                SetTimer(hwnd, 701, 1500, None);
             }
         }
     }
@@ -70,11 +76,8 @@ impl TrayDock {
     pub fn show() {
         unsafe {
             if DOCK_HWND != 0 {
-                // Re-evaluate position in case resolution or taskbar changed
-                let screen_w = GetSystemMetrics(SM_CXSCREEN);
-                let screen_h = GetSystemMetrics(SM_CYSCREEN);
-                let x = screen_w - DOCK_WIDTH - 16;
-                let y = screen_h - DOCK_HEIGHT - 48;
+                // Re-evaluate taskbar bounds to dock precisely inside the taskbar
+                let (x, y) = Self::get_taskbar_position(DOCK_WIDTH, DOCK_HEIGHT);
                 SetWindowPos(
                     DOCK_HWND,
                     HWND_TOPMOST,
@@ -102,6 +105,62 @@ impl TrayDock {
             }
         }
     }
+
+    /// Computes the exact screen coordinates to place the widget DIRECTLY IN the Windows taskbar.
+    /// Vertically centered within taskbar height, placed adjacent to the notification area.
+    pub fn get_taskbar_position(width: i32, height: i32) -> (i32, i32) {
+        unsafe {
+            let h_taskbar = FindWindowW(to_wide("Shell_TrayWnd").as_ptr(), std::ptr::null());
+            if h_taskbar != 0 {
+                let mut tb_rc: RECT = std::mem::zeroed();
+                GetWindowRect(h_taskbar, &mut tb_rc);
+
+                let tb_w = tb_rc.right - tb_rc.left;
+                let tb_h = tb_rc.bottom - tb_rc.top;
+
+                // Find notification area (TrayNotifyWnd) inside taskbar
+                let h_tray = FindWindowExW(h_taskbar, 0, to_wide("TrayNotifyWnd").as_ptr(), std::ptr::null());
+                let mut tray_rc: RECT = std::mem::zeroed();
+                let has_tray = h_tray != 0 && GetWindowRect(h_tray, &mut tray_rc) != 0;
+
+                if tb_h <= tb_w {
+                    // Horizontal taskbar (typically at screen bottom or top)
+                    // Vertically center inside the taskbar itself
+                    let y = tb_rc.top + (tb_h - height) / 2;
+
+                    // Place horizontally adjacent to system tray notification icons
+                    let x = if has_tray && tray_rc.left > tb_rc.left + 50 {
+                        tray_rc.left - width - 6
+                    } else {
+                        tb_rc.right - width - 180
+                    };
+                    return (x, y);
+                } else {
+                    // Vertical taskbar (left or right side of screen)
+                    let x = tb_rc.left + (tb_w - width) / 2;
+                    let y = if has_tray && tray_rc.top > tb_rc.top + 50 {
+                        tray_rc.top - height - 6
+                    } else {
+                        tb_rc.bottom - height - 180
+                    };
+                    return (x, y);
+                }
+            }
+
+            // Fallback using SPI_GETWORKAREA
+            let mut work_area: RECT = std::mem::zeroed();
+            SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut work_area as *mut _ as *mut c_void, 0);
+            let screen_w = GetSystemMetrics(SM_CXSCREEN);
+            let screen_h = GetSystemMetrics(SM_CYSCREEN);
+
+            // In standard bottom taskbar setup, work_area.bottom is where taskbar starts
+            let tb_top = work_area.bottom;
+            let tb_h = (screen_h - work_area.bottom).max(40);
+            let y = tb_top + (tb_h - height) / 2;
+            let x = screen_w - width - 200;
+            (x, y)
+        }
+    }
 }
 
 unsafe extern "system" fn dock_wnd_proc(
@@ -122,12 +181,12 @@ unsafe extern "system" fn dock_wnd_proc(
             let is_hovered = IS_HOVERED.load(Ordering::Relaxed);
             let fill_color = if is_hovered { color_hover } else { color_paper };
 
-            // 1. Background Fill with 2px Green Border
+            // 1. Background Fill with 2px Green Border inside Taskbar
             let bg_brush = CreateSolidBrush(fill_color);
             let border_pen = CreatePen(PS_SOLID, 2, color_green);
             let old_brush = SelectObject(hdc, bg_brush);
             let old_pen = SelectObject(hdc, border_pen);
-            RoundRect(hdc, 1, 1, DOCK_WIDTH - 1, DOCK_HEIGHT - 1, 10, 10);
+            RoundRect(hdc, 1, 1, DOCK_WIDTH - 1, DOCK_HEIGHT - 1, 8, 8);
 
             // 2. Draw Authentic Logo (28x24 scaled down to 22x19)
             assets::draw_icon(hdc, IconId::Logo, 5, 2);
@@ -168,6 +227,27 @@ unsafe extern "system" fn dock_wnd_proc(
             if !IS_HOVERED.swap(true, Ordering::SeqCst) {
                 InvalidateRect(hwnd, std::ptr::null(), TRUE);
             }
+
+            if IS_DRAGGING.load(Ordering::SeqCst) {
+                let mut pt: POINT = std::mem::zeroed();
+                GetCursorPos(&mut pt);
+                let dx = pt.x - DRAG_START_X;
+                if dx.abs() > 4 {
+                    let mut cur_rc: RECT = std::mem::zeroed();
+                    GetWindowRect(hwnd, &mut cur_rc);
+                    let new_x = DRAG_START_WIN_X + dx;
+                    SetWindowPos(
+                        hwnd,
+                        HWND_TOPMOST,
+                        new_x,
+                        cur_rc.top,
+                        DOCK_WIDTH,
+                        DOCK_HEIGHT,
+                        SWP_NOACTIVATE | SWP_NOSIZE,
+                    );
+                }
+            }
+
             let mut tme: TRACKMOUSEEVENT = std::mem::zeroed();
             tme.cbSize = std::mem::size_of::<TRACKMOUSEEVENT>() as u32;
             tme.dwFlags = TME_LEAVE;
@@ -182,10 +262,32 @@ unsafe extern "system" fn dock_wnd_proc(
             0
         }
 
-        WM_LBUTTONDOWN | WM_LBUTTONUP => {
-            // Click to restore full toolbar (exact prototype behavior)
-            TrayDock::hide();
-            FloatingToolbar::show();
+        WM_LBUTTONDOWN => {
+            SetCapture(hwnd);
+            let mut pt: POINT = std::mem::zeroed();
+            GetCursorPos(&mut pt);
+            DRAG_START_X = pt.x;
+            DRAG_START_Y = pt.y;
+            let mut cur_rc: RECT = std::mem::zeroed();
+            GetWindowRect(hwnd, &mut cur_rc);
+            DRAG_START_WIN_X = cur_rc.left;
+            IS_DRAGGING.store(true, Ordering::SeqCst);
+            0
+        }
+
+        WM_LBUTTONUP => {
+            ReleaseCapture();
+            let was_dragging = IS_DRAGGING.swap(false, Ordering::SeqCst);
+            let mut pt: POINT = std::mem::zeroed();
+            GetCursorPos(&mut pt);
+            let dx = (pt.x - DRAG_START_X).abs();
+            let dy = (pt.y - DRAG_START_Y).abs();
+
+            if was_dragging && dx < 5 && dy < 5 {
+                // User clicked without dragging: restore the full floating toolbar!
+                TrayDock::hide();
+                FloatingToolbar::show();
+            }
             0
         }
 
@@ -225,7 +327,31 @@ unsafe extern "system" fn dock_wnd_proc(
             0
         }
 
+        WM_TIMER => {
+            // If visible and not actively dragged, verify dock is cleanly inside the taskbar
+            if !IS_DRAGGING.load(Ordering::SeqCst) && IsWindowVisible(hwnd) != 0 {
+                let (expected_x, expected_y) = TrayDock::get_taskbar_position(DOCK_WIDTH, DOCK_HEIGHT);
+                let mut cur_rc: RECT = std::mem::zeroed();
+                GetWindowRect(hwnd, &mut cur_rc);
+
+                // Only adjust if taskbar moved or notification area shifted (> 10px difference)
+                if (cur_rc.top - expected_y).abs() > 2 || (cur_rc.left - expected_x).abs() > 40 {
+                    SetWindowPos(
+                        hwnd,
+                        HWND_TOPMOST,
+                        expected_x,
+                        expected_y,
+                        DOCK_WIDTH,
+                        DOCK_HEIGHT,
+                        SWP_NOACTIVATE | SWP_NOSIZE,
+                    );
+                }
+            }
+            0
+        }
+
         WM_DESTROY => {
+            KillTimer(hwnd, 701);
             if FONT_DOCK != 0 {
                 DeleteObject(FONT_DOCK);
                 FONT_DOCK = 0;
