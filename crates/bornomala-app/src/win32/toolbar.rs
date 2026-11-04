@@ -8,11 +8,11 @@ use super::converter::ConverterWindow;
 use bornomala_engine::InputScheme;
 use std::sync::atomic::{AtomicU32, Ordering};
 
-pub const TOOLBAR_WIDTH: i32 = 380;
+pub const TOOLBAR_WIDTH: i32 = 366;
 pub const TOOLBAR_HEIGHT: i32 = 36;
 
 pub static CURRENT_SCHEME: AtomicU32 = AtomicU32::new(3); // 0=Unicode, 1=Ansi, 2=Phonetic, 3=PassThrough (Default: English)
-static HOVERED_BTN: AtomicU32 = AtomicU32::new(0); // 0=None, 1=Pill, 2=Keyboard, 3=Settings, 4=Info, 5=Menu
+static HOVERED_BTN: AtomicU32 = AtomicU32::new(0); // 0=None, 1=Pill, 2=Tray, 3=Menu, 4=Close
 
 static mut TOOLBAR_HWND: HWND = 0;
 static mut FONT_TITLE: HFONT = 0;
@@ -20,10 +20,9 @@ static mut FONT_PILL: HFONT = 0;
 
 // Coordinates of interactive elements matching prototype layout
 const RECT_SEL_PILL:    RECT = RECT { left: 136, top: 5, right: 248, bottom: 31 };
-const RECT_BTN_KEYBOARD: RECT = RECT { left: 260, top: 6, right: 284, bottom: 30 };
-const RECT_BTN_SETTINGS: RECT = RECT { left: 286, top: 6, right: 310, bottom: 30 };
-const RECT_BTN_INFO:     RECT = RECT { left: 312, top: 6, right: 336, bottom: 30 };
-const RECT_BTN_MENU:     RECT = RECT { left: 338, top: 6, right: 362, bottom: 30 };
+const RECT_BTN_TRAY:    RECT = RECT { left: 260, top: 6, right: 284, bottom: 30 };
+const RECT_BTN_MENU:    RECT = RECT { left: 288, top: 6, right: 312, bottom: 30 };
+const RECT_BTN_CLOSE:   RECT = RECT { left: 316, top: 6, right: 340, bottom: 30 };
 
 // Command IDs
 const ID_MODE_UNICODE: usize = 101;
@@ -265,12 +264,17 @@ unsafe extern "system" fn toolbar_wnd_proc(
             MoveToEx(hdc, 254, 7, std::ptr::null_mut());
             LineTo(hdc, 254, 29);
 
-            // 9. Tool Buttons (Keyboard, Gear, Info, Menu)
+            // 9. Tool Buttons (SendToTray, Menu, Close)
             let hover_id = HOVERED_BTN.load(Ordering::Relaxed);
             let draw_hover_bg = |rc: &RECT, id: u32| {
                 if hover_id == id {
-                    let hover_brush = CreateSolidBrush(rgb(238, 228, 202));
-                    let hover_pen = CreatePen(PS_SOLID, 1, rgb(215, 202, 175));
+                    let (bg_col, border_col) = if id == 4 {
+                        (rgb(253, 235, 235), rgb(240, 180, 180)) // Gentle crimson tint on close hover
+                    } else {
+                        (rgb(238, 228, 202), rgb(215, 202, 175)) // Warm parchment hover
+                    };
+                    let hover_brush = CreateSolidBrush(bg_col);
+                    let hover_pen = CreatePen(PS_SOLID, 1, border_col);
                     let prev_brush = SelectObject(hdc, hover_brush);
                     let prev_pen = SelectObject(hdc, hover_pen);
                     RoundRect(hdc, rc.left, rc.top, rc.right, rc.bottom, 6, 6);
@@ -281,24 +285,20 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 }
             };
 
-            // Keyboard tool (24x24)
-            draw_hover_bg(&RECT_BTN_KEYBOARD, 2);
-            assets::draw_icon(hdc, IconId::Keyboard, 261, 10);
-
-            // Settings tool (24x24)
-            draw_hover_bg(&RECT_BTN_SETTINGS, 3);
-            assets::draw_icon(hdc, IconId::Gear, 289, 9);
-
-            // Info tool (24x24)
-            draw_hover_bg(&RECT_BTN_INFO, 4);
-            assets::draw_icon(hdc, IconId::Info, 315, 9);
+            // Send to Tray tool (24x24)
+            draw_hover_bg(&RECT_BTN_TRAY, 2);
+            assets::draw_icon(hdc, IconId::SendToTray, 263, 9);
 
             // Menu tool (24x24)
-            draw_hover_bg(&RECT_BTN_MENU, 5);
-            assets::draw_icon(hdc, IconId::Menu, 341, 9);
+            draw_hover_bg(&RECT_BTN_MENU, 3);
+            assets::draw_icon(hdc, IconId::Menu, 291, 9);
+
+            // Close tool (24x24)
+            draw_hover_bg(&RECT_BTN_CLOSE, 4);
+            assets::draw_icon(hdc, IconId::Close, 319, 9);
 
             // 10. Right Ornament from authentic ornament.svg (mirrored with red center)
-            assets::draw_icon(hdc, IconId::OrnamentRight, 360, 6);
+            assets::draw_icon(hdc, IconId::OrnamentRight, 346, 6);
 
             // Cleanup GDI objects
             SelectObject(hdc, old_pen);
@@ -322,14 +322,12 @@ unsafe extern "system" fn toolbar_wnd_proc(
 
             let new_hover = if in_rc(&RECT_SEL_PILL) {
                 1
-            } else if in_rc(&RECT_BTN_KEYBOARD) {
+            } else if in_rc(&RECT_BTN_TRAY) {
                 2
-            } else if in_rc(&RECT_BTN_SETTINGS) {
-                3
-            } else if in_rc(&RECT_BTN_INFO) {
-                4
             } else if in_rc(&RECT_BTN_MENU) {
-                5
+                3
+            } else if in_rc(&RECT_BTN_CLOSE) {
+                4
             } else {
                 0
             };
@@ -392,47 +390,13 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 return 0;
             }
 
-            // 2. Clicked Keyboard Layout button
-            if in_rect(&RECT_BTN_KEYBOARD) {
-                let title = to_wide("বর্ণমালা — কীবোর্ড লেআউট গাইড");
-                let msg = to_wide(
-                    "বর্ণমালা কীবোর্ড শর্টকাটসমূহ:\n\n\
-                    • Ctrl + Alt + V : ক্লাসিক ইউনিকোড মোড\n\
-                    • Ctrl + Alt + B : বিজয় এএনএসআই মোড (SutonnyMJ)\n\
-                    • F12 বা Ctrl + Space : ফোনেটিক বাংলা মোড\n\
-                    • Ctrl + Alt + E : ইংরেজি (Pass-through)\n\n\
-                    যুক্তবর্ণ লেখার নিয়ম:\n\
-                    প্রথম বর্ণ + G (হসন্ত) + দ্বিতীয় বর্ণ\n\
-                    উদাহরণ: k + g + k = ক্ক, k + g + t = ক্ত"
-                );
-                MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
+            // 2. Clicked Send to Tray button
+            if in_rect(&RECT_BTN_TRAY) {
+                super::minimize_toolbar_to_tray();
                 return 0;
             }
 
-            // 3. Clicked Settings button: Open Settings & Configuration Window
-            if in_rect(&RECT_BTN_SETTINGS) {
-                super::settings::SettingsWindow::open();
-                return 0;
-            }
-
-            // 4. Clicked Info button
-            if in_rect(&RECT_BTN_INFO) {
-                let title = to_wide("বর্ণমালা (Bornomala) v0.1.0");
-                let msg = to_wide(
-                    "Bornomala (বর্ণমালা) — ১০০% মুক্ত বাংলা টাইপিং স্যুট\n\
-                    \"আপনার মাতৃভাষার জন্য কোনো লাইসেন্স কি-র প্রয়োজন নেই।\"\n\n\
-                    প্রকাশক: রূপসী ওপেন ল্যাবস (Ruposhi Open Labs)\n\
-                    ওয়েবসাইট: https://github.com/RuposhiOpenLabs/bornomala\n\
-                    প্রধান ডেভেলপার: Ryan Shelby (https://github.com/MdSagorMunshi)\n\
-                    সাপোর্ট ইমেইল: ryn@disr.it\n\
-                    লাইসেন্স: Mozilla Public License 2.0 (MPL-2.0)\n\n\
-                    সম্পূর্ণ অফলাইন ও নিরাপদ। কোনো কী-লগিং নেই, কোনো ডেটা ট্র্যাকিং নেই।"
-                );
-                MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
-                return 0;
-            }
-
-            // 5. Clicked Menu button (☰) — Features Popup Menu
+            // 3. Clicked Menu button (☰) — Features Popup Menu
             if in_rect(&RECT_BTN_MENU) {
                 let mut screen_pt = POINT { x: RECT_BTN_MENU.left, y: RECT_BTN_MENU.bottom + 4 };
                 ClientToScreen(hwnd, &mut screen_pt);
@@ -446,12 +410,12 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     AppendMenuW(menu, MF_SEPARATOR, 0, std::ptr::null());
                 };
 
-                add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...");
-                add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)");
-                add_sep(hmenu);
                 add_menu_item(hmenu, ID_MENU_KEYBOARD, "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...");
                 add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...");
                 add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...");
+                add_sep(hmenu);
+                add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...");
+                add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)");
                 add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...");
                 add_sep(hmenu);
                 add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)");
@@ -459,6 +423,12 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 SetForegroundWindow(hwnd);
                 TrackPopupMenu(hmenu, 0, screen_pt.x, screen_pt.y, 0, hwnd, std::ptr::null());
                 DestroyMenu(hmenu);
+                return 0;
+            }
+
+            // 4. Clicked Close button (✕) — Clean Exit
+            if in_rect(&RECT_BTN_CLOSE) {
+                PostQuitMessage(0);
                 return 0;
             }
 
@@ -493,11 +463,12 @@ unsafe extern "system" fn toolbar_wnd_proc(
             add_sep(hmenu);
             add_menu_item(hmenu, ID_MODE_ENGLISH, "🇬🇧  English (Pass-through)\tCtrl+Alt+E", current == 3);
             add_sep(hmenu);
-            add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...", false);
-            add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)", false);
-            add_sep(hmenu);
+            add_menu_item(hmenu, ID_MENU_KEYBOARD, "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...", false);
             add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...", false);
             add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...", false);
+            add_sep(hmenu);
+            add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...", false);
+            add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)", false);
             add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...", false);
             add_sep(hmenu);
             add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)", false);
@@ -547,17 +518,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     super::settings::SettingsWindow::open();
                 }
                 ID_MENU_ABOUT => {
-                    let title = to_wide("বর্ণমালা (Bornomala) v0.1.0");
-                    let msg = to_wide(
-                        "Bornomala (বর্ণমালা) — ১০০% মুক্ত বাংলা টাইপিং স্যুট\n\
-                        \"আপনার মাতৃভাষার জন্য কোনো লাইসেন্স কি-র প্রয়োজন নেই।\"\n\n\
-                        প্রকাশক: রূপসী ওপেন ল্যাবস (Ruposhi Open Labs)\n\
-                        ওয়েবসাইট: https://github.com/RuposhiOpenLabs/bornomala\n\
-                        প্রধান ডেভেলপার: Ryan Shelby (https://github.com/MdSagorMunshi)\n\
-                        সাপোর্ট ইমেইল: ryn@disr.it\n\
-                        লাইসেন্স: Mozilla Public License 2.0 (MPL-2.0)"
-                    );
-                    MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
+                    super::about::AboutWindow::open();
                 }
                 ID_MENU_UPDATE => {
                     super::updater::trigger_manual_update_check("0.1.0");

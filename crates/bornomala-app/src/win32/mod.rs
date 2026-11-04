@@ -1,5 +1,6 @@
 //! Windows GUI Implementation Module for Bornomala.
 
+pub mod about;
 pub mod api;
 pub mod assets;
 pub mod converter;
@@ -220,6 +221,11 @@ unsafe extern "system" fn main_event_wnd_proc(
 
         WM_BORNOMALA_OPEN_SETTINGS => {
             settings::SettingsWindow::open();
+            0
+        }
+
+        WM_BORNOMALA_OPEN_ABOUT => {
+            about::AboutWindow::open();
             0
         }
 

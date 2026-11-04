@@ -6,8 +6,8 @@ use super::api::*;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 
-pub const SPLASH_WIDTH: i32 = 500;
-pub const SPLASH_HEIGHT: i32 = 500;
+pub const SPLASH_WIDTH: i32 = 320;
+pub const SPLASH_HEIGHT: i32 = 320;
 pub const SPLASH_DURATION_MS: u32 = 2500;
 
 static SPLASH_BMP_BYTES: &[u8] = include_bytes!("../../../../assets/branding/startup_screen_bn.bmp");

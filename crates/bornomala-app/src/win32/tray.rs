@@ -211,11 +211,7 @@ impl SystemTray {
                 }
             }
             ID_MENU_ABOUT => {
-                unsafe {
-                    let open_op = to_wide("open");
-                    let url = to_wide("https://github.com/RuposhiOpenLabs");
-                    ShellExecuteW(0, open_op.as_ptr(), url.as_ptr(), std::ptr::null(), std::ptr::null(), SW_SHOWNORMAL);
-                }
+                super::about::AboutWindow::open();
             }
             ID_MENU_UPDATE => {
                 super::updater::trigger_manual_update_check("0.1.0");
