@@ -101,15 +101,72 @@ fn get_input_text(param: Option<&String>) -> String {
 }
 
 fn handle_convert(args: &[String]) {
+    use std::path::Path;
+    use bornomala_engine::doc_converter::{convert_file, ConversionDirection, DocumentFormat};
+
     let converter = BanglaConverter::new();
     if args.is_empty() {
-        eprintln!("Error: specify --to-ansi or --to-unicode");
+        eprintln!("Error: specify --to-ansi, --to-unicode, or --file <DOCX|PDF|TXT>");
+        return;
+    }
+
+    if args[0] == "--file" {
+        if args.len() < 2 {
+            eprintln!("Usage: bornomala-cli convert --file <PATH> [--to-unicode | --to-ansi] [--out <OUT>]");
+            return;
+        }
+        let src = Path::new(&args[1]);
+        let mut direction = ConversionDirection::AnsiToUnicode;
+        let mut out_path = None;
+
+        let mut i = 2;
+        while i < args.len() {
+            if args[i] == "--to-ansi" {
+                direction = ConversionDirection::UnicodeToAnsi;
+            } else if args[i] == "--to-unicode" {
+                direction = ConversionDirection::AnsiToUnicode;
+            } else if args[i] == "--out" && i + 1 < args.len() {
+                out_path = Some(Path::new(&args[i + 1]));
+                i += 1;
+            }
+            i += 1;
+        }
+
+        match convert_file(src, out_path, direction) {
+            Ok(rep) => {
+                println!("✓ Conversion Succeeded!");
+                println!("Source:     {}", rep.source_path.display());
+                println!("Output:     {}", rep.output_path.display());
+                println!("Format:     {:?}", rep.format);
+                println!("Direction:  {}", rep.direction.description());
+                println!("Elements:   {} items processed", rep.items_processed);
+                println!("Characters: {} characters converted", rep.characters_converted);
+                println!("Time:       {} ms", rep.duration_ms);
+            }
+            Err(e) => {
+                eprintln!("✕ Document conversion error: {}", e);
+            }
+        }
         return;
     }
 
     match args[0].as_str() {
         "--to-ansi" => {
-            let input = get_input_text(args.get(1));
+            let input_arg = args.get(1);
+            if let Some(path_str) = input_arg {
+                let p = Path::new(path_str);
+                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                    match convert_file(p, None, ConversionDirection::UnicodeToAnsi) {
+                        Ok(rep) => {
+                            println!("✓ Document converted to ANSI: {}", rep.output_path.display());
+                            return;
+                        }
+                        Err(e) => eprintln!("Error: {}", e),
+                    }
+                }
+            }
+
+            let input = get_input_text(input_arg);
             let (ansi, unrep) = converter.unicode_to_ansi(&input);
             print!("{}", ansi);
             if !unrep.is_empty() {
@@ -117,7 +174,21 @@ fn handle_convert(args: &[String]) {
             }
         }
         "--to-unicode" => {
-            let input = get_input_text(args.get(1));
+            let input_arg = args.get(1);
+            if let Some(path_str) = input_arg {
+                let p = Path::new(path_str);
+                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                    match convert_file(p, None, ConversionDirection::AnsiToUnicode) {
+                        Ok(rep) => {
+                            println!("✓ Document converted to Unicode: {}", rep.output_path.display());
+                            return;
+                        }
+                        Err(e) => eprintln!("Error: {}", e),
+                    }
+                }
+            }
+
+            let input = get_input_text(input_arg);
             let uni = converter.ansi_to_unicode(&input);
             print!("{}", uni);
         }

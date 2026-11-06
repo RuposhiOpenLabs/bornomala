@@ -2,6 +2,7 @@ pub mod ansi_engine;
 pub mod config;
 pub mod conveniences;
 pub mod converter;
+pub mod doc_converter;
 pub mod events;
 pub mod layout;
 pub mod phonetic;
@@ -16,6 +17,10 @@ pub use conveniences::{
     PRELOADED_FONTS, REGISTRY_RUN_KEY, REGISTRY_VALUE_NAME,
 };
 pub use converter::BanglaConverter;
+pub use doc_converter::{
+    convert_file, default_output_path, ConversionDirection, ConversionReport, DocConvertError,
+    DocumentFormat,
+};
 pub use events::{BackspaceMode, EngineAction, InputScheme, KeyEvent, Suggestion, TextEdit};
 pub use layout::{load_default_ansi_layout, load_default_unicode_layout, LayoutDefinition};
 pub use phonetic::PhoneticEngine;

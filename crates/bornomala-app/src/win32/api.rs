@@ -20,6 +20,8 @@ pub type LRESULT = isize;
 pub type ATOM = u16;
 pub type BOOL = i32;
 pub type COLORREF = u32;
+pub type LPCWSTR = *const u16;
+pub type LPWSTR = *mut u16;
 
 pub const TRUE: BOOL = 1;
 pub const FALSE: BOOL = 0;
@@ -661,6 +663,45 @@ extern "system" {
         hSrc: i32,
         ftn: BLENDFUNCTION,
     ) -> BOOL;
+}
+
+// Common Dialogs (comdlg32)
+pub const OFN_OVERWRITEPROMPT: u32 = 0x00000002;
+pub const OFN_NOCHANGEDIR: u32 = 0x00000008;
+pub const OFN_PATHMUSTEXIST: u32 = 0x00000800;
+pub const OFN_FILEMUSTEXIST: u32 = 0x00001000;
+
+#[repr(C)]
+pub struct OPENFILENAMEW {
+    pub lStructSize: u32,
+    pub hwndOwner: HWND,
+    pub hInstance: HINSTANCE,
+    pub lpstrFilter: LPCWSTR,
+    pub lpstrCustomFilter: LPWSTR,
+    pub nMaxCustFilter: u32,
+    pub nFilterIndex: u32,
+    pub lpstrFile: LPWSTR,
+    pub nMaxFile: u32,
+    pub lpstrFileTitle: LPWSTR,
+    pub nMaxFileTitle: u32,
+    pub lpstrInitialDir: LPCWSTR,
+    pub lpstrTitle: LPCWSTR,
+    pub Flags: u32,
+    pub nFileOffset: u16,
+    pub nFileExtension: u16,
+    pub lpstrDefExt: LPCWSTR,
+    pub lCustData: LPARAM,
+    pub lpfnHook: *mut c_void,
+    pub lpTemplateName: LPCWSTR,
+    pub pvReserved: *mut c_void,
+    pub dwReserved: u32,
+    pub FlagsEx: u32,
+}
+
+#[link(name = "comdlg32")]
+extern "system" {
+    pub fn GetOpenFileNameW(lpofn: *mut OPENFILENAMEW) -> BOOL;
+    pub fn GetSaveFileNameW(lpofn: *mut OPENFILENAMEW) -> BOOL;
 }
 
 pub fn to_wide(s: &str) -> Vec<u16> {

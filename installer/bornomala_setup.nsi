@@ -23,12 +23,14 @@ Unicode true
 ; ----------------------------------------------------------------------------
 Name "${PRODUCT_NAME} v${PRODUCT_VERSION}"
 OutFile "../target/installer/Bornomala-Setup-v${PRODUCT_VERSION}.exe"
-InstallDir "$PROGRAMFILES64\Bornomala"
-InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
+InstallDir "$PROGRAMFILES\Bornomala"
 RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUnInstDetails show
+
+; Global Variables
+Var FontConflictPolicy ; 0 = Ask, 1 = Install All (Replace All), 2 = Skip All
 
 ; Force Windows Indic standard font (Nirmala UI) across all wizard controls
 SetFont "Nirmala UI" 9
@@ -66,6 +68,21 @@ SetFont "Nirmala UI" 9
 !insertmacro MUI_PAGE_COMPONENTS
 
 ; Directory Selection Page
+Function DirectoryPre
+  ${If} $INSTDIR == ""
+    ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
+    ${If} $0 != ""
+      StrCpy $INSTDIR $0
+    ${Else}
+      ${If} ${RunningX64}
+        StrCpy $INSTDIR "$PROGRAMFILES64\Bornomala"
+      ${Else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Bornomala"
+      ${EndIf}
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+!define MUI_PAGE_CUSTOMFUNCTION_PRE DirectoryPre
 !insertmacro MUI_PAGE_DIRECTORY
 
 ; Installation Progress Page
@@ -81,6 +98,24 @@ SetFont "Nirmala UI" 9
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller Pages
+Function un.ConfirmPre
+  ${If} $INSTDIR == ""
+    ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
+    ${If} $0 != ""
+      StrCpy $INSTDIR $0
+    ${Else}
+      ${GetParent} "$EXEPATH" $INSTDIR
+      ${If} $INSTDIR == ""
+        ${If} ${RunningX64}
+          StrCpy $INSTDIR "$PROGRAMFILES64\Bornomala"
+        ${Else}
+          StrCpy $INSTDIR "$PROGRAMFILES\Bornomala"
+        ${EndIf}
+      ${EndIf}
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPre
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -203,19 +238,52 @@ Function .onInit
   SetRegView 64
   ; Close any running instances gracefully without taskkill.exe
   Call CloseRunningInstances
+
+  ; Initialize Font Conflict Policy: 0 = Ask, 1 = Install All (Replace All), 2 = Skip All
+  StrCpy $FontConflictPolicy 0
+
+  ; Read previous installation directory or default to 64-bit Program Files
+  ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
+  ${If} $0 != ""
+    StrCpy $INSTDIR $0
+  ${Else}
+    ${If} ${RunningX64}
+      StrCpy $INSTDIR "$PROGRAMFILES64\Bornomala"
+    ${Else}
+      StrCpy $INSTDIR "$PROGRAMFILES\Bornomala"
+    ${EndIf}
+  ${EndIf}
 FunctionEnd
 
 Function un.onInit
   SetRegView 64
   ; Enforce that Bornomala must be closed before uninstallation begins
   Call un.EnsureNotRunning
+
+  ; Ensure $INSTDIR is set correctly in uninstaller
+  ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
+  ${If} $0 != ""
+    StrCpy $INSTDIR $0
+  ${Else}
+    ${GetParent} "$EXEPATH" $INSTDIR
+    ${If} $INSTDIR == ""
+      ${If} ${RunningX64}
+        StrCpy $INSTDIR "$PROGRAMFILES64\Bornomala"
+      ${Else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Bornomala"
+      ${EndIf}
+    ${EndIf}
+  ${EndIf}
 FunctionEnd
 
 ; ----------------------------------------------------------------------------
 ; Font Conflict Resolution Function
 ; ----------------------------------------------------------------------------
 ; Installs preloaded Bangla fonts directly into system C:\Windows\Fonts
-; If a font already exists, asks the user whether to replace or keep it.
+; Supports:
+; - "Install all (it will replace all)"
+; - "Skip all installed font"
+; - Individual per-font prompts
 Function InstallFontWithConflictCheck
   Exch $R0 ; FontRegName
   Exch
@@ -230,8 +298,30 @@ Function InstallFontWithConflictCheck
   IfFileExists "$R3" font_conflict_found do_copy_font
 
 font_conflict_found:
+  ; Check existing global policy: 1 = Install All, 2 = Skip All
+  IntCmp $FontConflictPolicy 1 do_copy_font
+  IntCmp $FontConflictPolicy 2 keep_existing_font
+
+  ; Policy is 0 (Unset). Offer Install All, Skip All, or Individual choice:
+  ; If Cancel is clicked, execution falls through to prompt_single_font
+  MessageBox MB_YESNOCANCEL|MB_ICONQUESTION \
+    "Preloaded Font Conflict / ফন্ট সংঘাত:$\r$\n$\r$\nফন্ট ফাইল '$R1' ইতিমধ্যে উইন্ডোজ সিস্টেম ফন্ট ফোল্ডারে ইনস্টল করা আছে।$\r$\n$\r$\nঅনুগ্রহ করে ফন্ট ইনস্টলেশন নীতি নির্বাচন করুন:$\r$\n• [Yes / হ্যাঁ]: Install All (সকল ফন্ট প্রতিস্থাপন / Replace All)$\r$\n• [No / না]: Skip All (বিদ্যমান সব ফন্ট স্কিপ / Skip All)$\r$\n• [Cancel / বাতিল]: শুধুমাত্র এই ফন্টের সিদ্ধান্ত নিন (Ask Each Font)" \
+    IDYES set_policy_install_all IDNO set_policy_skip_all
+  Goto prompt_single_font
+
+set_policy_install_all:
+  StrCpy $FontConflictPolicy 1
+  DetailPrint "ফন্ট নীতি সেট করা হয়েছে: Install All (বিদ্যমান সকল ফন্ট প্রতিস্থাপন করা হবে)"
+  Goto do_copy_font
+
+set_policy_skip_all:
+  StrCpy $FontConflictPolicy 2
+  DetailPrint "ফন্ট নীতি সেট করা হয়েছে: Skip All (বিদ্যমান সকল ফন্ট বজায় রাখা হবে)"
+  Goto keep_existing_font
+
+prompt_single_font:
   MessageBox MB_YESNO|MB_ICONQUESTION \
-    "Preloaded Font Conflict / ফন্ট সংঘাত:$\r$\n$\r$\nফন্ট ফাইল '$R1' ইতিমধ্যে উইন্ডোজ সিস্টেম ফন্ট ফোল্ডারে ইনস্টল করা আছে।$\r$\n$\r$\nআপনি কি এটি বর্ণমালার প্রিলোডেড সংস্করণ দ্বারা প্রতিস্থাপন (Replace) করতে চান?$\r$\n$\r$\n• [Yes / হ্যাঁ]: বর্ণমালার প্রিলোডেড ফন্ট প্রতিস্থাপন করুন$\r$\n• [No / না]: পূর্বের বিদ্যমান ফন্টটি বজায় রাখুন" \
+    "ফন্ট '$R1' প্রতিস্থাপন করতে চান?$\r$\n$\r$\n• [Yes / হ্যাঁ]: শুধুমাত্র '$R1' প্রতিস্থাপন করুন$\r$\n• [No / না]: পূর্বের বিদ্যমান ফন্টটি বজায় রাখুন" \
     IDYES do_copy_font IDNO keep_existing_font
 
 do_copy_font:

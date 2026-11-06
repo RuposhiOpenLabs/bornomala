@@ -280,7 +280,7 @@ impl SvgRenderer {
 
     fn render_converter(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
         let width = 760;
-        let height = 480;
+        let height = 520;
 
         let dir_text = if state.conv_direction_unicode_to_ansi {
             "ইউনিকোড ➔ এএনএসআই (সুতোন্নীএমজে)"
@@ -292,54 +292,66 @@ impl SvgRenderer {
             r###"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
   <rect width="{width}" height="{height}" rx="12" fill="{bg}" stroke="{border}" stroke-width="2"/>
   
-  <!-- Header Bar -->
-  <rect width="{width}" height="56" rx="12" fill="{green}"/>
-  <text x="24" y="35" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF">{title}</text>
+  <!-- Header Bar (Forest Green with Crimson Circle) -->
+  <rect width="{width}" height="64" rx="12" fill="{green}"/>
   
-  <!-- Direction Toggle Indicator -->
-  <g transform="translate(440, 12)">
-    <rect width="296" height="32" rx="6" fill="rgba(255,255,255,0.15)"/>
-    <text x="148" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">{dir_text}</text>
+  <!-- Crimson Circle Emblem with Bengali Bo -->
+  <circle cx="44" cy="32" r="20" fill="{red}"/>
+  <text x="44" y="39" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ব</text>
+  
+  <text x="76" y="28" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#FFFFFF">{title}</text>
+  <text x="76" y="48" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#F5C518">দ্বিমুখী রূপান্তর: ইউনিকোড ⇄ বিজয় ANSI | ডকু রূপান্তর: DOCX • PDF • TXT</text>
+  
+  <!-- Tab Switcher Bar -->
+  <g transform="translate(24, 76)">
+    <rect width="200" height="32" rx="6" fill="{green}"/>
+    <text x="100" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">📝 টেক্সট রূপান্তর</text>
+
+    <rect x="210" width="260" height="32" rx="6" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <text x="340" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{text_primary}" text-anchor="middle">📄 নথি রূপান্তর (DOCX, PDF, TXT)</text>
+
+    <rect x="480" width="256" height="32" rx="6" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <text x="608" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="11" font-weight="bold" fill="{text_secondary}" text-anchor="middle">মোড: {dir_text}</text>
   </g>
 
   <!-- Left Box: Unicode Text Area -->
-  <g transform="translate(24, 76)">
+  <g transform="translate(24, 120)">
     <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="{text_primary}">{lbl_unicode}</text>
-    <rect y="24" width="336" height="260" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <rect y="24" width="336" height="230" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
     <text x="14" y="56" font-family="sans-serif, 'SolaimanLipi'" font-size="14" fill="{text_primary}">{txt_unicode}</text>
   </g>
 
   <!-- Center Action Button -->
-  <g transform="translate(368, 180)">
+  <g transform="translate(368, 210)">
     <circle cx="12" cy="12" r="22" fill="{green}" stroke="{border}" stroke-width="1"/>
     <text x="12" y="19" font-family="sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">⇄</text>
   </g>
 
   <!-- Right Box: ANSI Text Area -->
-  <g transform="translate(400, 76)">
+  <g transform="translate(400, 120)">
     <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="{text_primary}">{lbl_ansi}</text>
-    <rect y="24" width="336" height="260" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <rect y="24" width="336" height="230" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
     <text x="14" y="56" font-family="sans-serif, monospace" font-size="14" fill="{text_primary}">{txt_ansi}</text>
   </g>
 
   <!-- Status & Message -->
-  <rect x="24" y="372" width="712" height="36" rx="6" fill="{surface}" stroke="{border}" stroke-width="1"/>
-  <circle cx="40" cy="390" r="5" fill="#28A745"/>
-  <text x="54" y="395" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}">{status_msg}</text>
+  <rect x="24" y="388" width="712" height="34" rx="6" fill="{surface}" stroke="{border}" stroke-width="1"/>
+  <circle cx="40" cy="405" r="5" fill="#28A745"/>
+  <text x="54" y="410" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}">{status_msg}</text>
 
   <!-- Bottom Buttons -->
-  <g transform="translate(24, 422)">
-    <rect x="0" y="0" width="140" height="38" rx="8" fill="{green}"/>
-    <text x="70" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">{btn_convert}</text>
+  <g transform="translate(24, 436)">
+    <rect x="0" y="0" width="160" height="38" rx="8" fill="{green}"/>
+    <text x="80" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">{btn_convert}</text>
 
-    <rect x="152" y="0" width="140" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
-    <text x="222" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="{text_primary}" text-anchor="middle">{btn_switch}</text>
+    <rect x="172" y="0" width="160" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <text x="252" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="{text_primary}" text-anchor="middle">{btn_switch}</text>
 
-    <rect x="304" y="0" width="140" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
-    <text x="374" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="{text_primary}" text-anchor="middle">{btn_copy}</text>
+    <rect x="344" y="0" width="140" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <text x="414" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="{text_primary}" text-anchor="middle">{btn_copy}</text>
 
-    <rect x="456" y="0" width="120" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
-    <text x="516" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="{accent_red}" text-anchor="middle">{btn_clear}</text>
+    <rect x="496" y="0" width="120" height="38" rx="8" fill="{surface}" stroke="{border}" stroke-width="1.5"/>
+    <text x="556" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="{accent_red}" text-anchor="middle">{btn_clear}</text>
   </g>
 </svg>"###,
             width = width,
@@ -348,8 +360,10 @@ impl SvgRenderer {
             surface = pal.surface,
             border = pal.border,
             green = pal.primary_green,
+            red = pal.accent_red,
             accent_red = pal.accessible_red,
             text_primary = pal.text_primary,
+            text_secondary = pal.text_secondary,
             title = Self::xml_escape(strings.conv_title),
             dir_text = Self::xml_escape(dir_text),
             lbl_unicode = Self::xml_escape(strings.conv_unicode_label),
