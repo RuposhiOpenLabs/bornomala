@@ -15,7 +15,7 @@ Bornomala provides seamless Bangla typing across all applications on Windows 10 
 
 | Hotkey | Action / Mode | বাংলা বিবরণ |
 |---|---|---|
-| **F12** | Toggle Phonetic (Banglish) / English | ফোনেটিক মোড চালু বা বন্ধ |
+| **Ctrl + Space** / **F12** | Toggle Phonetic (Banglish) / English | ফোনেটিক মোড চালু বা বন্ধ |
 | **Ctrl + Alt + V** | Switch to Classic Unicode Mode | ক্লাসিক ইউনিকোড ফিক্সড লেআউট |
 | **Ctrl + Alt + B** | Switch to Classic ANSI (SutonnyMJ) Mode | ক্লাসিক এএনএসআই (সুতোন্নী ফন্ট) |
 | **Ctrl + Shift + F11** | Quick Convert Clipboard Text | ক্লিপবোর্ডের টেক্সট রূপান্তর |
@@ -63,8 +63,17 @@ Use this mode when working on legacy government forms, land records, or publishi
 
 ---
 
-### 2.3 Avro Phonetic Mode — `F12`
-Type Bangla using natural English letters (transliteration):
+### 2.3 Avro Phonetic Mode — `Ctrl + Space` or `F12`
+Type Bangla using natural English letters (transliteration) with 100% Avro compatibility and live inline feedback:
+
+* **Live Inline Composition:** As each letter is pressed, the Bangla word appears immediately at the caret in real time. Space or Enter commits it. Backspace edits the current word seamlessly.
+* **Floating Candidate Window:** Anchored directly beneath the caret without stealing focus from your active application. Displays the current Roman text and ranked Bangla candidates.
+  * **Select by Number:** Press `1` through `9` to immediately commit candidate $N$.
+  * **Navigate:** Press `Down` / `Up` arrow or `Tab` to cycle suggestions.
+  * **Cancel:** Press `Escape` to cancel composition and clear preview.
+  * **Mouse Support:** Click directly on any suggestion in the floating window to select and commit it.
+* **Dictionary & Autocorrect:** 159,000+ words FST dictionary, 2,472 autocorrect entries (e.g. `abong` $\to$ `এবং`), and 737 grammatical suffixes (e.g. `amader`, `deshe`, `boigulo`).
+* **Beyond Avro Features:** Contextual prediction based on previous words (`আমার` $\to$ `সোনার`, `গণপ্রজাতন্ত্রী` $\to$ `বাংলাদেশ`), user custom abbreviations (`bd` $\to$ `বাংলাদেশ`), and locally encrypted learning memory.
 
 | What you type | What Bornomala outputs |
 |---|---|
@@ -72,8 +81,14 @@ Type Bangla using natural English letters (transliteration):
 | `amader shonar bangladesh` | `আমাদের সোনার বাংলাদেশ` |
 | `Dhaka` | `ঢাকা` |
 | `bidyaloy` | `বিদ্যালয়` |
-| `korrmo` | `কর্ম` |
+| `kormo` / `korrmo` | `কর্ম` |
+| `kormofol` | `কর্মফল` |
+| `daktar` | `ডাক্তার` |
+| `shikkha` | `শিক্ষা` |
 | `sOnar` | `সোনার` |
+| `$500` | `৳৫০০` |
+| `.` / `..` | `।` / `।।` |
+| `k`k` | `কক` (Root escape delimiter) |
 
 ---
 

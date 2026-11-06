@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/bornomala-phonetic",
     "crates/bornomala-engine",
     "crates/bornomala-cli",
     "crates/bornomala-lab",

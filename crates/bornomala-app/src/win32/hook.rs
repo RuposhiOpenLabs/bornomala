@@ -188,6 +188,34 @@ impl KeyboardHook {
             }
             _ => {}
         }
+        super::candidate_window::CandidateWindow::hide();
+    }
+
+    pub fn on_candidate_clicked(idx: usize) {
+        unsafe {
+            if let Some(ref engine_mutex) = GLOBAL_ENGINE {
+                if let Ok(mut engine) = engine_mutex.lock() {
+                    if let Some(action) = engine.phonetic_engine_mut().select_candidate_and_commit(idx) {
+                        for edit in &action.edits {
+                            match edit {
+                                TextEdit::ReplaceLast { count, text } => {
+                                    inject_backspaces(*count);
+                                    inject_unicode_text(text);
+                                }
+                                TextEdit::Insert(text) => {
+                                    inject_unicode_text(text);
+                                }
+                                TextEdit::DeleteBack(count) => {
+                                    inject_backspaces(*count);
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    super::candidate_window::CandidateWindow::hide();
+                }
+            }
+        }
     }
 
     pub fn cleanup(hwnd: HWND) {
@@ -217,6 +245,7 @@ unsafe extern "system" fn low_level_keyboard_proc(
 
     let scheme = FloatingToolbar::get_scheme();
     if scheme == InputScheme::PassThrough {
+        super::candidate_window::CandidateWindow::hide();
         return CallNextHookEx(HOOK_HANDLE, code, wparam, lparam);
     }
 
@@ -311,6 +340,20 @@ unsafe extern "system" fn low_level_keyboard_proc(
                 }
 
                 if handled_edits || action.consumed {
+                    // Update live candidate preview window for Phonetic mode
+                    if engine.active_scheme() == InputScheme::Phonetic {
+                        let candidates = engine.phonetic_engine().current_candidates();
+                        if !candidates.is_empty() {
+                            let roman = engine.phonetic_engine().roman_buffer();
+                            let sel_idx = engine.phonetic_engine().selected_candidate_index();
+                            super::candidate_window::CandidateWindow::update_and_show(roman, candidates, sel_idx);
+                        } else {
+                            super::candidate_window::CandidateWindow::hide();
+                        }
+                    } else {
+                        super::candidate_window::CandidateWindow::hide();
+                    }
+
                     return 1; // Intercept and block original ASCII key
                 }
             }

@@ -7,6 +7,7 @@ license.workspace = true
 description = "Pure Rust core typing and conversion engine for Bornomala (বর্ণমালা)"
 
 [dependencies]
+bornomala-phonetic = { path = "../bornomala-phonetic" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 unicode-normalization = { workspace = true }

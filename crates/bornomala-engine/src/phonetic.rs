@@ -1,285 +1,223 @@
-use std::collections::HashMap;
+use bornomala_phonetic::PhoneticEngine as CorePhoneticEngine;
 use crate::events::{EngineAction, KeyEvent, Suggestion, TextEdit};
 
-pub static EMBEDDED_PHONETIC_RULES: &str =
-    include_str!("../../../data/layouts/phonetic_rules.json");
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct MatchRule {
-    #[serde(rename = "type")]
-    pub match_type: String, // "prefix" or "suffix"
-    pub scope: String,      // "punctuation", "vowel", "consonant", "exact", or prefixed with "!"
-    #[serde(default)]
-    pub value: Option<String>,
-}
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct PatternRule {
-    #[serde(default)]
-    pub matches: Vec<MatchRule>,
-    pub replace: String,
-}
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct PhoneticPattern {
-    pub find: String,
-    pub replace: String,
-    #[serde(default)]
-    pub rules: Option<Vec<PatternRule>>,
-}
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct PhoneticData {
-    pub patterns: Vec<PhoneticPattern>,
-    #[serde(default)]
-    pub vowel: String,
-    #[serde(default)]
-    pub consonant: String,
-    #[serde(default)]
-    pub casesensitive: String,
-}
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct PhoneticRuleFile {
-    pub data: PhoneticData,
-}
-
-/// Avro-compatible Phonetic Transliteration Engine.
-#[derive(Debug, Clone)]
+/// Avro-compatible Phonetic Transliteration Engine for Bornomala.
+/// Wraps `bornomala_phonetic::PhoneticEngine` and manages live composition state,
+/// candidate suggestions, and differential inline text replacement.
+#[derive(Clone)]
 pub struct PhoneticEngine {
-    data: PhoneticData,
-    current_roman_buffer: String,
-    dictionary: Vec<String>,
-    user_frequency: HashMap<String, u32>,
+    core: CorePhoneticEngine,
+    last_preview_char_count: usize,
+    selected_candidate_idx: usize,
+    current_suggestions: Vec<String>,
 }
 
 impl Default for PhoneticEngine {
     fn default() -> Self {
-        Self::load_embedded()
+        Self::new()
+    }
+}
+
+impl std::fmt::Debug for PhoneticEngine {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PhoneticEngine")
+            .field("buffer", &self.core.input_buffer())
+            .field("last_preview_char_count", &self.last_preview_char_count)
+            .field("selected_candidate_idx", &self.selected_candidate_idx)
+            .finish()
     }
 }
 
 impl PhoneticEngine {
-    pub fn load_embedded() -> Self {
-        let rule_file: PhoneticRuleFile = serde_json::from_str(EMBEDDED_PHONETIC_RULES)
-            .expect("Embedded phonetic_rules.json must be valid");
-
-        let mut engine = Self {
-            data: rule_file.data,
-            current_roman_buffer: String::new(),
-            dictionary: Vec::new(),
-            user_frequency: HashMap::new(),
-        };
-
-        engine.load_core_dictionary();
-        engine
-    }
-
-    fn load_core_dictionary(&mut self) {
-        let core_words = &[
-            "আমি", "আমরা", "আমার", "আমাদের", "তুমি", "তোমরা", "তোমার", "তোমাদের",
-            "তিনি", "তারা", "তার", "তাদের", "বাংলা", "বাংলাদেশ", "সোনার", "ঢাকা",
-            "বিদ্যালয়", "বিশ্ববিদ্যালয়", "সরকারি", "বাংলাদেশি", "প্রশাসনিক", "মন্ত্রক",
-            "অফিস", "কর্মকর্তা", "কর্মচারী", "পরীক্ষা", "শিক্ষা", "স্বাস্থ্য", "চিকিৎসা",
-            "টাকা", "পয়সা", "তারিখ", "আবেদন", "অনুরোধ", "নোটিশ", "বিল", "ভাউচার",
-            "খাতায়", "কাজ", "করতে", "হবে", "করেছেন", "যিনি", "যাহা", "তাহা",
-        ];
-        for w in core_words {
-            self.dictionary.push(w.to_string());
+    pub fn new() -> Self {
+        Self {
+            core: CorePhoneticEngine::new(),
+            last_preview_char_count: 0,
+            selected_candidate_idx: 0,
+            current_suggestions: Vec::new(),
         }
     }
 
     pub fn reset_state(&mut self) {
-        self.current_roman_buffer.clear();
+        self.core.clear_buffer();
+        self.last_preview_char_count = 0;
+        self.selected_candidate_idx = 0;
+        self.current_suggestions.clear();
     }
 
     pub fn roman_buffer(&self) -> &str {
-        &self.current_roman_buffer
+        self.core.input_buffer()
     }
 
-    pub fn is_vowel(&self, c: char) -> bool {
-        let cl = c.to_ascii_lowercase();
-        self.data.vowel.contains(cl)
+    pub fn last_preview_char_count(&self) -> usize {
+        self.last_preview_char_count
     }
 
-    pub fn is_consonant(&self, c: char) -> bool {
-        let cl = c.to_ascii_lowercase();
-        self.data.consonant.contains(cl)
+    pub fn selected_candidate_index(&self) -> usize {
+        self.selected_candidate_idx
     }
 
-    pub fn is_punctuation(&self, c: char) -> bool {
-        !self.is_vowel(c) && !self.is_consonant(c)
+    pub fn current_candidates(&self) -> &[String] {
+        &self.current_suggestions
     }
 
-    pub fn is_case_sensitive(&self, c: char) -> bool {
-        let cl = c.to_ascii_lowercase();
-        self.data.casesensitive.contains(cl)
-    }
-
-    pub fn fix_string(&self, input: &str) -> String {
-        input
-            .chars()
-            .map(|c| {
-                if self.is_case_sensitive(c) {
-                    c
-                } else {
-                    c.to_ascii_lowercase()
-                }
-            })
-            .collect()
-    }
-
-    fn is_exact(&self, needle: &str, haystack: &[char], start: isize, end: isize, not_neg: bool) -> bool {
-        let cond = start >= 0
-            && end as usize <= haystack.len()
-            && start as usize <= end as usize
-            && {
-                let slice: String = haystack[start as usize..end as usize].iter().collect();
-                slice == needle
-            };
-        cond != not_neg
-    }
-
-    /// Pure string transliteration matching ibus-avro avrolib.js semantics.
     pub fn transliterate(&self, input: &str) -> String {
-        let fixed_str = self.fix_string(input);
-        let fixed: Vec<char> = fixed_str.chars().collect();
-        let mut output = String::new();
-        let mut cur = 0;
+        self.core.transliterate_classic(input)
+    }
 
-        while cur < fixed.len() {
-            let start = cur;
-            let mut matched = false;
+    pub fn record_word_selection(&mut self, roman: &str, bangla: &str) {
+        self.core.record_selection(roman, bangla);
+    }
 
-            for pattern in &self.data.patterns {
-                let pat_chars: Vec<char> = pattern.find.chars().collect();
-                let end = cur + pat_chars.len();
-
-                if end <= fixed.len() && &fixed[start..end] == pat_chars.as_slice() {
-                    let prev = start as isize - 1;
-
-                    if let Some(ref rules) = pattern.rules {
-                        for rule in rules {
-                            let mut replace = true;
-
-                            for m in &rule.matches {
-                                let chk = if m.match_type == "suffix" {
-                                    end as isize
-                                } else {
-                                    prev
-                                };
-
-                                let negative = m.scope.starts_with('!');
-                                let clean_scope = if negative {
-                                    &m.scope[1..]
-                                } else {
-                                    &m.scope[..]
-                                };
-                                let val = m.value.as_deref().unwrap_or("");
-
-                                match clean_scope {
-                                    "punctuation" => {
-                                        let cond = (chk < 0 && m.match_type == "prefix")
-                                            || (chk >= fixed.len() as isize && m.match_type == "suffix")
-                                            || (chk >= 0
-                                                && (chk as usize) < fixed.len()
-                                                && self.is_punctuation(fixed[chk as usize]));
-                                        if !(cond != negative) {
-                                            replace = false;
-                                            break;
-                                        }
-                                    }
-                                    "vowel" => {
-                                        let cond = ((chk >= 0 && m.match_type == "prefix")
-                                            || (chk < fixed.len() as isize && m.match_type == "suffix"))
-                                            && (chk >= 0
-                                                && (chk as usize) < fixed.len()
-                                                && self.is_vowel(fixed[chk as usize]));
-                                        if !(cond != negative) {
-                                            replace = false;
-                                            break;
-                                        }
-                                    }
-                                    "consonant" => {
-                                        let cond = ((chk >= 0 && m.match_type == "prefix")
-                                            || (chk < fixed.len() as isize && m.match_type == "suffix"))
-                                            && (chk >= 0
-                                                && (chk as usize) < fixed.len()
-                                                && self.is_consonant(fixed[chk as usize]));
-                                        if !(cond != negative) {
-                                            replace = false;
-                                            break;
-                                        }
-                                    }
-                                    "exact" => {
-                                        let (s, e) = if m.match_type == "suffix" {
-                                            (end as isize, end as isize + val.chars().count() as isize)
-                                        } else {
-                                            (
-                                                start as isize - val.chars().count() as isize,
-                                                start as isize,
-                                            )
-                                        };
-                                        if !self.is_exact(val, &fixed, s, e, negative) {
-                                            replace = false;
-                                            break;
-                                        }
-                                    }
-                                    _ => {}
-                                }
-                            }
-
-                            if replace {
-                                output.push_str(&rule.replace);
-                                cur = end - 1;
-                                matched = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if matched {
-                        break;
-                    }
-
-                    // Default replacement if no rule matched
-                    output.push_str(&pattern.replace);
-                    cur = end - 1;
-                    matched = true;
-                    break;
-                }
-            }
-
-            if !matched {
-                output.push(fixed[cur]);
-            }
-            cur += 1;
+    /// Select candidate at specific index (0-based) and commit it.
+    pub fn select_candidate_and_commit(&mut self, idx: usize) -> Option<EngineAction> {
+        if self.current_suggestions.is_empty() {
+            return None;
         }
 
-        output
+        let chosen = if idx < self.current_suggestions.len() {
+            self.current_suggestions[idx].clone()
+        } else {
+            self.current_suggestions[0].clone()
+        };
+
+        let roman = self.core.input_buffer().to_string();
+        self.core.record_selection(&roman, &chosen);
+
+        let edit = TextEdit::ReplaceLast {
+            count: self.last_preview_char_count,
+            text: chosen,
+        };
+
+        self.reset_state();
+
+        Some(EngineAction {
+            edits: vec![edit],
+            composition: None,
+            suggestions: Vec::new(),
+            status_message: None,
+            consumed: true,
+        })
     }
 
     /// Process incoming key event for Phonetic typing.
     pub fn process_key(&mut self, event: &KeyEvent) -> EngineAction {
-        // Backspace removes last Roman character
-        if event.key_code == 8 {
-            if !self.current_roman_buffer.is_empty() {
-                self.current_roman_buffer.pop();
-                if self.current_roman_buffer.is_empty() {
+        if !event.is_down {
+            return EngineAction::pass_through();
+        }
+
+        // Pass through Ctrl or Alt combinations (shortcuts are handled by parent)
+        if event.ctrl || event.alt {
+            return EngineAction::pass_through();
+        }
+
+        // 1. Escape: Cancel composition and clear preview
+        if event.key_code == 27 || event.key_code == 0x1B {
+            if !self.core.input_buffer().is_empty() || self.last_preview_char_count > 0 {
+                let count = self.last_preview_char_count;
+                self.reset_state();
+                return EngineAction {
+                    edits: if count > 0 {
+                        vec![TextEdit::DeleteBack(count)]
+                    } else {
+                        Vec::new()
+                    },
+                    composition: None,
+                    suggestions: Vec::new(),
+                    status_message: None,
+                    consumed: true,
+                };
+            }
+            return EngineAction::pass_through();
+        }
+
+        // 2. Tab or Down Arrow: Cycle to next suggestion
+        if (event.key_code == 9 || event.key_code == 40 || event.key_code == 0x28)
+            && !self.current_suggestions.is_empty()
+        {
+            self.selected_candidate_idx =
+                (self.selected_candidate_idx + 1) % self.current_suggestions.len();
+            let new_preview = self.current_suggestions[self.selected_candidate_idx].clone();
+            let edit = TextEdit::ReplaceLast {
+                count: self.last_preview_char_count,
+                text: new_preview.clone(),
+            };
+            self.last_preview_char_count = new_preview.chars().count();
+            return EngineAction {
+                edits: vec![edit],
+                composition: Some(new_preview),
+                suggestions: self.build_suggestion_list(),
+                status_message: None,
+                consumed: true,
+            };
+        }
+
+        // 3. Up Arrow: Cycle to previous suggestion
+        if (event.key_code == 38 || event.key_code == 0x26) && !self.current_suggestions.is_empty()
+        {
+            if self.selected_candidate_idx == 0 {
+                self.selected_candidate_idx = self.current_suggestions.len() - 1;
+            } else {
+                self.selected_candidate_idx -= 1;
+            }
+            let new_preview = self.current_suggestions[self.selected_candidate_idx].clone();
+            let edit = TextEdit::ReplaceLast {
+                count: self.last_preview_char_count,
+                text: new_preview.clone(),
+            };
+            self.last_preview_char_count = new_preview.chars().count();
+            return EngineAction {
+                edits: vec![edit],
+                composition: Some(new_preview),
+                suggestions: self.build_suggestion_list(),
+                status_message: None,
+                consumed: true,
+            };
+        }
+
+        // 4. Number keys 1-9: Select candidate directly when candidate list is visible
+        if let Some(c) = event.ch {
+            if ('1'..='9').contains(&c) && !self.current_suggestions.is_empty() {
+                let idx = (c as usize) - ('1' as usize);
+                if idx < self.current_suggestions.len() {
+                    return self.select_candidate_and_commit(idx).unwrap();
+                }
+            }
+        }
+
+        // 5. Backspace: Edit active composition
+        if event.key_code == 8 || event.key_code == 0x08 {
+            if !self.core.input_buffer().is_empty() {
+                self.core.pop_char();
+                if self.core.input_buffer().is_empty() {
+                    let count = self.last_preview_char_count;
+                    self.reset_state();
                     return EngineAction {
-                        edits: Vec::new(),
+                        edits: if count > 0 {
+                            vec![TextEdit::DeleteBack(count)]
+                        } else {
+                            Vec::new()
+                        },
                         composition: None,
                         suggestions: Vec::new(),
                         status_message: None,
                         consumed: true,
                     };
                 }
-                let preview = self.transliterate(&self.current_roman_buffer);
-                let suggestions = self.generate_suggestions(&preview);
+
+                self.update_suggestions();
+                let top_preview = self.current_suggestions[0].clone();
+                let edit = TextEdit::ReplaceLast {
+                    count: self.last_preview_char_count,
+                    text: top_preview.clone(),
+                };
+                self.last_preview_char_count = top_preview.chars().count();
+                self.selected_candidate_idx = 0;
+
                 return EngineAction {
-                    edits: Vec::new(),
-                    composition: Some(preview),
-                    suggestions,
+                    edits: vec![edit],
+                    composition: Some(top_preview),
+                    suggestions: self.build_suggestion_list(),
                     status_message: None,
                     consumed: true,
                 };
@@ -288,18 +226,33 @@ impl PhoneticEngine {
             }
         }
 
-        // Commit on Space or Enter
-        if event.key_code == 32 || event.key_code == 13 {
-            if !self.current_roman_buffer.is_empty() {
-                let committed = self.transliterate(&self.current_roman_buffer);
-                self.record_word_selection(&committed);
-                self.current_roman_buffer.clear();
-                let space_str = if event.key_code == 32 { " " } else { "\n" };
+        // 6. Space or Enter: Commit current composition + trailing space/newline
+        if event.key_code == 32 || event.key_code == 13 || event.key_code == 0x20 || event.key_code == 0x0D {
+            if !self.core.input_buffer().is_empty() {
+                let chosen = if !self.current_suggestions.is_empty() {
+                    self.current_suggestions[self.selected_candidate_idx].clone()
+                } else {
+                    self.core.transliterate_classic(self.core.input_buffer())
+                };
+
+                let roman = self.core.input_buffer().to_string();
+                self.core.record_selection(&roman, &chosen);
+
+                let trailing = if event.key_code == 32 || event.key_code == 0x20 {
+                    " "
+                } else {
+                    "\n"
+                };
+
+                let edit = TextEdit::ReplaceLast {
+                    count: self.last_preview_char_count,
+                    text: format!("{}{}", chosen, trailing),
+                };
+
+                self.reset_state();
+
                 return EngineAction {
-                    edits: vec![
-                        TextEdit::Insert(committed),
-                        TextEdit::Insert(space_str.to_string()),
-                    ],
+                    edits: vec![edit],
                     composition: None,
                     suggestions: Vec::new(),
                     status_message: None,
@@ -310,73 +263,196 @@ impl PhoneticEngine {
             }
         }
 
-        // Ignore Ctrl or Alt key combinations
-        if event.ctrl || event.alt {
-            return EngineAction::pass_through();
-        }
-
-        // Append valid typing characters
+        // 7. Alphanumeric / backtick / dollar / period: Active Roman buffer expansion
         if let Some(c) = event.ch {
-            if c.is_ascii_alphanumeric() || c == '`' || c == '$' {
-                self.current_roman_buffer.push(c);
-                let preview = self.transliterate(&self.current_roman_buffer);
-                let suggestions = self.generate_suggestions(&preview);
+            if c.is_ascii_alphanumeric() || c == '`' || c == '$' || c == '.' {
+                self.core.push_char(c);
+                self.update_suggestions();
+
+                let top_preview = self.current_suggestions[0].clone();
+                let edit = TextEdit::ReplaceLast {
+                    count: self.last_preview_char_count,
+                    text: top_preview.clone(),
+                };
+                self.last_preview_char_count = top_preview.chars().count();
+                self.selected_candidate_idx = 0;
+
                 return EngineAction {
-                    edits: Vec::new(),
-                    composition: Some(preview),
-                    suggestions,
+                    edits: vec![edit],
+                    composition: Some(top_preview),
+                    suggestions: self.build_suggestion_list(),
                     status_message: None,
                     consumed: true,
                 };
             }
         }
 
-        // Non-alphanumeric punctuation commits current buffer and passes through
-        if !self.current_roman_buffer.is_empty() {
-            let committed = self.transliterate(&self.current_roman_buffer);
-            self.current_roman_buffer.clear();
-            EngineAction {
-                edits: vec![TextEdit::Insert(committed)],
+        // 8. Other punctuation / symbols: Commit current word and pass through punctuation
+        if !self.core.input_buffer().is_empty() {
+            let chosen = if !self.current_suggestions.is_empty() {
+                self.current_suggestions[self.selected_candidate_idx].clone()
+            } else {
+                self.core.transliterate_classic(self.core.input_buffer())
+            };
+
+            let roman = self.core.input_buffer().to_string();
+            self.core.record_selection(&roman, &chosen);
+
+            let mut punct_str = String::new();
+            if let Some(c) = event.ch {
+                // If it's standard Bengali punctuation like '.', Avro transliterates it to '।'
+                let transliterated_punct = self.core.transliterate_classic(&c.to_string());
+                punct_str.push_str(&transliterated_punct);
+            }
+
+            let edit = TextEdit::ReplaceLast {
+                count: self.last_preview_char_count,
+                text: format!("{}{}", chosen, punct_str),
+            };
+
+            self.reset_state();
+
+            return EngineAction {
+                edits: vec![edit],
                 composition: None,
                 suggestions: Vec::new(),
                 status_message: None,
-                consumed: false,
-            }
-        } else {
-            EngineAction::pass_through()
+                consumed: true,
+            };
         }
-    }
 
-    fn generate_suggestions(&self, current_translit: &str) -> Vec<Suggestion> {
-        let mut results = Vec::new();
-
-        // 1. Exact transliterated match is primary
-        results.push(Suggestion {
-            word: current_translit.to_string(),
-            hint: None,
-            score: 1000,
-        });
-
-        // 2. Dictionary completions / prefixes
-        for word in &self.dictionary {
-            if word.starts_with(current_translit) && word != current_translit {
-                let freq = *self.user_frequency.get(word).unwrap_or(&10);
-                results.push(Suggestion {
-                    word: word.clone(),
-                    hint: None,
-                    score: freq,
-                });
-                if results.len() >= 5 {
-                    break;
+        // Default pass-through if buffer is empty
+        if let Some(c) = event.ch {
+            // Check if punctuation like '.' should produce '।' even with empty buffer
+            if c == '.' || c == '$' {
+                let converted = self.core.transliterate_classic(&c.to_string());
+                if converted != c.to_string() {
+                    return EngineAction::insert(converted);
                 }
             }
         }
 
-        results
+        EngineAction::pass_through()
     }
 
-    pub fn record_word_selection(&mut self, word: &str) {
-        let count = self.user_frequency.entry(word.to_string()).or_insert(0);
-        *count += 1;
+    fn update_suggestions(&mut self) {
+        let buf = self.core.input_buffer();
+        if buf.is_empty() {
+            self.current_suggestions.clear();
+            return;
+        }
+        self.current_suggestions = self.core.get_candidates(buf);
+        if self.current_suggestions.is_empty() {
+            self.current_suggestions
+                .push(self.core.transliterate_classic(buf));
+        }
+    }
+
+    fn build_suggestion_list(&self) -> Vec<Suggestion> {
+        let roman = self.core.input_buffer();
+        self.current_suggestions
+            .iter()
+            .enumerate()
+            .map(|(i, w)| Suggestion {
+                word: w.clone(),
+                hint: if i == 0 {
+                    Some(roman.to_string())
+                } else {
+                    None
+                },
+                score: (100usize.saturating_sub(i * 5)) as u32,
+            })
+            .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_phonetic_live_composition_keystrokes() {
+        let mut engine = PhoneticEngine::new();
+
+        // 1. Type 'a'
+        let act1 = engine.process_key(&KeyEvent::new_down(65, Some('a'), false, false, false));
+        assert_eq!(
+            act1.edits,
+            vec![TextEdit::ReplaceLast {
+                count: 0,
+                text: "আ".to_string()
+            }]
+        );
+        assert_eq!(act1.composition, Some("আ".to_string()));
+
+        // 2. Type 'm'
+        let act2 = engine.process_key(&KeyEvent::new_down(77, Some('m'), false, false, false));
+        assert_eq!(
+            act2.edits,
+            vec![TextEdit::ReplaceLast {
+                count: 1,
+                text: "আম".to_string()
+            }]
+        );
+
+        // 3. Type 'i'
+        let act3 = engine.process_key(&KeyEvent::new_down(73, Some('i'), false, false, false));
+        assert_eq!(
+            act3.edits,
+            vec![TextEdit::ReplaceLast {
+                count: 2,
+                text: "আমি".to_string()
+            }]
+        );
+
+        // 4. Press Space
+        let act4 = engine.process_key(&KeyEvent::new_down(32, Some(' '), false, false, false));
+        assert_eq!(
+            act4.edits,
+            vec![TextEdit::ReplaceLast {
+                count: 3,
+                text: "আমি ".to_string()
+            }]
+        );
+        assert_eq!(engine.roman_buffer(), "");
+        assert_eq!(engine.last_preview_char_count(), 0);
+    }
+
+    #[test]
+    fn test_phonetic_backspace_editing() {
+        let mut engine = PhoneticEngine::new();
+
+        // Type 'a', 'm'
+        engine.process_key(&KeyEvent::new_down(65, Some('a'), false, false, false));
+        engine.process_key(&KeyEvent::new_down(77, Some('m'), false, false, false));
+
+        // Backspace 'm'
+        let bs1 = engine.process_key(&KeyEvent::new_down(8, None, false, false, false));
+        assert_eq!(
+            bs1.edits,
+            vec![TextEdit::ReplaceLast {
+                count: 2,
+                text: "আ".to_string()
+            }]
+        );
+        assert_eq!(engine.roman_buffer(), "a");
+
+        // Backspace 'a'
+        let bs2 = engine.process_key(&KeyEvent::new_down(8, None, false, false, false));
+        assert_eq!(bs2.edits, vec![TextEdit::DeleteBack(1)]);
+        assert_eq!(engine.roman_buffer(), "");
+    }
+
+    #[test]
+    fn test_phonetic_escape_cancellation() {
+        let mut engine = PhoneticEngine::new();
+
+        engine.process_key(&KeyEvent::new_down(65, Some('a'), false, false, false));
+        engine.process_key(&KeyEvent::new_down(77, Some('m'), false, false, false));
+
+        // Escape cancels composition
+        let esc = engine.process_key(&KeyEvent::new_down(27, None, false, false, false));
+        assert_eq!(esc.edits, vec![TextEdit::DeleteBack(2)]);
+        assert_eq!(engine.roman_buffer(), "");
     }
 }

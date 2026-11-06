@@ -205,15 +205,16 @@ fn test_phonetic_oracle_vectors() {
             let ev = KeyEvent::new_down(ch as u32, Some(ch), ch.is_uppercase(), false, false);
             engine.process_key(&ev);
         }
-        // Commit with Space
+        // Commit with Space commits the active live inline composition
         let space_ev = KeyEvent::new_down(32, Some(' '), false, false, false);
         let act = engine.process_key(&space_ev);
+        let expected_with_space = format!("{} ", expected);
         assert_eq!(
             act.edits,
-            vec![
-                TextEdit::Insert(expected.to_string()),
-                TextEdit::Insert(" ".to_string())
-            ],
+            vec![TextEdit::ReplaceLast {
+                count: expected.chars().count(),
+                text: expected_with_space
+            }],
             "Mismatch on word {}",
             roman
         );

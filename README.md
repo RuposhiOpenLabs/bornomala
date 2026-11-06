@@ -30,7 +30,7 @@ Bornomala is a clean, modern, signed, and completely free Bangla typing suite an
 ### Why Bornomala?
 * **Classic Fixed Layout (Unicode Output):** Exactly matches the 20-year typing muscle memory of government and commercial typists (`Ctrl+Alt+V`), producing canonical Unicode Bangla (`U+0980..U+09FF`).
 * **Classic Fixed Layout (Legacy ANSI Output):** Produces legacy SutonnyMJ glyphs (`Ctrl+Alt+B`) for compatibility with existing government forms, land registry documents, and publishing workflows without needing cracked software.
-* **Avro-Compatible Phonetic Typing:** Full Banglish-to-Bangla phonetic transliteration (`F12`) validated 100% against official phonetic rules with intelligent offline suggestions.
+* **Avro-Compatible Phonetic Typing:** Full Banglish-to-Bangla phonetic transliteration (`Ctrl+Space` or `F12`) with 100% Avro 5.6.0 compatibility (289 rules, 2,472 autocorrect entries from `autodict.dct`, 159k+ word dictionary FST, and 737 morphological suffixes). Features **live inline composition** and an **anchored floating candidate window** following the caret in real time, plus **beyond-Avro** innovations (context-aware n-gram reranking, custom abbreviations, sub-millisecond search, and locally encrypted candidate learning).
 * **Bijoy/Ekushe-Style Startup Splash Screen & Auto-Startup:** Displays an elegant, familiar centered splash screen on system startup or app launch, then automatically hides itself after 2.5 seconds to reveal the floating bar and system tray.
 * **Lossless Bidirectional Converter:** High-fidelity conversion between modern Unicode and legacy ANSI (SutonnyMJ) text.
 * **Government Office Conveniences:**
@@ -53,7 +53,7 @@ Bornomala is a clean, modern, signed, and completely free Bangla typing suite an
 ### প্রধান সুবিধাসমূহ
 1. **ক্লাসিক ফিক্সড লেআউট (ইউনিকোড):** ২০ বছরের পরিচিত ফিক্সড কিবোর্ড লেআউট হুবহু অপরিবর্তিত রেখে আধুনিক ইউনিকোড বাংলা টাইপিং (`Ctrl+Alt+V`)।
 2. **ক্লাসিক এএনএসআই লেআউট (সুতোন্নীএমজে):** পুরনো সরকারি ফর্ম ও দলিলের জন্য সুতোন্নী ফন্ট উপযোগী লেগ্যাসি এএনএসআই টাইপিং (`Ctrl+Alt+B`)।
-3. **ফোনেটিক টাইপিং (অভ্র সামঞ্জস্যপূর্ণ):** ইংরেজি হরফে লিখে খাঁটি বাংলা উচ্চারণভিত্তিক টাইপিং (`F12`), অফলাইন শব্দকোষ ও স্বয়ংক্রিয় সাজেশন সহ।
+3. **ফোনেটিক টাইপিং (অভ্র ১০০% সামঞ্জস্যপূর্ণ):** ইংরেজি হরফে লিখে খাঁটি বাংলা উচ্চারণভিত্তিক টাইপিং (`Ctrl+Space` বা `F12`)। অভ্র ৫.৬.০ এর ২৮৯টি রুল, ২,৪৭২টি অটো-কারেক্ট এন্ট্রি, ১,৫৯,০০০+ শব্দের এফএসটি ডিকশনারি ও ৭৩৭টি প্রত্যয় অন্তর্ভুক্ত। টাইপ করার সাথে সাথে রিয়েল-টাইম **লাইভ ইনলাইন কম্পোজিশন** ও ক্যারেটের নিচে নো-ফোকাস **ফ্লোটিং ক্যান্ডিডেট প্রিভিউ উইন্ডো** দৃশ্যমান হয়। এছাড়াও এতে রয়েছে কনটেক্সট-সচেতন র‍্যাংকিং ও কাস্টম সংক্ষেপণ।
 4. **স্বয়ংক্রিয় স্টার্টআপ ও ক্লাসিক স্প্ল্যাশ স্ক্রিন:** কম্পিউটার চালু হলে বা অ্যাপ ওপেন করলে বিজয় বা একুশের ন্যায় স্ক্রিনের মাঝখানে পরিচিত স্টার্টআপ স্প্ল্যাশ স্ক্রিন দেখাবে এবং ২.৫ সেকেন্ড পর নিজে নিজেই লুকিয়ে যাবে।
 5. **দ্বিমুখী রূপান্তরক (Unicode <-> ANSI):** কোনো তথ্যের বিকৃতি ছাড়াই ইউনিকোড থেকে সুতোন্নী এবং সুতোন্নী থেকে ইউনিকোডে টেক্সট কনভার্সন।
 6. **অফিসিয়াল সহায়তা টুলস:**

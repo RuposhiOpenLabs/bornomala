@@ -1,0 +1,21 @@
+[package]
+name = "bornomala-phonetic"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Pure Rust high-performance Avro-compatible phonetic engine and candidate generator"
+
+[dependencies]
+fst = "0.4"
+once_cell = "1.20"
+serde = { workspace = true }
+serde_json = { workspace = true }
+unicode-normalization = { workspace = true }
+thiserror = { workspace = true }
+sha2 = { workspace = true }
+
+[dev-dependencies]
+bornomala-engine = { path = "../bornomala-engine" }
+proptest = { workspace = true }
+tempfile = { workspace = true }

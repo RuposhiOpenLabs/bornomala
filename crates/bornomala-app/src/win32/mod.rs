@@ -3,6 +3,7 @@
 pub mod about;
 pub mod api;
 pub mod assets;
+pub mod candidate_window;
 pub mod converter;
 pub mod hook;
 pub mod settings;
@@ -12,6 +13,7 @@ pub mod tray;
 pub mod updater;
 
 use api::*;
+use candidate_window::CandidateWindow;
 use converter::ConverterWindow;
 use hook::KeyboardHook;
 use splash::SplashWindow;
@@ -134,6 +136,9 @@ pub fn run_app(converter_only: bool, _startup_mode: bool) {
 
         // 3. Initialize Low-Level Keyboard Hook & Global Hotkeys
         KeyboardHook::init(hwnd, hinst);
+
+        // 3b. Initialize Live Phonetic Candidate & Preview Window
+        CandidateWindow::init(hinst);
 
         // 4. Create the Top Floating Toolbar
         let _tb = FloatingToolbar::create(hinst);

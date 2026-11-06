@@ -24,6 +24,10 @@ pub type COLORREF = u32;
 pub const TRUE: BOOL = 1;
 pub const FALSE: BOOL = 0;
 
+pub const CS_VREDRAW: u32 = 0x0001;
+pub const CS_HREDRAW: u32 = 0x0002;
+pub const SRCCOPY: u32 = 0x00CC0020;
+
 // Window Styles
 pub const WS_OVERLAPPED: u32 = 0x00000000;
 pub const WS_POPUP: u32 = 0x80000000;
@@ -347,6 +351,31 @@ pub struct ICONINFO {
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct GUITHREADINFO {
+    pub cbSize: u32,
+    pub flags: u32,
+    pub hwndActive: HWND,
+    pub hwndFocus: HWND,
+    pub hwndCapture: HWND,
+    pub hwndMenuOwner: HWND,
+    pub hwndMoveSize: HWND,
+    pub hwndCaret: HWND,
+    pub rcCaret: RECT,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct MONITORINFO {
+    pub cbSize: u32,
+    pub rcMonitor: RECT,
+    pub rcWork: RECT,
+    pub dwFlags: u32,
+}
+
+pub const MONITOR_DEFAULTTONEAREST: u32 = 2;
+
+#[repr(C)]
 pub struct TRACKMOUSEEVENT {
     pub cbSize: u32,
     pub dwFlags: u32,
@@ -559,6 +588,16 @@ extern "system" {
     pub fn CreateMutexW(lpMutexAttributes: *mut c_void, bInitialOwner: BOOL, lpName: *const u16) -> usize;
     pub fn GetLastError() -> u32;
     pub fn CloseHandle(hObject: usize) -> BOOL;
+
+    // Caret & Focus Tracking
+    pub fn AttachThreadInput(idAttach: u32, idAttachTo: u32, fAttach: BOOL) -> BOOL;
+    pub fn GetGUIThreadInfo(idThread: u32, pgui: *mut GUITHREADINFO) -> BOOL;
+    pub fn GetCaretPos(lpPoint: *mut POINT) -> BOOL;
+    pub fn GetForegroundWindow() -> HWND;
+    pub fn GetCurrentThreadId() -> u32;
+    pub fn MonitorFromPoint(pt: POINT, dwFlags: u32) -> usize;
+    pub fn GetMonitorInfoW(hMonitor: usize, lpmi: *mut MONITORINFO) -> BOOL;
+    pub fn FrameRect(hdc: HDC, lprc: *const RECT, hbr: HBRUSH) -> i32;
 
     // Process & Thread Management
     pub fn GetWindowThreadProcessId(hWnd: HWND, lpdwProcessId: *mut u32) -> u32;

@@ -127,6 +127,28 @@ impl BornomalaEngine {
             return None;
         }
 
+        // Ctrl + Space toggle for Phonetic
+        if event.ctrl && !event.alt && (event.key_code == 32 || event.key_code == 0x20) {
+            let next_scheme = if self.scheme == InputScheme::Phonetic {
+                InputScheme::PassThrough
+            } else {
+                InputScheme::Phonetic
+            };
+            self.set_scheme(next_scheme);
+            let msg = match next_scheme {
+                InputScheme::Phonetic => "ধ্বনিভিত্তিক (Phonetic) মোড সক্রিয়",
+                InputScheme::PassThrough => "ইংরেজি (English) মোড সক্রিয়",
+                _ => "",
+            };
+            return Some(EngineAction {
+                edits: Vec::new(),
+                composition: None,
+                suggestions: Vec::new(),
+                status_message: Some(msg.to_string()),
+                consumed: true,
+            });
+        }
+
         // F12 toggle for Phonetic
         if event.key_code == 123 || event.key_code == 0x7B {
             let next_scheme = if self.scheme == InputScheme::Phonetic {
