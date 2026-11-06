@@ -2,7 +2,7 @@
 
 **Author:** Ryan Shelby  
 **Organization:** Ruposhi Open Labs (`github.com/RuposhiOpenLabs`)  
-**License:** MPL-2.0  
+**License:** GPL-3.0-or-later  
 
 ---
 

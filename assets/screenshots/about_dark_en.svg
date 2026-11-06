@@ -9,7 +9,7 @@
     <text x="0" y="20" font-family="sans-serif, 'SolaimanLipi'" font-size="15" font-weight="bold" fill="#E6EDE8">Version: 0.1.0 (v0.1.0-alpha)</text>
     <text x="0" y="46" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">Publisher: Ruposhi Open Labs</text>
     <text x="0" y="70" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">Developer: Ryan Shelby</text>
-    <text x="0" y="94" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">License: Mozilla Public License 2.0 (MPL-2.0)</text>
+    <text x="0" y="94" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#E6EDE8">License: GNU General Public License v3.0 (GPLv3)</text>
 
     <!-- Links & Contact Cards -->
     <rect y="112" width="516" height="34" rx="6" fill="#1B241E" stroke="#2C3A30" stroke-width="1"/>

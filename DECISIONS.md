@@ -4,7 +4,7 @@
 **Publisher:** Ruposhi Open Labs  
 **Developer:** Ryan Shelby  
 **Repository:** github.com/RuposhiOpenLabs/bornomala  
-**License:** Mozilla Public License 2.0 (MPL-2.0)  
+**License:** GNU General Public License v3.0 (GPLv3)  
 
 ---
 
@@ -31,10 +31,10 @@
 ## 2. Project Licensing
 
 * **Status:** Decided.
-* **License:** Mozilla Public License 2.0 (MPL-2.0).
+* **License:** GNU General Public License v3.0 (GPLv3).
 * **Rationale:**
-  * Bornomala integrates phonetic transliteration rules and dictionary assets derived from the open-source Avro Keyboard project (originally released by OmicronLab under MPL-2.0).
-  * MPL-2.0 allows free personal, commercial, and governmental usage, permits integration with proprietary host applications (such as Microsoft Office, Adobe InDesign, web browsers), and guarantees that improvements to file-level components remain open source without imposing viral copyleft on the entire operating system or host applications.
+  * Bornomala integrates phonetic transliteration rules and dictionary assets derived from the open-source Avro Keyboard project (originally released by OmicronLab under MPL-2.0, compatible with GPLv3).
+  * GPLv3 ensures that Bornomala remains completely free, copyleft, and open source for all users, guaranteeing that any redistributions, improvements, or derivative works also preserve full user freedom and remain open source.
 
 ---
 

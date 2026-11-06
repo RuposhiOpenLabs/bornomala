@@ -2,7 +2,7 @@
 # Publisher: Ruposhi Open Labs (https://github.com/RuposhiOpenLabs)
 # Lead Developer: Ryan Shelby (https://github.com/MdSagorMunshi/)
 # Support: ryn@disr.it
-# License: MPL-2.0
+# License: GPL-3.0
 
 [CmdletBinding()]
 param(

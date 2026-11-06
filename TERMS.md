@@ -5,7 +5,7 @@
 **Publisher:** [Ruposhi Open Labs](https://github.com/RuposhiOpenLabs)  
 **Lead Developer:** [Ryan Shelby](https://github.com/MdSagorMunshi/)  
 **Support Email:** [ryn@disr.it](mailto:ryn@disr.it)  
-**License:** Mozilla Public License 2.0 (MPL-2.0)  
+**License:** GNU General Public License v3.0 (GPLv3)  
 
 ---
 
@@ -17,10 +17,10 @@ Bornomala (বর্ণমালা) was created under the moral philosophy that
 Bornomala provides a pure, clean, completely offline, and mathematically verified alternative in pure Rust.
 
 ### 2. Grant of License
-Subject to the terms of the **Mozilla Public License Version 2.0 (MPL-2.0)**, Ruposhi Open Labs hereby grants you a perpetual, worldwide, non-exclusive, royalty-free license to:
+Subject to the terms of the **GNU General Public License Version 3 (GPLv3)**, Ruposhi Open Labs hereby grants you a perpetual, worldwide, non-exclusive, royalty-free license to:
 * Use Bornomala for personal, educational, non-profit, commercial, judicial, or governmental purposes.
 * Install Bornomala on an unlimited number of computers, laptops, virtual machines, and office networks.
-* Inspect, audit, study, modify, and redistribute the source code pursuant to the MPL-2.0 provisions.
+* Inspect, audit, study, modify, and redistribute the source code pursuant to the GNU GPLv3 provisions.
 
 ### 3. Absolute Privacy & Offline Pledge
 * **Zero Keystroke Recording:** Bornomala does not intercept, log, record, or retain keystrokes typed by you.
@@ -49,7 +49,7 @@ BORNOMALA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 বাংলাদেশের সরকারি দপ্তর, আদালত, প্রেস ও প্রকাশনা প্রতিষ্ঠান, শিক্ষা প্রতিষ্ঠান এবং সর্বস্তরের লাখো মানুষের জন্য নিরাপদ, ক্র্যাকমুক্ত ও আধুনিক বাংলা টাইপিং সেবা নিশ্চিত করাই বর্ণমালার মূল লক্ষ্য।
 
 ### ২. লাইসেন্স ও ব্যবহারের অধিকার
-মজিলা পাবলিক লাইসেন্স ২.০ (MPL-2.0) অনুসারে:
+জিএনইউ জেনারেল পাবলিক লাইসেন্স ৩.০ (GPLv3) অনুসারে:
 * আপনি ব্যক্তিগত, পারিবারিক, প্রাতিষ্ঠানিক, ব্যবসায়িক, বিচারিক এবং সরকারি যেকোনো কাজে বর্ণমালা সম্পূর্ণ বিনামূল্যে আজীবন ব্যবহার করতে পারবেন।
 * যত খুশি কম্পিউটারে কোনো প্রকার ফি বা অ্যাক্টিভেশন কি ছাড়াই ইনস্টল করতে পারবেন।
 * ওপেন সোর্স নীতিমালা অনুসারে কোড নিরীক্ষা এবং অবদান রাখতে পারবেন।

@@ -779,7 +779,7 @@ impl SvgRenderer {
         <text x="0" y="116" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{green}">৩. প্রিলোডেড ফন্ট নীতিমালা (Preloaded Fonts Notice):</text>
         <text x="0" y="136" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   সরকারি নথির সুবিধার্থে ৮টি প্রমিত বাংলা ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি ইত্যাদি) সরবরাহ করা হয়েছে।</text>
 
-        <text x="0" y="166" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{green}">৪. নিরাপত্তা ও লাইসেন্স (MPL-2.0 License):</text>
+        <text x="0" y="166" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{green}">৪. নিরাপত্তা ও লাইসেন্স (GPLv3 License):</text>
         <text x="0" y="186" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   কোনো ক্র্যাক বা ভাইরাস নেই। ক্রিপ্টোগ্রাফিক Ed25519 স্বাক্ষর দ্বারা যাচাইকৃত।</text>
       </g>
 

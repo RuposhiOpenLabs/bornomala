@@ -220,7 +220,7 @@ unsafe extern "system" fn about_wnd_proc(
             draw_detail("প্রকাশক (Publisher):", "রূপসী ওপেন ল্যাবস (Ruposhi Open Labs)", 160);
             draw_detail("ওয়েবসাইট:", "github.com/RuposhiOpenLabs/bornomala", 188);
             draw_detail("প্রধান ডেভেলপার:", "Ryan Shelby (MdSagorMunshi)", 216);
-            draw_detail("লাইসেন্স:", "Mozilla Public License 2.0 (MPL-2.0)", 244);
+            draw_detail("লাইসেন্স:", "GNU General Public License v3.0 (GPLv3)", 244);
             draw_detail("নিরাপত্তা ও গোপনীয়তা:", "১০০% অফলাইন, জিরো কী-লগিং, জিরো ট্র্যাকিং", 272);
             draw_detail("সমর্থিত ইনপুট মোড:", "ইউনিকোড, বিজয় ANSI, ফোনেটিক, ইংরেজি", 300);
             draw_detail("দ্বিমুখী রূপান্তর:", "ইউনিকোড ⇄ বিজয় এএনএসআই কনভার্টার", 328);

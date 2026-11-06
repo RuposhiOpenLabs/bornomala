@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![License](https://img.shields.io/badge/license-MPL--2.0-blue.svg)
+![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011%20%7C%20Linux-green.svg)
 ![Offline](https://img.shields.io/badge/privacy-100%25%20Offline-brightgreen.svg)
 ![Language](https://img.shields.io/badge/rust-2021-orange.svg)
@@ -180,5 +180,5 @@ scripts\disable_autostart.bat
 ---
 
 ## License
-Released under the [Mozilla Public License 2.0 (MPL-2.0)](LICENSE).  
+Released under the [GNU General Public License v3.0 (GPLv3)](LICENSE).  
 Copyright © 2026 Ruposhi Open Labs & Ryan Shelby. <ryn@disr.it>

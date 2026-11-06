@@ -418,7 +418,7 @@ Developer:  Ryan Shelby
             GitHub:  https://github.com/MdSagorMunshi/
 
 Support:    ryn@disr.it
-License:    Mozilla Public License 2.0 (MPL-2.0)
+License:    GNU General Public License v3.0 (GPLv3)
 
 Design Principles:
   • 100% Offline: Zero internet required for typing, conversion, or layout switching.
