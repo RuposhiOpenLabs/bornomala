@@ -177,3 +177,27 @@ fn test_pdf_conversion() {
     let loaded = lopdf::Document::load(&pdf_out).unwrap();
     assert_eq!(loaded.get_pages().len(), 1);
 }
+
+#[test]
+fn test_doc_conversion() {
+    let dir = tempdir().unwrap();
+    let doc_in = dir.path().join("sample_legacy.doc");
+
+    // Write a standard Word 97-2003 RTF/CFB document containing SutonnyMJ ANSI text
+    let legacy_content = r#"{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fnil\fcharset0 SutonnyMJ;}}\viewkind4\uc1\pard\f0\fs24 Avgvi \u8224?mvbvi evsjv, Avwg \u8224?Zvgvq fv\u8225?jvevwm|\par}"#;
+    std::fs::write(&doc_in, legacy_content.as_bytes()).unwrap();
+
+    let doc_out = dir.path().join("converted_sample.doc");
+    let rep = convert_file(&doc_in, Some(&doc_out), ConversionDirection::AnsiToUnicode).unwrap();
+
+    assert_eq!(rep.format, DocumentFormat::Doc);
+    assert!(doc_out.exists());
+
+    let out_str = std::fs::read_to_string(&doc_out).unwrap();
+    assert!(out_str.contains("Kalpurush"));
+    // Also test converting to .docx from .doc
+    let docx_out = dir.path().join("converted_from_doc.docx");
+    let rep_docx = convert_file(&doc_in, Some(&docx_out), ConversionDirection::AnsiToUnicode).unwrap();
+    assert!(docx_out.exists());
+    assert_eq!(rep_docx.format, DocumentFormat::Doc);
+}

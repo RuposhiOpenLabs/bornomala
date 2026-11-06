@@ -106,7 +106,7 @@ fn handle_convert(args: &[String]) {
 
     let converter = BanglaConverter::new();
     if args.is_empty() {
-        eprintln!("Error: specify --to-ansi, --to-unicode, or --file <DOCX|PDF|TXT>");
+        eprintln!("Error: specify --to-ansi, --to-unicode, or --file <DOCX|DOC|PDF|TXT>");
         return;
     }
 
@@ -155,7 +155,7 @@ fn handle_convert(args: &[String]) {
             let input_arg = args.get(1);
             if let Some(path_str) = input_arg {
                 let p = Path::new(path_str);
-                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Doc | DocumentFormat::Pdf | DocumentFormat::Txt) {
                     match convert_file(p, None, ConversionDirection::UnicodeToAnsi) {
                         Ok(rep) => {
                             println!("✓ Document converted to ANSI: {}", rep.output_path.display());
@@ -177,7 +177,7 @@ fn handle_convert(args: &[String]) {
             let input_arg = args.get(1);
             if let Some(path_str) = input_arg {
                 let p = Path::new(path_str);
-                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Doc | DocumentFormat::Pdf | DocumentFormat::Txt) {
                     match convert_file(p, None, ConversionDirection::AnsiToUnicode) {
                         Ok(rep) => {
                             println!("✓ Document converted to Unicode: {}", rep.output_path.display());

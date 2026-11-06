@@ -211,9 +211,9 @@ unsafe extern "system" fn converter_wnd_proc(
             SendMessageW(btn_tab_text, WM_SETFONT, FONT_BTN as WPARAM, 1);
 
             let btn_tab_doc = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📄 নথি ও ফাইল রূপান্তর (DOCX, PDF, TXT)").as_ptr(),
+                0, btn_cls.as_ptr(), to_wide("📄 নথি ও ফাইল রূপান্তর (DOCX, DOC, PDF, TXT)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                268, 80, 310, 34, hwnd, IDC_TAB_DOC, hinst, std::ptr::null_mut(),
+                268, 80, 340, 34, hwnd, IDC_TAB_DOC, hinst, std::ptr::null_mut(),
             );
             SendMessageW(btn_tab_doc, WM_SETFONT, FONT_BTN as WPARAM, 1);
 
@@ -302,7 +302,7 @@ unsafe extern "system" fn converter_wnd_proc(
             // 1. Source Document
             let doc_src_lbl = CreateWindowExW(
                 0, static_cls.as_ptr(),
-                to_wide("ধাপ ১: যে ফাইলটি রূপান্তর করতে চান তা নির্বাচন করুন (Word .docx, PDF বা .txt):").as_ptr(),
+                to_wide("ধাপ ১: যে ফাইলটি রূপান্তর করতে চান তা নির্বাচন করুন (Word .docx, .doc, PDF বা .txt):").as_ptr(),
                 WS_CHILD, 20, 126, 640, 20, hwnd, IDC_DOC_SRC_LBL, hinst, std::ptr::null_mut(),
             );
             SendMessageW(doc_src_lbl, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
@@ -494,7 +494,7 @@ unsafe extern "system" fn converter_wnd_proc(
 
             SetTextColor(mem_dc, color_gold);
             SelectObject(mem_dc, FONT_SUBTITLE);
-            let sub_txt = to_wide("দ্বিমুখী রূপান্তর: ইউনিকোড ⇄ বিজয় ANSI | ডকু রূপান্তর: DOCX • PDF • TXT (১০০% নিখুঁত লেআউট)");
+            let sub_txt = to_wide("দ্বিমুখী রূপান্তর: ইউনিকোড ⇄ বিজয় ANSI | ডকু রূপান্তর: DOCX • DOC • PDF • TXT (১০০% নিখুঁত লেআউট)");
             let mut sub_rc = RECT { left: 80, top: 38, right: w - 20, bottom: 58 };
             DrawTextW(mem_dc, sub_txt.as_ptr(), -1, &mut sub_rc, DT_LEFT | DT_SINGLELINE);
 
@@ -755,10 +755,10 @@ unsafe fn switch_tab(tab: usize) {
 unsafe fn prompt_open_document(owner: HWND) -> Option<PathBuf> {
     let mut file_buf = vec![0u16; 1024];
 
-    // Filter: All Supported (*.docx;*.pdf;*.txt), Word (*.docx), PDF (*.pdf), TXT (*.txt), All (*.*)
     let filter = to_wide_filter(&[
-        ("সমর্থিত সকল নথি (*.docx, *.pdf, *.txt)", "*.docx;*.pdf;*.txt"),
+        ("সমর্থিত সকল নথি (*.docx, *.doc, *.pdf, *.txt)", "*.docx;*.doc;*.pdf;*.txt"),
         ("Microsoft Word নথি (*.docx)", "*.docx"),
+        ("Word ৯৭-২০০৩ নথি (*.doc)", "*.doc"),
         ("PDF দলিল (*.pdf)", "*.pdf"),
         ("টেক্সট ফাইল (*.txt)", "*.txt"),
         ("সকল ফাইল (*.*)", "*.*"),
@@ -788,9 +788,18 @@ unsafe fn prompt_save_document(owner: HWND, default_ext: &str) -> Option<PathBuf
     let mut file_buf = vec![0u16; 1024];
 
     let filter = match default_ext {
+        "doc" => to_wide_filter(&[
+            ("Word ৯৭-২০০৩ নথি (*.doc)", "*.doc"),
+            ("Microsoft Word নথি (*.docx)", "*.docx"),
+            ("সকল ফাইল (*.*)", "*.*"),
+        ]),
         "pdf" => to_wide_filter(&[("PDF দলিল (*.pdf)", "*.pdf"), ("সকল ফাইল (*.*)", "*.*")]),
         "txt" => to_wide_filter(&[("টেক্সট ফাইল (*.txt)", "*.txt"), ("সকল ফাইল (*.*)", "*.*")]),
-        _ => to_wide_filter(&[("Microsoft Word নথি (*.docx)", "*.docx"), ("সকল ফাইল (*.*)", "*.*")]),
+        _ => to_wide_filter(&[
+            ("Microsoft Word নথি (*.docx)", "*.docx"),
+            ("Word ৯৭-২০০৩ নথি (*.doc)", "*.doc"),
+            ("সকল ফাইল (*.*)", "*.*"),
+        ]),
     };
 
     let title = to_wide("রূপান্তরিত ফাইল সংরক্ষণের অবস্থান নির্ধারণ করুন");

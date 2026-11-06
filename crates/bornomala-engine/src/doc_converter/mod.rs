@@ -3,9 +3,11 @@
 //! Provides high-fidelity, layout-preserving bidirectional conversion
 //! between Bijoy/SutonnyMJ ANSI and Unicode Bangla for:
 //! - DOCX (Microsoft Word 2007-2024 / Office 365)
+//! - DOC (Microsoft Word 97-2003 Binary / CFBF)
 //! - PDF (Portable Document Format)
 //! - TXT (Plain Text / UTF-8 / Windows-1252)
 
+pub mod doc;
 pub mod docx;
 pub mod pdf;
 pub mod txt;
@@ -32,6 +34,7 @@ impl ConversionDirection {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DocumentFormat {
     Docx,
+    Doc,
     Pdf,
     Txt,
     Unknown,
@@ -41,6 +44,7 @@ impl DocumentFormat {
     pub fn from_path(path: &Path) -> Self {
         match path.extension().and_then(|s| s.to_str()).map(|s| s.to_ascii_lowercase()) {
             Some(ref ext) if ext == "docx" => DocumentFormat::Docx,
+            Some(ref ext) if ext == "doc" => DocumentFormat::Doc,
             Some(ref ext) if ext == "pdf" => DocumentFormat::Pdf,
             Some(ref ext) if ext == "txt" => DocumentFormat::Txt,
             _ => DocumentFormat::Unknown,
@@ -50,6 +54,7 @@ impl DocumentFormat {
     pub fn display_name(&self) -> &'static str {
         match self {
             DocumentFormat::Docx => "Word নথি (.docx)",
+            DocumentFormat::Doc => "Word নথি ৯৭-২০০৩ (.doc)",
             DocumentFormat::Pdf => "PDF দলিল (.pdf)",
             DocumentFormat::Txt => "টেক্সট ফাইল (.txt)",
             DocumentFormat::Unknown => "অজানা ফরম্যাট",
@@ -74,11 +79,14 @@ pub enum DocConvertError {
     #[error("ফাইল ত্রুটি (File I/O Error): {0}")]
     Io(#[from] std::io::Error),
 
-    #[error("অসমর্থিত ফাইল ফরম্যাট: শুধুমাত্র .docx, .pdf এবং .txt ফাইল সমর্থিত।")]
+    #[error("অসমর্থিত ফাইল ফরম্যাট: শুধুমাত্র .docx, .doc, .pdf এবং .txt ফাইল সমর্থিত।")]
     UnsupportedFormat(String),
 
     #[error("Word (DOCX) রূপান্তর ত্রুটি: {0}")]
     Docx(String),
+
+    #[error("Word (DOC) রূপান্তর ত্রুটি: {0}")]
+    Doc(String),
 
     #[error("PDF রূপান্তর ত্রুটি: {0}")]
     Pdf(String),
@@ -129,6 +137,9 @@ pub fn convert_file(
         }
         DocumentFormat::Docx => {
             docx::convert_docx(source_path, &out_buf, direction)?
+        }
+        DocumentFormat::Doc => {
+            doc::convert_doc(source_path, &out_buf, direction)?
         }
         DocumentFormat::Pdf => {
             pdf::convert_pdf(source_path, &out_buf, direction)?

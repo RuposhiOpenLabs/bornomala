@@ -32,9 +32,6 @@ ShowUnInstDetails show
 ; Global Variables
 Var FontConflictPolicy ; 0 = Ask, 1 = Install All (Replace All), 2 = Skip All
 
-; Force Windows Indic standard font (Nirmala UI) across all wizard controls
-SetFont "Nirmala UI" 9
-
 ; ----------------------------------------------------------------------------
 ; Modern UI 2 Configuration & Branding
 ; ----------------------------------------------------------------------------
@@ -82,7 +79,20 @@ Function DirectoryPre
     ${EndIf}
   ${EndIf}
 FunctionEnd
+
+Function DirectoryShow
+  FindWindow $0 "#32770" "" $HWNDPARENT
+  GetDlgItem $1 $0 1019
+  ${If} $1 != 0
+    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $1 0x00B1 0 0 ; EM_SETSEL (0, 0)
+    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $1)"
+  ${EndIf}
+FunctionEnd
+
 !define MUI_PAGE_CUSTOMFUNCTION_PRE DirectoryPre
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW DirectoryShow
 !insertmacro MUI_PAGE_DIRECTORY
 
 ; Installation Progress Page
@@ -115,7 +125,27 @@ Function un.ConfirmPre
     ${EndIf}
   ${EndIf}
 FunctionEnd
+
+Function un.ConfirmShow
+  FindWindow $0 "#32770" "" $HWNDPARENT
+  GetDlgItem $1 $0 1000
+  ${If} $1 != 0
+    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $1 0x00B1 0 0 ; EM_SETSEL (0, 0)
+    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $1)"
+  ${EndIf}
+  GetDlgItem $2 $0 1019
+  ${If} $2 != 0
+    SendMessage $2 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $2 0x00B1 0 0
+    System::Call "user32::InvalidateRect(p $2, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $2)"
+  ${EndIf}
+FunctionEnd
+
 !define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPre
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW un.ConfirmShow
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
