@@ -72,7 +72,7 @@ Legacy Bangla typing software from the 1990s and 2000s relies on global Windows 
 ### 3.1 Classic Fixed Layout (Unicode Output)
 * **Pre-base Vowel Reordering:** Vowel signs `ি` (i-kar), `ে` (e-kar), and `ৈ` (oi-kar) are typed in traditional visual order (before the consonant), but canonical Unicode standard requires vowel signs to be stored *after* the consonant cluster. The engine buffers the pre-base vowel sign, accepts the consonant or hasanta conjunct, and automatically emits the base cluster followed by the vowel sign.
 * **Split Vowel Construction:** Typing `ে` (key `c`), followed by a consonant (e.g. `ক` / key `j`), followed by `া` (key `f`) triggers a component replacement of `কে` with `কো` (o-kar / `U+09CB`).
-* **Reph Logic:** Typing `র্` (Shift+A) buffers the Reph state and attaches `র` + `্` to the head of the subsequent consonant cluster.
+* **Retroactive Reph Logic:** Pressing Reph (`র্` / Shift+A) retroactively attaches `র` + `্` to the preceding consonant or conjunct cluster (e.g. typing `কম` then Shift+A transforms it into `কর্ম`), matching natural Bengali typing sequence, while maintaining proactive buffering as a fallback.
 * **Backspace Engine:** Supports user-selectable **Atomic** mode (deletes the entire conjunct or cluster at once) or **Component** mode (deletes only the trailing code point).
 
 ### 3.2 Classic Fixed Layout (ANSI Output)

@@ -100,7 +100,7 @@
   },
   {
     "id": "uni_reph",
-    "desc": "Reph: A (Shift+a = র্) + j (ka) -> র্ক",
+    "desc": "Reph: A (Shift+a = র্) + j (ka) -> র্ক (Proactive Fallback)",
     "mode": "classic_unicode",
     "input_keys": [
       "A",
@@ -114,6 +114,25 @@
     ],
     "confidence": "Level B",
     "provenance": "Layout Unicode.xml Shift+A"
+  },
+  {
+    "id": "uni_retroactive_reph_kormofol",
+    "desc": "Retroactive Reph: j (ka) + m (ma) + A (Shift+a = র্) -> কর্ম",
+    "mode": "classic_unicode",
+    "input_keys": [
+      "j",
+      "m",
+      "A"
+    ],
+    "expected_output": "কর্ম",
+    "expected_codepoints": [
+      "U+0995",
+      "U+09B0",
+      "U+09CD",
+      "U+09AE"
+    ],
+    "confidence": "Level A",
+    "provenance": "Natural Bengali Reph Orthography"
   },
   {
     "id": "uni_independent_vowel_aa",

@@ -47,8 +47,7 @@ This mode uses the traditional Bijoy-style physical keyboard layout but outputs 
   * `u` + `g` + `Shift + i` -> `জ্ঞ` (জ + ঞ)
   * `k` + `g` + `k` -> `ত্ত` (ত + ত)
 * **Reph and Phala (রেফ ও ফলা):**
-  * **Reph (`র্`):** Type `Shift + a` + consonant:
-    * `Shift + a` + `j` -> `র্ক`
+  * **Reph (`র্`):** Type consonant + `Shift + a` (natural retroactive flow, e.g. `কম` + `Shift + a` -> `কর্ম`, `j` + `Shift + a` -> `র্ক`), or `Shift + a` before consonant as proactive fallback.
   * **Ya-phala (`্য`):** Type consonant + `z`:
     * `j` + `z` -> `ক্য`
   * **Ra-phala (`্র`):** Type consonant + `Shift + z`:

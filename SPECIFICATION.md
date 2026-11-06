@@ -112,8 +112,10 @@ In Bangla typing tradition, users type vowel signs in visual order:
   * Sequence: `c` + `j` + `X` -> `ক` + `ৌ` (`কৌ`, U+0995 U+09CC).
 
 ### 4.3 Reph and Ya-phala / Ra-phala
-* **Reph (`র্`)**: Typed key `A` (Shift+a) before the consonant in fixed layout:
-  * Sequence: `A` + `j` -> `র` + `্` + `ক` (`র্ক`, U+09B0 U+09CD U+0995).
+* **Reph (`র্`)**: Supports natural retroactive typing (consonant + `Shift+a`) and proactive fallback (`Shift+a` + consonant):
+  * Natural sequence: `j` + `m` + `A` -> `ক` + `র` + `্` + `ম` (`কর্ম`, U+0995 U+09B0 U+09CD U+09AE).
+  * Single key sequence: `j` + `A` -> `র` + `্` + `ক` (`র্ক`, U+09B0 U+09CD U+0995).
+  * Proactive fallback: `A` + `j` -> `র` + `্` + `ক` (`র্ক`, U+09B0 U+09CD U+0995).
 * **Ya-phala (`্য`)**: Typed as `Z` (key 90) or `g` (hasanta) + `w` (ya):
   * Sequence: `j` + `Z` -> `ক` + `্` + `য` (`ক্য`, U+0995 U+09CD U+09AF).
 * **Ra-phala (`্র`)**: Typed as `z` (Shift+z) or `g` (hasanta) + `v` (ra):

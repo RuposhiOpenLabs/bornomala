@@ -48,6 +48,116 @@ fn test_unicode_typing_vectors() {
 }
 
 #[test]
+fn test_retroactive_reph_behavior() {
+    let mut engine = BornomalaEngine::new(InputScheme::ClassicUnicode);
+
+    let apply_action = |doc: &mut String, act: &bornomala_engine::EngineAction| {
+        for edit in &act.edits {
+            match edit {
+                TextEdit::Insert(s) => doc.push_str(s),
+                TextEdit::ReplaceLast { count, text } => {
+                    for _ in 0..*count {
+                        doc.pop();
+                    }
+                    doc.push_str(text);
+                }
+                TextEdit::DeleteBack(count) => {
+                    for _ in 0..*count {
+                        doc.pop();
+                    }
+                }
+                TextEdit::PassThrough => {}
+            }
+        }
+    };
+
+    // 1. Typing কর্মফল:
+    // Step 1: 'j' (ক)
+    let mut doc = String::new();
+    let a1 = engine.process_key(&KeyEvent::new_down(74, Some('j'), false, false, false));
+    apply_action(&mut doc, &a1);
+    assert_eq!(doc, "ক");
+
+    // Step 2: 'm' (ম)
+    let a2 = engine.process_key(&KeyEvent::new_down(77, Some('m'), false, false, false));
+    apply_action(&mut doc, &a2);
+    assert_eq!(doc, "কম");
+
+    // Step 3: Shift+A (Reph) -> transforms 'কম' into 'কর্ম' retroactively on 'ম'
+    let a3 = engine.process_key(&KeyEvent::new_down(65, Some('A'), true, false, false));
+    assert_eq!(
+        a3.edits,
+        vec![TextEdit::ReplaceLast {
+            count: 1,
+            text: "র্ম".to_string()
+        }]
+    );
+    apply_action(&mut doc, &a3);
+    assert_eq!(doc, "কর্ম");
+
+    // Step 4: Shift+R (ফ)
+    let a4 = engine.process_key(&KeyEvent::new_down(82, Some('R'), true, false, false));
+    apply_action(&mut doc, &a4);
+    assert_eq!(doc, "কর্মফ");
+
+    // Step 5: Shift+V (ল)
+    let a5 = engine.process_key(&KeyEvent::new_down(86, Some('V'), true, false, false));
+    apply_action(&mut doc, &a5);
+    assert_eq!(doc, "কর্মফল");
+
+    // 2. Single consonant retroactive Reph: 'j' (ক) + Shift+A (Reph) -> র্ক
+    engine.reset_all_states();
+    doc.clear();
+    let a1 = engine.process_key(&KeyEvent::new_down(74, Some('j'), false, false, false));
+    apply_action(&mut doc, &a1);
+    assert_eq!(doc, "ক");
+    let a2 = engine.process_key(&KeyEvent::new_down(65, Some('A'), true, false, false));
+    assert_eq!(
+        a2.edits,
+        vec![TextEdit::ReplaceLast {
+            count: 1,
+            text: "র্ক".to_string()
+        }]
+    );
+    apply_action(&mut doc, &a2);
+    assert_eq!(doc, "র্ক");
+
+    // 3. Conjunct cluster retroactive Reph:
+    // 'j' (ক) + 'g' (্) + Shift+N (ষ) -> 'ক্ষ'
+    engine.reset_all_states();
+    doc.clear();
+    let a1 = engine.process_key(&KeyEvent::new_down(74, Some('j'), false, false, false));
+    apply_action(&mut doc, &a1);
+    let a2 = engine.process_key(&KeyEvent::new_down(71, Some('g'), false, false, false));
+    apply_action(&mut doc, &a2);
+    let a3 = engine.process_key(&KeyEvent::new_down(78, Some('N'), true, false, false));
+    apply_action(&mut doc, &a3);
+    assert_eq!(doc, "ক্ষ");
+
+    // Press Shift+A (Reph) -> transforms 'ক্ষ' into 'র্ক্ষ'
+    let a4 = engine.process_key(&KeyEvent::new_down(65, Some('A'), true, false, false));
+    assert_eq!(
+        a4.edits,
+        vec![TextEdit::ReplaceLast {
+            count: 3,
+            text: "র্ক্ষ".to_string()
+        }]
+    );
+    apply_action(&mut doc, &a4);
+    assert_eq!(doc, "র্ক্ষ");
+
+    // 4. Proactive Reph fallback (when buffer is empty at start of typing):
+    engine.reset_all_states();
+    doc.clear();
+    let a1 = engine.process_key(&KeyEvent::new_down(65, Some('A'), true, false, false));
+    assert!(a1.edits.is_empty());
+    assert_eq!(a1.composition, Some("র্".to_string()));
+    let a2 = engine.process_key(&KeyEvent::new_down(74, Some('j'), false, false, false));
+    apply_action(&mut doc, &a2);
+    assert_eq!(doc, "র্ক");
+}
+
+#[test]
 fn test_ansi_typing_vectors() {
     let mut engine = BornomalaEngine::new(InputScheme::ClassicAnsi);
 

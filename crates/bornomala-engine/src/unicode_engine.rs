@@ -19,6 +19,7 @@ pub const RA: char = '\u{09B0}'; // র
 pub const YA: char = '\u{09AF}'; // য
 pub const ZWJ: char = '\u{200D}';
 pub const ZWNJ: char = '\u{200C}';
+pub const NUKTA: char = '\u{09BC}'; // ়
 
 /// Checks if a character is a Bangla consonant.
 pub fn is_bangla_consonant(c: char) -> bool {
@@ -28,6 +29,24 @@ pub fn is_bangla_consonant(c: char) -> bool {
 /// Checks if a character is a pre-base vowel sign.
 pub fn is_prebase_kar(c: char) -> bool {
     c == I_KAR || c == E_KAR || c == OI_KAR
+}
+
+/// Checks if a character is a Bangla vowel sign (Kar).
+pub fn is_bangla_vowel_sign(c: char) -> bool {
+    matches!(c, '\u{09BE}'..='\u{09CC}' | '\u{09D7}')
+}
+
+/// Checks if a character is a Bangla modifier (Chandrabindu, Anusvara, Visarga).
+pub fn is_bangla_modifier(c: char) -> bool {
+    matches!(c, '\u{0981}'..='\u{0983}')
+}
+
+/// Result of attempting to apply Reph retroactively to the preceding cluster.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RetroactiveRephResult {
+    Applied { count: usize, text: String },
+    AlreadyHasReph,
+    NoPrecedingConsonant,
 }
 
 /// Classic Fixed Layout Engine producing canonical Unicode.
@@ -69,6 +88,92 @@ impl UnicodeClassicEngine {
         self.pending_prebase_kar = None;
         self.pending_reph = false;
         self.last_inserted.clear();
+    }
+
+    /// Applies Reph (র্) retroactively to the preceding consonant or cluster in `last_inserted`.
+    pub fn apply_retroactive_reph(&mut self) -> RetroactiveRephResult {
+        if self.pending_prebase_kar.is_some() || self.last_inserted.is_empty() {
+            return RetroactiveRephResult::NoPrecedingConsonant;
+        }
+
+        let chars = &self.last_inserted;
+        let mut idx = chars.len();
+
+        // 1. Skip trailing modifiers (Chandrabindu, Anusvara, Visarga)
+        while idx > 0 && is_bangla_modifier(chars[idx - 1]) {
+            idx -= 1;
+        }
+
+        // 2. Skip trailing vowel signs (Kars)
+        while idx > 0 && is_bangla_vowel_sign(chars[idx - 1]) {
+            idx -= 1;
+        }
+
+        // 3. Must have a consonant before any vowel signs/modifiers
+        if idx == 0 {
+            return RetroactiveRephResult::NoPrecedingConsonant;
+        }
+
+        // Optional Nukta right after base consonant
+        if idx > 0 && chars[idx - 1] == NUKTA {
+            idx -= 1;
+        }
+
+        if idx == 0 || !is_bangla_consonant(chars[idx - 1]) {
+            return RetroactiveRephResult::NoPrecedingConsonant;
+        }
+
+        // Consume the final consonant of the cluster
+        idx -= 1;
+
+        // 4. Scan backwards across any conjunct links: (Consonant (+ Nukta)? (+ ZWJ)? + HASANTA (+ ZWJ)?)
+        loop {
+            let mut temp = idx;
+            if temp > 0 && (chars[temp - 1] == ZWJ || chars[temp - 1] == ZWNJ) {
+                temp -= 1;
+            }
+            if temp > 0 && chars[temp - 1] == HASANTA {
+                temp -= 1;
+            } else {
+                break;
+            }
+            if temp > 0 && (chars[temp - 1] == ZWJ || chars[temp - 1] == ZWNJ) {
+                temp -= 1;
+            }
+            if temp > 0 && chars[temp - 1] == NUKTA {
+                temp -= 1;
+            }
+            if temp > 0 && is_bangla_consonant(chars[temp - 1]) {
+                temp -= 1;
+                idx = temp;
+            } else {
+                break;
+            }
+        }
+
+        // 5. Check if the cluster already begins with Reph (RA + HASANTA)
+        if chars[idx] == RA && chars.len() > idx + 1 && chars[idx + 1] == HASANTA {
+            return RetroactiveRephResult::AlreadyHasReph;
+        }
+
+        // 6. Valid preceding cluster found: chars[idx..]
+        let count = chars.len() - idx;
+        let cluster: Vec<char> = chars[idx..].to_vec();
+
+        let mut new_seq = Vec::with_capacity(cluster.len() + 2);
+        new_seq.push(RA);
+        new_seq.push(HASANTA);
+        new_seq.extend(cluster);
+
+        let text: String = new_seq.iter().collect::<String>().nfc().collect();
+
+        // Update self.last_inserted
+        self.last_inserted.truncate(idx);
+        for c in text.chars() {
+            self.last_inserted.push(c);
+        }
+
+        RetroactiveRephResult::Applied { count, text }
     }
 
     /// Process a physical key event through the Unicode layout.
@@ -133,14 +238,36 @@ impl UnicodeClassicEngine {
 
         // 1. Check for Reph shortcut (Shift+A in Bijoy Unicode emits র্)
         if mapped == "র্" || (chars.len() == 2 && chars[0] == RA && chars[1] == HASANTA) {
-            self.pending_reph = true;
-            return EngineAction {
-                edits: Vec::new(),
-                composition: Some("র্".to_string()),
-                suggestions: Vec::new(),
-                status_message: None,
-                consumed: true,
-            };
+            match self.apply_retroactive_reph() {
+                RetroactiveRephResult::Applied { count, text } => {
+                    return EngineAction {
+                        edits: vec![TextEdit::ReplaceLast { count, text }],
+                        composition: None,
+                        suggestions: Vec::new(),
+                        status_message: None,
+                        consumed: true,
+                    };
+                }
+                RetroactiveRephResult::AlreadyHasReph => {
+                    return EngineAction {
+                        edits: Vec::new(),
+                        composition: None,
+                        suggestions: Vec::new(),
+                        status_message: None,
+                        consumed: true,
+                    };
+                }
+                RetroactiveRephResult::NoPrecedingConsonant => {
+                    self.pending_reph = true;
+                    return EngineAction {
+                        edits: Vec::new(),
+                        composition: Some("র্".to_string()),
+                        suggestions: Vec::new(),
+                        status_message: None,
+                        consumed: true,
+                    };
+                }
+            }
         }
 
         // 2. Check for pre-base vowel signs typed before consonant (ি, ে, ৈ)
