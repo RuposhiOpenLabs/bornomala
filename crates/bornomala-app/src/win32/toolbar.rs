@@ -8,8 +8,8 @@ use super::converter::ConverterWindow;
 use bornomala_engine::InputScheme;
 use std::sync::atomic::{AtomicU32, Ordering};
 
-pub const TOOLBAR_WIDTH: i32 = 366;
-pub const TOOLBAR_HEIGHT: i32 = 36;
+pub const TOOLBAR_WIDTH: i32 = 324;
+pub const TOOLBAR_HEIGHT: i32 = 32;
 
 pub static CURRENT_SCHEME: AtomicU32 = AtomicU32::new(3); // 0=Unicode, 1=Ansi, 2=Phonetic, 3=PassThrough (Default: English)
 static HOVERED_BTN: AtomicU32 = AtomicU32::new(0); // 0=None, 1=Pill, 2=Tray, 3=Menu, 4=Close
@@ -19,10 +19,10 @@ static mut FONT_TITLE: HFONT = 0;
 static mut FONT_PILL: HFONT = 0;
 
 // Coordinates of interactive elements matching prototype layout
-const RECT_SEL_PILL:    RECT = RECT { left: 136, top: 5, right: 248, bottom: 31 };
-const RECT_BTN_TRAY:    RECT = RECT { left: 260, top: 6, right: 284, bottom: 30 };
-const RECT_BTN_MENU:    RECT = RECT { left: 288, top: 6, right: 312, bottom: 30 };
-const RECT_BTN_CLOSE:   RECT = RECT { left: 316, top: 6, right: 340, bottom: 30 };
+const RECT_SEL_PILL:    RECT = RECT { left: 112, top: 4, right: 212, bottom: 28 };
+const RECT_BTN_TRAY:    RECT = RECT { left: 222, top: 4, right: 246, bottom: 28 };
+const RECT_BTN_MENU:    RECT = RECT { left: 249, top: 4, right: 273, bottom: 28 };
+const RECT_BTN_CLOSE:   RECT = RECT { left: 276, top: 4, right: 300, bottom: 28 };
 
 // Command IDs
 const ID_MODE_UNICODE: usize = 101;
@@ -59,7 +59,7 @@ impl FloatingToolbar {
 
             let font_name = to_wide("Nirmala UI");
             FONT_TITLE = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0,
+                -12, 0, 0, 0, FW_BOLD, 0, 0, 0,
                 DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
                 font_name.as_ptr(),
             );
@@ -93,7 +93,7 @@ impl FloatingToolbar {
                 return None;
             }
 
-            let rgn = CreateRoundRectRgn(0, 0, TOOLBAR_WIDTH + 1, TOOLBAR_HEIGHT + 1, 18, 18);
+            let rgn = CreateRoundRectRgn(0, 0, TOOLBAR_WIDTH + 1, TOOLBAR_HEIGHT + 1, 16, 16);
             SetWindowRgn(hwnd, rgn, TRUE);
 
             TOOLBAR_HWND = hwnd;
@@ -200,25 +200,25 @@ unsafe extern "system" fn toolbar_wnd_proc(
             let parchment_brush = CreateSolidBrush(color_paper);
             let old_brush = SelectObject(hdc, parchment_brush);
             let old_pen = SelectObject(hdc, border_pen);
-            RoundRect(hdc, 1, 1, TOOLBAR_WIDTH - 1, TOOLBAR_HEIGHT - 1, 18, 18);
+            RoundRect(hdc, 1, 1, TOOLBAR_WIDTH - 1, TOOLBAR_HEIGHT - 1, 16, 16);
 
             // 3. Left Ornament from authentic ornament.svg
-            assets::draw_icon(hdc, IconId::OrnamentLeft, 12, 6);
+            assets::draw_icon(hdc, IconId::OrnamentLeft, 7, 4);
 
             // 4. Authentic Logo from logo.svg
-            assets::draw_icon(hdc, IconId::Logo, 28, 6);
+            assets::draw_icon(hdc, IconId::Logo, 22, 4);
 
             // 5. Divider 1 (1px green vertical line)
             let div_pen = CreatePen(PS_SOLID, 1, color_green);
             SelectObject(hdc, div_pen);
-            MoveToEx(hdc, 60, 7, std::ptr::null_mut());
-            LineTo(hdc, 60, 29);
+            MoveToEx(hdc, 53, 5, std::ptr::null_mut());
+            LineTo(hdc, 53, 27);
 
             // 6. Wordmark "বর্ণমালা"
             SetBkMode(hdc, TRANSPARENT);
             SetTextColor(hdc, color_green);
             SelectObject(hdc, FONT_TITLE);
-            let mut word_rc = RECT { left: 66, top: 4, right: 132, bottom: 32 };
+            let mut word_rc = RECT { left: 56, top: 2, right: 108, bottom: 30 };
             let wide_word = to_wide("বর্ণমালা");
             DrawTextW(hdc, wide_word.as_ptr(), -1, &mut word_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
@@ -226,16 +226,16 @@ unsafe extern "system" fn toolbar_wnd_proc(
             SelectObject(hdc, parchment_brush);
             let pill_pen = CreatePen(PS_SOLID, 2, color_green);
             SelectObject(hdc, pill_pen);
-            RoundRect(hdc, RECT_SEL_PILL.left, RECT_SEL_PILL.top, RECT_SEL_PILL.right, RECT_SEL_PILL.bottom, 10, 10);
+            RoundRect(hdc, RECT_SEL_PILL.left, RECT_SEL_PILL.top, RECT_SEL_PILL.right, RECT_SEL_PILL.bottom, 8, 8);
             DeleteObject(pill_pen);
 
             let current = CURRENT_SCHEME.load(Ordering::SeqCst);
 
             // Draw Flag / En Badge inside Pill
             if current == 3 {
-                assets::draw_icon(hdc, IconId::FlagEn, 142, 11);
+                assets::draw_icon(hdc, IconId::FlagEn, 118, 10);
             } else {
-                assets::draw_icon(hdc, IconId::FlagBd, 142, 11);
+                assets::draw_icon(hdc, IconId::FlagBd, 118, 10);
             }
 
             // Mode Label text
@@ -247,22 +247,22 @@ unsafe extern "system" fn toolbar_wnd_proc(
             };
             SetTextColor(hdc, color_green);
             SelectObject(hdc, FONT_PILL);
-            let mut label_rc = RECT { left: 166, top: 5, right: 232, bottom: 31 };
+            let mut label_rc = RECT { left: 138, top: 3, right: 196, bottom: 29 };
             let wide_mode = to_wide(mode_text);
             DrawTextW(hdc, wide_mode.as_ptr(), -1, &mut label_rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
             // Down chevron ∨
             let chev_pen = CreatePen(PS_SOLID, 2, color_green);
             SelectObject(hdc, chev_pen);
-            MoveToEx(hdc, 236, 16, std::ptr::null_mut());
-            LineTo(hdc, 239, 19);
-            LineTo(hdc, 242, 16);
+            MoveToEx(hdc, 199, 14, std::ptr::null_mut());
+            LineTo(hdc, 202, 17);
+            LineTo(hdc, 205, 14);
             DeleteObject(chev_pen);
 
             // 8. Divider 2 (1px green vertical line)
             SelectObject(hdc, div_pen);
-            MoveToEx(hdc, 254, 7, std::ptr::null_mut());
-            LineTo(hdc, 254, 29);
+            MoveToEx(hdc, 217, 5, std::ptr::null_mut());
+            LineTo(hdc, 217, 27);
 
             // 9. Tool Buttons (SendToTray, Menu, Close)
             let hover_id = HOVERED_BTN.load(Ordering::Relaxed);
@@ -287,18 +287,18 @@ unsafe extern "system" fn toolbar_wnd_proc(
 
             // Send to Tray tool (24x24)
             draw_hover_bg(&RECT_BTN_TRAY, 2);
-            assets::draw_icon(hdc, IconId::SendToTray, 263, 9);
+            assets::draw_icon(hdc, IconId::SendToTray, 225, 7);
 
             // Menu tool (24x24)
             draw_hover_bg(&RECT_BTN_MENU, 3);
-            assets::draw_icon(hdc, IconId::Menu, 291, 9);
+            assets::draw_icon(hdc, IconId::Menu, 252, 7);
 
             // Close tool (24x24)
             draw_hover_bg(&RECT_BTN_CLOSE, 4);
-            assets::draw_icon(hdc, IconId::Close, 319, 9);
+            assets::draw_icon(hdc, IconId::Close, 279, 7);
 
             // 10. Right Ornament from authentic ornament.svg (mirrored with red center)
-            assets::draw_icon(hdc, IconId::OrnamentRight, 346, 6);
+            assets::draw_icon(hdc, IconId::OrnamentRight, 305, 4);
 
             // Cleanup GDI objects
             SelectObject(hdc, old_pen);
