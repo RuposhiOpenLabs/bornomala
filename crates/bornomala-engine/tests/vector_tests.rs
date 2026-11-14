@@ -248,14 +248,8 @@ fn test_amount_in_words_bangla() {
         amount_to_bangla_words(1234.50),
         "এক হাজার দুই শত চৌত্রিশ টাকা পঞ্চাশ পয়সা মাত্র"
     );
-    assert_eq!(
-        amount_to_bangla_words(500.00),
-        "পাঁচ শত টাকা মাত্র"
-    );
-    assert_eq!(
-        amount_to_bangla_words(100000.00),
-        "এক লাখ টাকা মাত্র"
-    );
+    assert_eq!(amount_to_bangla_words(500.00), "পাঁচ শত টাকা মাত্র");
+    assert_eq!(amount_to_bangla_words(100000.00), "এক লাখ টাকা মাত্র");
     assert_eq!(
         amount_to_bangla_words(25000000.00),
         "দুই কোটি পঞ্চাশ লাখ টাকা মাত্র"
@@ -268,10 +262,7 @@ fn test_amount_in_words_english() {
         amount_to_english_words(1234.50),
         "One Thousand Two Hundred Thirty-Four Taka and Fifty Paisa Only"
     );
-    assert_eq!(
-        amount_to_english_words(500.00),
-        "Five Hundred Taka Only"
-    );
+    assert_eq!(amount_to_english_words(500.00), "Five Hundred Taka Only");
 }
 
 #[test]
@@ -330,17 +321,26 @@ fn test_preloaded_fonts_catalog() {
     assert_eq!(fonts.len(), 8);
 
     // Verify SutonnyMJ is marked as ANSI
-    let sutonny = fonts.iter().find(|f| f.font_name == "SutonnyMJ").expect("SutonnyMJ present");
+    let sutonny = fonts
+        .iter()
+        .find(|f| f.font_name == "SutonnyMJ")
+        .expect("SutonnyMJ present");
     assert!(sutonny.is_ansi);
     assert!(!sutonny.is_unicode);
 
     // Verify Nikosh is marked as Unicode
-    let nikosh = fonts.iter().find(|f| f.font_name == "Nikosh").expect("Nikosh present");
+    let nikosh = fonts
+        .iter()
+        .find(|f| f.font_name == "Nikosh")
+        .expect("Nikosh present");
     assert!(nikosh.is_unicode);
     assert!(!nikosh.is_ansi);
 
     // Verify PowerShell script generation includes all fonts
-    let ps_user = bornomala_engine::conveniences::fonts::generate_powershell_font_installer("C:\\Fonts", FontInstallScope::CurrentUser);
+    let ps_user = bornomala_engine::conveniences::fonts::generate_powershell_font_installer(
+        "C:\\Fonts",
+        FontInstallScope::CurrentUser,
+    );
     assert!(ps_user.contains("Nikosh.ttf"));
     assert!(ps_user.contains("SutonnyMJ Regular.ttf"));
     assert!(ps_user.contains("HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"));

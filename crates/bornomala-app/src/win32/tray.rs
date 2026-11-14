@@ -92,7 +92,8 @@ impl SystemTray {
 
     pub fn notify_minimized(&mut self) {
         let title = to_wide("বর্ণমালা (Bornomala)");
-        let info = to_wide("টুলবার সিস্টেম ট্রে-তে মিনিমাইজ করা হয়েছে। পুনরায় দেখতে এখানে বা ট্রে আইকনে ক্লিক করুন।");
+        let info =
+            to_wide("টুলবার সিস্টেম ট্রে-তে মিনিমাইজ করা হয়েছে। পুনরায় দেখতে এখানে বা ট্রে আইকনে ক্লিক করুন।");
 
         for c in self.nid.szInfoTitle.iter_mut() {
             *c = 0;
@@ -133,45 +134,126 @@ impl SystemTray {
                     let hmenu = CreatePopupMenu();
                     let current = CURRENT_SCHEME.load(Ordering::SeqCst);
 
-                    let add_item = |menu: HMENU, id: usize, text: &str, checked: bool, disabled: bool| {
-                        let mut flags = MF_STRING;
-                        if checked {
-                            flags |= MF_CHECKED;
-                        }
-                        if disabled {
-                            flags |= MF_GRAYED;
-                        }
-                        let wide = to_wide(text);
-                        AppendMenuW(menu, flags, id, wide.as_ptr());
-                    };
+                    let add_item =
+                        |menu: HMENU, id: usize, text: &str, checked: bool, disabled: bool| {
+                            let mut flags = MF_STRING;
+                            if checked {
+                                flags |= MF_CHECKED;
+                            }
+                            if disabled {
+                                flags |= MF_GRAYED;
+                            }
+                            let wide = to_wide(text);
+                            AppendMenuW(menu, flags, id, wide.as_ptr());
+                        };
 
                     let add_sep = |menu: HMENU| {
                         AppendMenuW(menu, MF_SEPARATOR, 0, std::ptr::null());
                     };
 
-                    add_item(hmenu, ID_MENU_HEADER, "Bornomala (বর্ণমালা) v0.1.0", false, true);
+                    add_item(
+                        hmenu,
+                        ID_MENU_HEADER,
+                        "Bornomala (বর্ণমালা) v0.1.0",
+                        false,
+                        true,
+                    );
                     add_sep(hmenu);
 
-                    add_item(hmenu, ID_MENU_UNICODE, "  ইউনিকোড মোড (Ctrl+Alt+V)", current == 0, false);
-                    add_item(hmenu, ID_MENU_ANSI, "  বিজয় এএনএসআই মোড (Ctrl+Alt+B)", current == 1, false);
-                    add_item(hmenu, ID_MENU_PHONETIC, "  ফোনেটিক মোড (F12)", current == 2, false);
-                    add_item(hmenu, ID_MENU_ENGLISH, "  ইংরেজি মোড (Ctrl+Alt+E)", current == 3, false);
+                    add_item(
+                        hmenu,
+                        ID_MENU_UNICODE,
+                        "  ইউনিকোড মোড (Ctrl+Alt+V)",
+                        current == 0,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_ANSI,
+                        "  বিজয় এএনএসআই মোড (Ctrl+Alt+B)",
+                        current == 1,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_PHONETIC,
+                        "  ফোনেটিক মোড (F12)",
+                        current == 2,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_ENGLISH,
+                        "  ইংরেজি মোড (Ctrl+Alt+E)",
+                        current == 3,
+                        false,
+                    );
                     add_sep(hmenu);
 
-                    add_item(hmenu, ID_MENU_TOOLBAR, "📌 ফ্লোটিং বার দেখান/লুকান (Toggle Bar)", false, false);
-                    add_item(hmenu, ID_MENU_CONVERTER, "🔄 বাংলা রূপান্তরকারী (Converter)...", false, false);
-                    add_item(hmenu, ID_MENU_SETTINGS, "⚙ কনফিগারেশন ও সেটিংস (Settings)...", false, false);
+                    add_item(
+                        hmenu,
+                        ID_MENU_TOOLBAR,
+                        "📌 ফ্লোটিং বার দেখান/লুকান (Toggle Bar)",
+                        false,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_CONVERTER,
+                        "🔄 বাংলা রূপান্তরকারী (Converter)...",
+                        false,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_SETTINGS,
+                        "⚙ কনফিগারেশন ও সেটিংস (Settings)...",
+                        false,
+                        false,
+                    );
                     add_sep(hmenu);
 
-                    add_item(hmenu, ID_MENU_GITHUB, "🌐 সোর্স কোড ও ডকুমেন্টেশন (GitHub)", false, false);
-                    add_item(hmenu, ID_MENU_ABOUT, "ℹ বর্ণমালা পরিচিতি (About)", false, false);
-                    add_item(hmenu, ID_MENU_UPDATE, "🔄 আপডেট পরীক্ষা করুন (Check for Updates)...", false, false);
+                    add_item(
+                        hmenu,
+                        ID_MENU_GITHUB,
+                        "🌐 সোর্স কোড ও ডকুমেন্টেশন (GitHub)",
+                        false,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_ABOUT,
+                        "ℹ বর্ণমালা পরিচিতি (About)",
+                        false,
+                        false,
+                    );
+                    add_item(
+                        hmenu,
+                        ID_MENU_UPDATE,
+                        "🔄 আপডেট পরীক্ষা করুন (Check for Updates)...",
+                        false,
+                        false,
+                    );
                     add_sep(hmenu);
 
-                    add_item(hmenu, ID_MENU_EXIT, "❌ সম্পূর্ণ প্রস্থান করুন (Exit)", false, false);
+                    add_item(
+                        hmenu,
+                        ID_MENU_EXIT,
+                        "❌ সম্পূর্ণ প্রস্থান করুন (Exit)",
+                        false,
+                        false,
+                    );
 
                     SetForegroundWindow(hwnd);
-                    TrackPopupMenu(hmenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, std::ptr::null());
+                    TrackPopupMenu(
+                        hmenu,
+                        TPM_RIGHTBUTTON,
+                        pt.x,
+                        pt.y,
+                        0,
+                        hwnd,
+                        std::ptr::null(),
+                    );
                     DestroyMenu(hmenu);
                 }
 
@@ -203,24 +285,27 @@ impl SystemTray {
             ID_MENU_SETTINGS => {
                 super::settings::SettingsWindow::open();
             }
-            ID_MENU_GITHUB => {
-                unsafe {
-                    let open_op = to_wide("open");
-                    let url = to_wide("https://github.com/RuposhiOpenLabs/bornomala");
-                    ShellExecuteW(0, open_op.as_ptr(), url.as_ptr(), std::ptr::null(), std::ptr::null(), SW_SHOWNORMAL);
-                }
-            }
+            ID_MENU_GITHUB => unsafe {
+                let open_op = to_wide("open");
+                let url = to_wide("https://github.com/RuposhiOpenLabs/bornomala");
+                ShellExecuteW(
+                    0,
+                    open_op.as_ptr(),
+                    url.as_ptr(),
+                    std::ptr::null(),
+                    std::ptr::null(),
+                    SW_SHOWNORMAL,
+                );
+            },
             ID_MENU_ABOUT => {
                 super::about::AboutWindow::open();
             }
             ID_MENU_UPDATE => {
                 super::updater::trigger_manual_update_check("0.1.0");
             }
-            ID_MENU_EXIT => {
-                unsafe {
-                    PostQuitMessage(0);
-                }
-            }
+            ID_MENU_EXIT => unsafe {
+                PostQuitMessage(0);
+            },
             _ => {}
         }
     }

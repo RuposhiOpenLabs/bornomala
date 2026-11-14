@@ -1,8 +1,7 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 
-pub static EMBEDDED_PHONETIC_RULES: &str =
-    include_str!("../data/phonetic_rules.json");
+pub static EMBEDDED_PHONETIC_RULES: &str = include_str!("../data/phonetic_rules.json");
 
 static GLOBAL_RULES: Lazy<AvroRules> = Lazy::new(|| {
     AvroRules::load_from_json(EMBEDDED_PHONETIC_RULES).expect("Failed to load Avro phonetic rules")
@@ -12,7 +11,7 @@ static GLOBAL_RULES: Lazy<AvroRules> = Lazy::new(|| {
 pub struct MatchRule {
     #[serde(rename = "type")]
     pub match_type: String, // "prefix" or "suffix"
-    pub scope: String,      // "punctuation", "vowel", "consonant", "exact", or "!..."
+    pub scope: String, // "punctuation", "vowel", "consonant", "exact", or "!..."
     #[serde(default)]
     pub value: Option<String>,
 }
@@ -112,11 +111,16 @@ impl AvroRules {
             .collect()
     }
 
-    fn is_exact(&self, needle: &str, haystack: &[char], start: isize, end: isize, not_neg: bool) -> bool {
-        let cond = start >= 0
-            && end as usize <= haystack.len()
-            && start as usize <= end as usize
-            && {
+    fn is_exact(
+        &self,
+        needle: &str,
+        haystack: &[char],
+        start: isize,
+        end: isize,
+        not_neg: bool,
+    ) -> bool {
+        let cond =
+            start >= 0 && end as usize <= haystack.len() && start as usize <= end as usize && {
                 let slice: String = haystack[start as usize..end as usize].iter().collect();
                 slice == needle
             };
@@ -163,7 +167,8 @@ impl AvroRules {
                                 match clean_scope {
                                     "punctuation" => {
                                         let cond = (chk < 0 && m.match_type == "prefix")
-                                            || (chk >= fixed.len() as isize && m.match_type == "suffix")
+                                            || (chk >= fixed.len() as isize
+                                                && m.match_type == "suffix")
                                             || (chk >= 0
                                                 && (chk as usize) < fixed.len()
                                                 && self.is_punctuation(fixed[chk as usize]));
@@ -174,7 +179,8 @@ impl AvroRules {
                                     }
                                     "vowel" => {
                                         let cond = ((chk >= 0 && m.match_type == "prefix")
-                                            || (chk < fixed.len() as isize && m.match_type == "suffix"))
+                                            || (chk < fixed.len() as isize
+                                                && m.match_type == "suffix"))
                                             && (chk >= 0
                                                 && (chk as usize) < fixed.len()
                                                 && self.is_vowel(fixed[chk as usize]));
@@ -185,7 +191,8 @@ impl AvroRules {
                                     }
                                     "consonant" => {
                                         let cond = ((chk >= 0 && m.match_type == "prefix")
-                                            || (chk < fixed.len() as isize && m.match_type == "suffix"))
+                                            || (chk < fixed.len() as isize
+                                                && m.match_type == "suffix"))
                                             && (chk >= 0
                                                 && (chk as usize) < fixed.len()
                                                 && self.is_consonant(fixed[chk as usize]));

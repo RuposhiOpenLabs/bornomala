@@ -48,7 +48,8 @@ pub const WS_SYSMENU: u32 = 0x00080000;
 pub const WS_THICKFRAME: u32 = 0x00040000;
 pub const WS_MINIMIZEBOX: u32 = 0x00020000;
 pub const WS_MAXIMIZEBOX: u32 = 0x00010000;
-pub const WS_OVERLAPPEDWINDOW: u32 = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+pub const WS_OVERLAPPEDWINDOW: u32 =
+    WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 // Extended Window Styles
 pub const WS_EX_TOOLWINDOW: u32 = 0x00000080;
@@ -445,18 +446,39 @@ extern "system" {
     pub fn ShowWindow(hWnd: HWND, nCmdShow: i32) -> BOOL;
     pub fn IsWindowVisible(hWnd: HWND) -> BOOL;
     pub fn UpdateWindow(hWnd: HWND) -> BOOL;
-    pub fn SetWindowPos(hWnd: HWND, hWndInsertAfter: HWND, X: i32, Y: i32, cx: i32, cy: i32, uFlags: u32) -> BOOL;
-    pub fn MoveWindow(hWnd: HWND, X: i32, Y: i32, nWidth: i32, nHeight: i32, bRepaint: BOOL) -> BOOL;
+    pub fn SetWindowPos(
+        hWnd: HWND,
+        hWndInsertAfter: HWND,
+        X: i32,
+        Y: i32,
+        cx: i32,
+        cy: i32,
+        uFlags: u32,
+    ) -> BOOL;
+    pub fn MoveWindow(
+        hWnd: HWND,
+        X: i32,
+        Y: i32,
+        nWidth: i32,
+        nHeight: i32,
+        bRepaint: BOOL,
+    ) -> BOOL;
     pub fn GetClientRect(hWnd: HWND, lpRect: *mut RECT) -> BOOL;
     pub fn GetWindowRect(hWnd: HWND, lpRect: *mut RECT) -> BOOL;
     pub fn DefWindowProcW(hWnd: HWND, Msg: u32, wParam: WPARAM, lParam: LPARAM) -> LRESULT;
     pub fn PostQuitMessage(nExitCode: i32);
     pub fn PostMessageW(hWnd: HWND, Msg: u32, wParam: WPARAM, lParam: LPARAM) -> BOOL;
     pub fn SendMessageW(hWnd: HWND, Msg: u32, wParam: WPARAM, lParam: LPARAM) -> LRESULT;
-    pub fn GetMessageW(lpMsg: *mut MSG, hWnd: HWND, wMsgFilterMin: u32, wMsgFilterMax: u32) -> BOOL;
+    pub fn GetMessageW(lpMsg: *mut MSG, hWnd: HWND, wMsgFilterMin: u32, wMsgFilterMax: u32)
+        -> BOOL;
     pub fn TranslateMessage(lpMsg: *const MSG) -> BOOL;
     pub fn DispatchMessageW(lpMsg: *const MSG) -> LRESULT;
-    pub fn SetTimer(hWnd: HWND, nIDEvent: usize, uElapse: u32, lpTimerFunc: Option<unsafe extern "system" fn(HWND, u32, usize, u32)>) -> usize;
+    pub fn SetTimer(
+        hWnd: HWND,
+        nIDEvent: usize,
+        uElapse: u32,
+        lpTimerFunc: Option<unsafe extern "system" fn(HWND, u32, usize, u32)>,
+    ) -> usize;
     pub fn KillTimer(hWnd: HWND, uIDEvent: usize) -> BOOL;
     pub fn BeginPaint(hWnd: HWND, lpPaint: *mut PAINTSTRUCT) -> HDC;
     pub fn EndPaint(hWnd: HWND, lpPaint: *const PAINTSTRUCT) -> BOOL;
@@ -477,7 +499,12 @@ extern "system" {
     pub fn SetWindowTextW(hWnd: HWND, lpString: *const u16) -> BOOL;
     pub fn RegisterHotKey(hWnd: HWND, id: i32, fsModifiers: u32, vk: u32) -> BOOL;
     pub fn UnregisterHotKey(hWnd: HWND, id: i32) -> BOOL;
-    pub fn SetWindowsHookExW(idHook: i32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: u32) -> HHOOK;
+    pub fn SetWindowsHookExW(
+        idHook: i32,
+        lpfn: HOOKPROC,
+        hmod: HINSTANCE,
+        dwThreadId: u32,
+    ) -> HHOOK;
     pub fn UnhookWindowsHookEx(hhk: HHOOK) -> BOOL;
     pub fn CallNextHookEx(hhk: HHOOK, nCode: i32, wParam: WPARAM, lParam: LPARAM) -> LRESULT;
     pub fn SendInput(cInputs: u32, pInputs: *const INPUT, cbSize: i32) -> u32;
@@ -487,7 +514,15 @@ extern "system" {
     pub fn CreateSolidBrush(color: COLORREF) -> HBRUSH;
     pub fn CreatePen(iStyle: i32, cWidth: i32, color: COLORREF) -> usize;
     pub fn FillRect(hDC: HDC, lprc: *const RECT, hbr: HBRUSH) -> i32;
-    pub fn RoundRect(hdc: HDC, left: i32, top: i32, right: i32, bottom: i32, width: i32, height: i32) -> BOOL;
+    pub fn RoundRect(
+        hdc: HDC,
+        left: i32,
+        top: i32,
+        right: i32,
+        bottom: i32,
+        width: i32,
+        height: i32,
+    ) -> BOOL;
     pub fn Ellipse(hdc: HDC, left: i32, top: i32, right: i32, bottom: i32) -> BOOL;
     pub fn Polygon(hdc: HDC, apt: *const POINT, cpt: i32) -> BOOL;
     pub fn MoveToEx(hdc: HDC, x: i32, y: i32, lppt: *mut POINT) -> BOOL;
@@ -541,8 +576,20 @@ extern "system" {
         hSection: usize,
         offset: u32,
     ) -> HBITMAP;
-    pub fn CreateBitmap(nWidth: i32, nHeight: i32, nPlanes: u32, nBitCount: u32, lpBits: *const c_void) -> HBITMAP;
-    pub fn DrawTextW(hdc: HDC, lpchText: *const u16, cchText: i32, lprc: *mut RECT, format: u32) -> i32;
+    pub fn CreateBitmap(
+        nWidth: i32,
+        nHeight: i32,
+        nPlanes: u32,
+        nBitCount: u32,
+        lpBits: *const c_void,
+    ) -> HBITMAP;
+    pub fn DrawTextW(
+        hdc: HDC,
+        lpchText: *const u16,
+        cchText: i32,
+        lprc: *mut RECT,
+        format: u32,
+    ) -> i32;
     pub fn SetDIBitsToDevice(
         hdc: HDC,
         xDest: i32,
@@ -569,8 +616,17 @@ extern "system" {
         nShowCmd: i32,
     ) -> HINSTANCE;
     pub fn CreatePopupMenu() -> HMENU;
-    pub fn AppendMenuW(hMenu: HMENU, uFlags: u32, uIDNewItem: usize, lpNewItem: *const u16) -> BOOL;
-    pub fn TrackPopupMenu(hMenu: HMENU, uFlags: u32, x: i32, y: i32, nReserved: i32, hWnd: HWND, prcRect: *const RECT) -> BOOL;
+    pub fn AppendMenuW(hMenu: HMENU, uFlags: u32, uIDNewItem: usize, lpNewItem: *const u16)
+        -> BOOL;
+    pub fn TrackPopupMenu(
+        hMenu: HMENU,
+        uFlags: u32,
+        x: i32,
+        y: i32,
+        nReserved: i32,
+        hWnd: HWND,
+        prcRect: *const RECT,
+    ) -> BOOL;
     pub fn DestroyMenu(hMenu: HMENU) -> BOOL;
 
     // Clipboard
@@ -587,7 +643,11 @@ extern "system" {
     pub fn GlobalFree(hMem: usize) -> usize;
 
     // Single Instance Mutex
-    pub fn CreateMutexW(lpMutexAttributes: *mut c_void, bInitialOwner: BOOL, lpName: *const u16) -> usize;
+    pub fn CreateMutexW(
+        lpMutexAttributes: *mut c_void,
+        bInitialOwner: BOOL,
+        lpName: *const u16,
+    ) -> usize;
     pub fn GetLastError() -> u32;
     pub fn CloseHandle(hObject: usize) -> BOOL;
 

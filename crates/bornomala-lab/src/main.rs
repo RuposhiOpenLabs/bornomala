@@ -1,7 +1,5 @@
+use bornomala_engine::{BanglaConverter, BornomalaEngine, InputScheme, KeyEvent, TextEdit};
 use std::io::{self, BufRead, Write};
-use bornomala_engine::{
-    BanglaConverter, BornomalaEngine, InputScheme, KeyEvent, TextEdit,
-};
 
 fn main() {
     println!("\x1b[2J\x1b[H"); // Clear screen

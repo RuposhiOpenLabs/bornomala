@@ -73,7 +73,13 @@ fn test_e2e_mixed_bangla_english_and_punctuation() {
     // 2. Dāṛi '.' -> '।' (displays live preview '।')
     let dari_ev = KeyEvent::new_down(0xBE, Some('.'), false, false, false);
     let dari_act = engine.process_key(&dari_ev);
-    assert_eq!(dari_act.edits, vec![TextEdit::ReplaceLast { count: 0, text: "।".to_string() }]);
+    assert_eq!(
+        dari_act.edits,
+        vec![TextEdit::ReplaceLast {
+            count: 0,
+            text: "।".to_string()
+        }]
+    );
 
     // 3. Double Dāṛi '..' -> '।।'
     engine.reset_all_states();

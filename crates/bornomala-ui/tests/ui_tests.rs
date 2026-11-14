@@ -55,7 +55,10 @@ fn test_autostart_and_splash_behavior() {
     assert!(state.startup_screen_visible);
     assert!(state.startup_screen_bengali_by_default);
     assert_eq!(state.language, Language::Bangla);
-    assert_eq!(state.get_startup_screen_path(), "assets/branding/startup_screen_bn.png");
+    assert_eq!(
+        state.get_startup_screen_path(),
+        "assets/branding/startup_screen_bn.png"
+    );
 
     state.toggle_autostart();
     assert!(!state.auto_startup_enabled);
@@ -79,10 +82,16 @@ fn test_installer_setup_wizard_flow() {
     assert_eq!(state.installer_step, bornomala_ui::InstallerStep::Terms);
 
     state.next_installer_step();
-    assert_eq!(state.installer_step, bornomala_ui::InstallerStep::Components);
+    assert_eq!(
+        state.installer_step,
+        bornomala_ui::InstallerStep::Components
+    );
 
     state.next_installer_step();
-    assert_eq!(state.installer_step, bornomala_ui::InstallerStep::Installing);
+    assert_eq!(
+        state.installer_step,
+        bornomala_ui::InstallerStep::Installing
+    );
 
     // Font conflict modal
     assert!(state.installer_font_conflict.is_none());

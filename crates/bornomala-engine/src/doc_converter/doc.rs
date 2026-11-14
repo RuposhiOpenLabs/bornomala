@@ -7,11 +7,11 @@
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::Path;
-use zip::write::FileOptions;
+use zip::write::SimpleFileOptions;
 use zip::{CompressionMethod, ZipWriter};
 
-use crate::converter::BanglaConverter;
 use super::{ConversionDirection, DocConvertError};
+use crate::converter::BanglaConverter;
 
 pub fn convert_doc(
     source_path: &Path,
@@ -48,7 +48,11 @@ pub fn convert_doc(
     }
 
     // 2. Write output matching the requested extension (.doc or .docx)
-    let out_ext = output_path.extension().and_then(|s| s.to_str()).unwrap_or("doc").to_ascii_lowercase();
+    let out_ext = output_path
+        .extension()
+        .and_then(|s| s.to_str())
+        .unwrap_or("doc")
+        .to_ascii_lowercase();
 
     let items_count = converted_text.lines().count();
 
@@ -72,7 +76,8 @@ fn extract_text_from_doc(path: &Path) -> Result<String, DocConvertError> {
 
     // First attempt: Parse CFBF Compound Document
     if let Ok(mut compound) = cfb::CompoundFile::open(&mut file) {
-        let entries: Vec<std::path::PathBuf> = compound.walk().map(|e| e.path().to_path_buf()).collect();
+        let entries: Vec<std::path::PathBuf> =
+            compound.walk().map(|e| e.path().to_path_buf()).collect();
 
         // Look for WordDocument stream
         let mut word_doc_stream = Vec::new();
@@ -144,10 +149,16 @@ fn extract_via_clx(word_doc: &[u8], table: &[u8]) -> Result<String, ()> {
 
     // fcClx is at offset 0x01A2 (418), lcbClx at 0x01A6 (422)
     let fc_clx = u32::from_le_bytes([
-        word_doc[0x01A2], word_doc[0x01A3], word_doc[0x01A4], word_doc[0x01A5],
+        word_doc[0x01A2],
+        word_doc[0x01A3],
+        word_doc[0x01A4],
+        word_doc[0x01A5],
     ]) as usize;
     let lcb_clx = u32::from_le_bytes([
-        word_doc[0x01A6], word_doc[0x01A7], word_doc[0x01A8], word_doc[0x01A9],
+        word_doc[0x01A6],
+        word_doc[0x01A7],
+        word_doc[0x01A8],
+        word_doc[0x01A9],
     ]) as usize;
 
     if fc_clx + lcb_clx > table.len() || lcb_clx < 5 {
@@ -162,18 +173,27 @@ fn extract_via_clx(word_doc: &[u8], table: &[u8]) -> Result<String, ()> {
         let clxt = clx_data[pos];
         if clxt == 0x01 {
             // clxtGrpprl: skip grpprl
-            if pos + 3 > clx_data.len() { break; }
+            if pos + 3 > clx_data.len() {
+                break;
+            }
             let cb = u16::from_le_bytes([clx_data[pos + 1], clx_data[pos + 2]]) as usize;
             pos += 3 + cb;
         } else if clxt == 0x02 {
             // clxtPlcfpcd: Piece Table found!
-            if pos + 5 > clx_data.len() { break; }
+            if pos + 5 > clx_data.len() {
+                break;
+            }
             let lcb = u32::from_le_bytes([
-                clx_data[pos + 1], clx_data[pos + 2], clx_data[pos + 3], clx_data[pos + 4],
+                clx_data[pos + 1],
+                clx_data[pos + 2],
+                clx_data[pos + 3],
+                clx_data[pos + 4],
             ]) as usize;
             pos += 5;
 
-            if lcb < 4 || pos + lcb > clx_data.len() { break; }
+            if lcb < 4 || pos + lcb > clx_data.len() {
+                break;
+            }
             let n = (lcb - 4) / 12; // (n + 1) * 4 + n * 8 = 12*n + 4
 
             let cp_array = &clx_data[pos..pos + (n + 1) * 4];
@@ -181,13 +201,21 @@ fn extract_via_clx(word_doc: &[u8], table: &[u8]) -> Result<String, ()> {
 
             for i in 0..n {
                 let cp_start = u32::from_le_bytes([
-                    cp_array[4 * i], cp_array[4 * i + 1], cp_array[4 * i + 2], cp_array[4 * i + 3],
+                    cp_array[4 * i],
+                    cp_array[4 * i + 1],
+                    cp_array[4 * i + 2],
+                    cp_array[4 * i + 3],
                 ]) as usize;
                 let cp_end = u32::from_le_bytes([
-                    cp_array[4 * (i + 1)], cp_array[4 * (i + 1) + 1], cp_array[4 * (i + 1) + 2], cp_array[4 * (i + 1) + 3],
+                    cp_array[4 * (i + 1)],
+                    cp_array[4 * (i + 1) + 1],
+                    cp_array[4 * (i + 1) + 2],
+                    cp_array[4 * (i + 1) + 3],
                 ]) as usize;
 
-                if cp_end <= cp_start { continue; }
+                if cp_end <= cp_start {
+                    continue;
+                }
                 let cp_count = cp_end - cp_start;
 
                 let pcd = &pcd_array[8 * i..8 * i + 8];
@@ -222,7 +250,11 @@ fn extract_via_clx(word_doc: &[u8], table: &[u8]) -> Result<String, ()> {
         }
     }
 
-    if full_text.is_empty() { Err(()) } else { Ok(full_text) }
+    if full_text.is_empty() {
+        Err(())
+    } else {
+        Ok(full_text)
+    }
 }
 
 fn extract_from_simple_fib(word_doc: &[u8]) -> Result<String, ()> {
@@ -230,10 +262,16 @@ fn extract_from_simple_fib(word_doc: &[u8]) -> Result<String, ()> {
         return Err(());
     }
     let fc_min = u32::from_le_bytes([
-        word_doc[0x0018], word_doc[0x0019], word_doc[0x001A], word_doc[0x001B],
+        word_doc[0x0018],
+        word_doc[0x0019],
+        word_doc[0x001A],
+        word_doc[0x001B],
     ]) as usize;
     let ccp_text = u32::from_le_bytes([
-        word_doc[0x004C], word_doc[0x004D], word_doc[0x004E], word_doc[0x004F],
+        word_doc[0x004C],
+        word_doc[0x004D],
+        word_doc[0x004E],
+        word_doc[0x004F],
     ]) as usize;
 
     if fc_min < word_doc.len() && ccp_text > 0 {
@@ -281,7 +319,12 @@ fn extract_printable_strings(bytes: &[u8]) -> String {
     let mut run = Vec::new();
 
     for &b in bytes {
-        if (0x20..=0x7E).contains(&b) || (0x80..=0xFF).contains(&b) || b == b'\r' || b == b'\n' || b == b'\t' {
+        if (0x20..=0x7E).contains(&b)
+            || (0x80..=0xFF).contains(&b)
+            || b == b'\r'
+            || b == b'\n'
+            || b == b'\t'
+        {
             run.push(b as char);
         } else {
             if run.len() >= 3 {
@@ -316,7 +359,11 @@ fn sanitize_doc_text(text: &str) -> String {
 }
 
 /// Writes converted text as a native, fully styled .doc (Word Document).
-fn write_as_doc(output_path: &Path, text: &str, direction: ConversionDirection) -> Result<(), DocConvertError> {
+fn write_as_doc(
+    output_path: &Path,
+    text: &str,
+    direction: ConversionDirection,
+) -> Result<(), DocConvertError> {
     let font_name = match direction {
         ConversionDirection::AnsiToUnicode => "Kalpurush",
         ConversionDirection::UnicodeToAnsi => "SutonnyMJ",
@@ -371,10 +418,14 @@ fn write_as_doc(output_path: &Path, text: &str, direction: ConversionDirection) 
 }
 
 /// Writes converted text as a modern, clean OpenXML .docx file.
-fn write_as_docx(output_path: &Path, text: &str, direction: ConversionDirection) -> Result<(), DocConvertError> {
+fn write_as_docx(
+    output_path: &Path,
+    text: &str,
+    direction: ConversionDirection,
+) -> Result<(), DocConvertError> {
     let file = File::create(output_path)?;
     let mut zip = ZipWriter::new(file);
-    let opts = FileOptions::default().compression_method(CompressionMethod::Deflated);
+    let opts = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
 
     let font_name = match direction {
         ConversionDirection::AnsiToUnicode => "Kalpurush",
@@ -404,9 +455,11 @@ fn write_as_docx(output_path: &Path, text: &str, direction: ConversionDirection)
         .map_err(|e| DocConvertError::Docx(e.to_string()))?;
 
     let mut doc_xml = String::new();
-    doc_xml.push_str(r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    doc_xml.push_str(
+        r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body>"#);
+  <w:body>"#,
+    );
 
     for line in text.lines() {
         let escaped = quick_xml::escape::escape(line);

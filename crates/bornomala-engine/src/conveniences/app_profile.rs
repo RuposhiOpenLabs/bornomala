@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::events::InputScheme;
+use std::collections::HashMap;
 
 /// Tracks and remembers last used typing scheme per application executable name or window title.
 #[derive(Debug, Clone, Default)]

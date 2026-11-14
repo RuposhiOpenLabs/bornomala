@@ -1,18 +1,21 @@
-use std::env;
-use std::fs;
-use std::io::{self, Read, Write};
-use std::thread;
-use std::time::Duration;
+use bornomala_engine::conveniences::fonts::{
+    generate_powershell_font_installer, get_preloaded_fonts, FontInstallScope,
+};
 use bornomala_engine::{
     amount_to_bangla_words, amount_to_english_words, convert_digits, gregorian_to_bangla,
     AutostartManager, BanglaConverter, BornomalaEngine, InputScheme, KeyEvent, TextEdit,
     DEFAULT_SPLASH_DURATION_MS, REGISTRY_RUN_KEY, REGISTRY_VALUE_NAME,
 };
-use bornomala_engine::conveniences::fonts::{get_preloaded_fonts, FontInstallScope, generate_powershell_font_installer};
 use bornomala_ui::{ActiveView, FontConflictModal, InstallerStep, Language, SvgRenderer, UiState};
+use std::env;
+use std::fs;
+use std::io::{self, Read, Write};
+use std::thread;
+use std::time::Duration;
 
 fn print_usage() {
-    println!(r#"Bornomala (বর্ণমালা) CLI — Universal Bangla Text & Engine Tool
+    println!(
+        r#"Bornomala (বর্ণমালা) CLI — Universal Bangla Text & Engine Tool
 "Your mother tongue doesn't need a license key."
 Ruposhi Open Labs | Developer: Ryan Shelby
 
@@ -55,7 +58,8 @@ COMMANDS:
               Usage: bornomala-cli digits [--to-bangla | --to-english] <TEXT>
 
     help      Show this help information
-"#);
+"#
+    );
 }
 
 fn main() {
@@ -101,8 +105,8 @@ fn get_input_text(param: Option<&String>) -> String {
 }
 
 fn handle_convert(args: &[String]) {
-    use std::path::Path;
     use bornomala_engine::doc_converter::{convert_file, ConversionDirection, DocumentFormat};
+    use std::path::Path;
 
     let converter = BanglaConverter::new();
     if args.is_empty() {
@@ -140,7 +144,10 @@ fn handle_convert(args: &[String]) {
                 println!("Format:     {:?}", rep.format);
                 println!("Direction:  {}", rep.direction.description());
                 println!("Elements:   {} items processed", rep.items_processed);
-                println!("Characters: {} characters converted", rep.characters_converted);
+                println!(
+                    "Characters: {} characters converted",
+                    rep.characters_converted
+                );
                 println!("Time:       {} ms", rep.duration_ms);
             }
             Err(e) => {
@@ -155,10 +162,21 @@ fn handle_convert(args: &[String]) {
             let input_arg = args.get(1);
             if let Some(path_str) = input_arg {
                 let p = Path::new(path_str);
-                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Doc | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                if p.exists()
+                    && matches!(
+                        DocumentFormat::from_path(p),
+                        DocumentFormat::Docx
+                            | DocumentFormat::Doc
+                            | DocumentFormat::Pdf
+                            | DocumentFormat::Txt
+                    )
+                {
                     match convert_file(p, None, ConversionDirection::UnicodeToAnsi) {
                         Ok(rep) => {
-                            println!("✓ Document converted to ANSI: {}", rep.output_path.display());
+                            println!(
+                                "✓ Document converted to ANSI: {}",
+                                rep.output_path.display()
+                            );
                             return;
                         }
                         Err(e) => eprintln!("Error: {}", e),
@@ -170,17 +188,31 @@ fn handle_convert(args: &[String]) {
             let (ansi, unrep) = converter.unicode_to_ansi(&input);
             print!("{}", ansi);
             if !unrep.is_empty() {
-                eprintln!("\n[Warning] Unrepresentable characters in ANSI: {:?}", unrep);
+                eprintln!(
+                    "\n[Warning] Unrepresentable characters in ANSI: {:?}",
+                    unrep
+                );
             }
         }
         "--to-unicode" => {
             let input_arg = args.get(1);
             if let Some(path_str) = input_arg {
                 let p = Path::new(path_str);
-                if p.exists() && matches!(DocumentFormat::from_path(p), DocumentFormat::Docx | DocumentFormat::Doc | DocumentFormat::Pdf | DocumentFormat::Txt) {
+                if p.exists()
+                    && matches!(
+                        DocumentFormat::from_path(p),
+                        DocumentFormat::Docx
+                            | DocumentFormat::Doc
+                            | DocumentFormat::Pdf
+                            | DocumentFormat::Txt
+                    )
+                {
                     match convert_file(p, None, ConversionDirection::AnsiToUnicode) {
                         Ok(rep) => {
-                            println!("✓ Document converted to Unicode: {}", rep.output_path.display());
+                            println!(
+                                "✓ Document converted to Unicode: {}",
+                                rep.output_path.display()
+                            );
                             return;
                         }
                         Err(e) => eprintln!("Error: {}", e),
@@ -207,7 +239,10 @@ fn handle_inspect(args: &[String]) {
     println!("Text: {}", text);
     println!("Length: {} characters", text.chars().count());
     println!("{:-<50}", "");
-    println!("{:<6} {:<10} {:<15} {}", "Index", "Char", "Codepoint", "Hex Bytes (UTF-8)");
+    println!(
+        "{:<6} {:<10} {:<15} {}",
+        "Index", "Char", "Codepoint", "Hex Bytes (UTF-8)"
+    );
     println!("{:-<50}", "");
     for (i, c) in text.chars().enumerate() {
         let mut b = [0u8; 4];
@@ -217,7 +252,10 @@ fn handle_inspect(args: &[String]) {
             .map(|x| format!("{:02X}", x))
             .collect::<Vec<_>>()
             .join(" ");
-        println!("{:<6} {:<10} U+{:04X}         {}", i, c, c as u32, hex_bytes);
+        println!(
+            "{:<6} {:<10} U+{:04X}         {}",
+            i, c, c as u32, hex_bytes
+        );
     }
 }
 
@@ -232,7 +270,10 @@ fn handle_type(args: &[String]) {
         "ansi" => InputScheme::ClassicAnsi,
         "phonetic" => InputScheme::Phonetic,
         other => {
-            eprintln!("Invalid scheme: {}. Choose 'unicode', 'ansi', or 'phonetic'", other);
+            eprintln!(
+                "Invalid scheme: {}. Choose 'unicode', 'ansi', or 'phonetic'",
+                other
+            );
             return;
         }
     };
@@ -374,17 +415,31 @@ fn handle_splash(args: &[String]) {
     };
 
     println!("\x1b[2J\x1b[1;1H");
-    println!("\x1b[1;32m======================================================================\x1b[0m");
-    println!("\x1b[1;32m      ____                                               _            \x1b[0m");
-    println!("\x1b[1;32m     |  _ \\                                             | |           \x1b[0m");
-    println!("\x1b[1;32m     | |_) | ___  _ __ _ __   ___  _ __ ___   __ _  ___| | __ _      \x1b[0m");
+    println!(
+        "\x1b[1;32m======================================================================\x1b[0m"
+    );
+    println!(
+        "\x1b[1;32m      ____                                               _            \x1b[0m"
+    );
+    println!(
+        "\x1b[1;32m     |  _ \\                                             | |           \x1b[0m"
+    );
+    println!(
+        "\x1b[1;32m     | |_) | ___  _ __ _ __   ___  _ __ ___   __ _  ___| | __ _      \x1b[0m"
+    );
     println!("\x1b[1;31m     |  _ < / _ \\| '__| '_ \\ / _ \\| '_ ` _ \\ / _` |/ __| |/ _` |     \x1b[0m");
-    println!("\x1b[1;31m     | |_) | (_) | |  | | | | (_) | | | | | | (_| | (__| | (_| |     \x1b[0m");
+    println!(
+        "\x1b[1;31m     | |_) | (_) | |  | | | | (_) | | | | | | (_| | (__| | (_| |     \x1b[0m"
+    );
     println!("\x1b[1;32m     |____/ \\___/|_|  |_| |_|\\___/|_| |_| |_|\\__,_|\\___|_|\\__,_|     \x1b[0m");
-    println!("\x1b[1;32m                         ব  র্ণ  মা  লা                                \x1b[0m");
-    println!("\x1b[1;32m======================================================================\x1b[0m");
+    println!(
+        "\x1b[1;32m                         ব  র্ণ  মা  লা                                \x1b[0m"
+    );
+    println!(
+        "\x1b[1;32m======================================================================\x1b[0m"
+    );
     if english_mode {
-        println!("\x1b[1;37m Bornomala — Free & Offline Bangla Typing Suite v0.1.0-alpha\x1b[0m");
+        println!("\x1b[1;37m Bornomala — Free & Offline Bangla Typing Suite v0.1.0\x1b[0m");
         println!("\x1b[0;36m \"Your mother tongue doesn't need a license key.\"\x1b[0m");
         println!("\x1b[1;31m No crack. No virus. No invoice.\x1b[0m");
         println!("----------------------------------------------------------------------");
@@ -420,10 +475,14 @@ fn handle_splash(args: &[String]) {
         }
         if english_mode {
             println!("] Ready!");
-            println!("\n Auto-hiding startup splash screen (2.5s). Background text service running...");
+            println!(
+                "\n Auto-hiding startup splash screen (2.5s). Background text service running..."
+            );
         } else {
             println!("] প্রস্তুত!");
-            println!("\n ২.৫ সেকেন্ডের মধ্যে স্ক্রিনটি স্বয়ংক্রিয়ভাবে লুকিয়ে যাবে। ব্যাকগ্রাউন্ড টেক্সট সার্ভিস সক্রিয়...");
+            println!(
+                "\n ২.৫ সেকেন্ডের মধ্যে স্ক্রিনটি স্বয়ংক্রিয়ভাবে লুকিয়ে যাবে। ব্যাকগ্রাউন্ড টেক্সট সার্ভিস সক্রিয়..."
+            );
         }
     } else {
         if english_mode {
@@ -432,7 +491,9 @@ fn handle_splash(args: &[String]) {
             println!("[####################] প্রস্তুত (তাৎক্ষণিক)!");
         }
     }
-    println!("\x1b[1;32m======================================================================\x1b[0m");
+    println!(
+        "\x1b[1;32m======================================================================\x1b[0m"
+    );
 }
 
 fn handle_autostart(args: &[String]) {
@@ -465,9 +526,15 @@ fn handle_autostart(args: &[String]) {
         }
         "script" => {
             println!("--- scripts/enable_autostart.bat ---");
-            println!("{}", bornomala_engine::conveniences::autostart::generate_enable_bat_script(None));
+            println!(
+                "{}",
+                bornomala_engine::conveniences::autostart::generate_enable_bat_script(None)
+            );
             println!("--- scripts/disable_autostart.bat ---");
-            println!("{}", bornomala_engine::conveniences::autostart::generate_disable_bat_script());
+            println!(
+                "{}",
+                bornomala_engine::conveniences::autostart::generate_disable_bat_script()
+            );
         }
         other => {
             eprintln!("Unknown autostart subcommand: {}", other);
@@ -477,11 +544,12 @@ fn handle_autostart(args: &[String]) {
 }
 
 fn handle_about() {
-    println!(r#"======================================================================
+    println!(
+        r#"======================================================================
 Bornomala (বর্ণমালা) — Free, Open Source Bangla Typing Suite
 "Your mother tongue doesn't need a license key."
 ======================================================================
-Version:    0.1.0 (v0.1.0-alpha)
+Version:    0.1.0 (v0.1.0)
 Publisher:  Ruposhi Open Labs
             GitHub:  https://github.com/RuposhiOpenLabs
 
@@ -497,9 +565,9 @@ Design Principles:
   • Zero Ads & Free: No cracked copies, no viruses, no trial limits, no payment invoices.
   • Cryptographically Verified: Ed25519 signature checks on updates.
   • High-Reliability TSF Architecture: Built in Rust with panic-safe pass-through fail-safes.
-======================================================================"#);
+======================================================================"#
+    );
 }
-
 
 fn handle_fonts(args: &[String]) {
     let sub = args.first().map(|s| s.as_str()).unwrap_or("list");
@@ -510,7 +578,10 @@ fn handle_fonts(args: &[String]) {
             println!("==========================================================================================");
             println!(" Bornomala (বর্ণমালা) — Preloaded Government & Classic Bangla Fonts (৮টি ফন্ট)");
             println!("==========================================================================================");
-            println!("{:<4} {:<28} {:<18} {:<10} {}", "No.", "Font Name", "Type", "Scope", "Description / বিবরণ");
+            println!(
+                "{:<4} {:<28} {:<18} {:<10} {}",
+                "No.", "Font Name", "Type", "Scope", "Description / বিবরণ"
+            );
             println!("{:-<95}", "");
             for (idx, font) in fonts.iter().enumerate() {
                 let enc = if font.is_unicode && font.is_ansi {
@@ -531,7 +602,9 @@ fn handle_fonts(args: &[String]) {
             }
             println!("{:-<95}", "");
             println!(" Total: 8 preloaded fonts included in installer & fonts/ directory.");
-            println!(" Auto-installed by setup wizard with conflict popup detection if already present.");
+            println!(
+                " Auto-installed by setup wizard with conflict popup detection if already present."
+            );
             println!("==========================================================================================");
         }
         "script" => {
@@ -543,7 +616,8 @@ fn handle_fonts(args: &[String]) {
                     eprintln!("scripts/install_fonts.bat not found");
                 }
             } else {
-                let script = generate_powershell_font_installer(r"\..onts", FontInstallScope::CurrentUser);
+                let script =
+                    generate_powershell_font_installer(r"\..onts", FontInstallScope::CurrentUser);
                 println!("{}", script);
             }
         }
@@ -595,7 +669,14 @@ fn handle_setup(args: &[String]) {
     println!(" Bornomala (বর্ণমালা) — Animated Windows Install Setup UI/UX");
     println!("======================================================================");
     println!(" Active Step:     {:?}", step);
-    println!(" Conflict Modal:  {}", if show_conflict { "Visible (SutonnyMJ conflict test)" } else { "None" });
+    println!(
+        " Conflict Modal:  {}",
+        if show_conflict {
+            "Visible (SutonnyMJ conflict test)"
+        } else {
+            "None"
+        }
+    );
     println!(" Preloaded Fonts: 8 Fonts Ready (Nikosh, SutonnyMJ, AdorshoLipi, Bangla)");
     println!(" Smooth Lazy Animations: Pulse Glow, Float Badges, Shimmer Progress");
     println!("----------------------------------------------------------------------");
@@ -633,12 +714,16 @@ fn handle_setup(args: &[String]) {
 
             let light_escaped = serde_json::to_string(&light_svg).unwrap();
             let dark_escaped = serde_json::to_string(&dark_svg).unwrap();
-            svg_json_items.push(format!("  \"{}\": {{ light: {}, dark: {} }}", name, light_escaped, dark_escaped));
+            svg_json_items.push(format!(
+                "  \"{}\": {{ light: {}, dark: {} }}",
+                name, light_escaped, dark_escaped
+            ));
         }
 
         let json_body = svg_json_items.join(",\n");
 
-        let html = format!(r###"<!DOCTYPE html>
+        let html = format!(
+            r###"<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
@@ -880,12 +965,17 @@ fn handle_setup(args: &[String]) {
     render();
   </script>
 </body>
-</html>"###, json_body = json_body);
+</html>"###,
+            json_body = json_body
+        );
 
         if let Err(e) = fs::write(&path, html) {
             eprintln!("Failed to write HTML preview to {}: {}", path, e);
         } else {
-            println!(" Saved interactive animated HTML setup preview to: {}", path);
+            println!(
+                " Saved interactive animated HTML setup preview to: {}",
+                path
+            );
         }
     } else {
         println!(" (Tip: use '--html preview.html' to generate an interactive browser preview)");

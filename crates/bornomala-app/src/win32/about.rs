@@ -77,32 +77,68 @@ unsafe extern "system" fn about_wnd_proc(
             let hinst = GetModuleHandleW(std::ptr::null());
 
             let font_btn = CreateFontW(
-                -12, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
 
             // Action Buttons
             let btn_github = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("🌐 গিটহাব (GitHub)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                24, 385, 130, 32, hwnd, ID_BTN_ABOUT_GITHUB, hinst, std::ptr::null_mut(),
+                24,
+                385,
+                130,
+                32,
+                hwnd,
+                ID_BTN_ABOUT_GITHUB,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_github, WM_SETFONT, font_btn, 1);
 
             let btn_mail = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("📧 সাপোর্ট ও ফিডব্যাক").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                164, 385, 160, 32, hwnd, ID_BTN_ABOUT_FEEDBACK, hinst, std::ptr::null_mut(),
+                164,
+                385,
+                160,
+                32,
+                hwnd,
+                ID_BTN_ABOUT_FEEDBACK,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_mail, WM_SETFONT, font_btn, 1);
 
             let btn_close = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("✕ বন্ধ করুন").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-                334, 385, 106, 32, hwnd, ID_BTN_ABOUT_CLOSE, hinst, std::ptr::null_mut(),
+                334,
+                385,
+                106,
+                32,
+                hwnd,
+                ID_BTN_ABOUT_CLOSE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_close, WM_SETFONT, font_btn, 1);
 
@@ -134,7 +170,12 @@ unsafe extern "system" fn about_wnd_proc(
 
             // 1. Forest Green Header Banner
             let header_brush = CreateSolidBrush(color_green);
-            let header_rc = RECT { left: 0, top: 0, right: w, bottom: 74 };
+            let header_rc = RECT {
+                left: 0,
+                top: 0,
+                right: w,
+                bottom: 74,
+            };
             FillRect(mem_dc, &header_rc, header_brush);
             DeleteObject(header_brush);
 
@@ -157,20 +198,66 @@ unsafe extern "system" fn about_wnd_proc(
             SetTextColor(mem_dc, rgb(254, 247, 222)); // Cream font
 
             let title_font = CreateFontW(
-                -19, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -19,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let old_f = SelectObject(mem_dc, title_font);
-            let mut t_rect = RECT { left: 82, top: 15, right: w - 20, bottom: 42 };
-            DrawTextW(mem_dc, to_wide("বর্ণমালা — Bornomala v0.1.0").as_ptr(), -1, &mut t_rect, DT_LEFT | DT_SINGLELINE);
+            let mut t_rect = RECT {
+                left: 82,
+                top: 15,
+                right: w - 20,
+                bottom: 42,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("বর্ণমালা — Bornomala v0.1.0").as_ptr(),
+                -1,
+                &mut t_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             let sub_font = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, sub_font);
-            let mut st_rect = RECT { left: 82, top: 42, right: w - 20, bottom: 64 };
-            DrawTextW(mem_dc, to_wide("১০০% মুক্ত ও আধুনিক বাংলা টাইপিং স্যুট").as_ptr(), -1, &mut st_rect, DT_LEFT | DT_SINGLELINE);
+            let mut st_rect = RECT {
+                left: 82,
+                top: 42,
+                right: w - 20,
+                bottom: 64,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("১০০% মুক্ত ও আধুনিক বাংলা টাইপিং স্যুট").as_ptr(),
+                -1,
+                &mut st_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // 2. Tagline Card (Rounded box with Crimson Red quote)
             let border_pen = CreatePen(PS_SOLID, 1, color_card_border);
@@ -181,13 +268,36 @@ unsafe extern "system" fn about_wnd_proc(
             RoundRect(mem_dc, 20, 86, w - 20, 134, 10, 10);
 
             let quote_font = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, quote_font);
             SetTextColor(mem_dc, color_red);
-            let mut q_rect = RECT { left: 30, top: 96, right: w - 30, bottom: 124 };
-            DrawTextW(mem_dc, to_wide("“আপনার মাতৃভাষার জন্য কোনো লাইসেন্স কি-র প্রয়োজন নেই।”").as_ptr(), -1, &mut q_rect, DT_CENTER | DT_SINGLELINE);
+            let mut q_rect = RECT {
+                left: 30,
+                top: 96,
+                right: w - 30,
+                bottom: 124,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("“আপনার মাতৃভাষার জন্য কোনো লাইসেন্স কি-র প্রয়োজন নেই।”").as_ptr(),
+                -1,
+                &mut q_rect,
+                DT_CENTER | DT_SINGLELINE,
+            );
 
             // 3. Information Card (Rounded box with details)
             RoundRect(mem_dc, 20, 144, w - 20, 365, 10, 10);
@@ -197,32 +307,90 @@ unsafe extern "system" fn about_wnd_proc(
 
             // Details List
             let item_label_font = CreateFontW(
-                -12, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let item_val_font = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
 
             let draw_detail = |label: &str, val: &str, y_pos: i32| {
                 SelectObject(mem_dc, item_label_font);
                 SetTextColor(mem_dc, color_green);
-                let mut l_rc = RECT { left: 34, top: y_pos, right: 175, bottom: y_pos + 20 };
-                DrawTextW(mem_dc, to_wide(label).as_ptr(), -1, &mut l_rc, DT_LEFT | DT_SINGLELINE);
+                let mut l_rc = RECT {
+                    left: 34,
+                    top: y_pos,
+                    right: 175,
+                    bottom: y_pos + 20,
+                };
+                DrawTextW(
+                    mem_dc,
+                    to_wide(label).as_ptr(),
+                    -1,
+                    &mut l_rc,
+                    DT_LEFT | DT_SINGLELINE,
+                );
 
                 SelectObject(mem_dc, item_val_font);
                 SetTextColor(mem_dc, rgb(30, 40, 35));
-                let mut v_rc = RECT { left: 180, top: y_pos, right: w - 34, bottom: y_pos + 20 };
-                DrawTextW(mem_dc, to_wide(val).as_ptr(), -1, &mut v_rc, DT_LEFT | DT_SINGLELINE);
+                let mut v_rc = RECT {
+                    left: 180,
+                    top: y_pos,
+                    right: w - 34,
+                    bottom: y_pos + 20,
+                };
+                DrawTextW(
+                    mem_dc,
+                    to_wide(val).as_ptr(),
+                    -1,
+                    &mut v_rc,
+                    DT_LEFT | DT_SINGLELINE,
+                );
             };
 
-            draw_detail("প্রকাশক (Publisher):", "রূপসী ওপেন ল্যাবস (Ruposhi Open Labs)", 160);
+            draw_detail(
+                "প্রকাশক (Publisher):",
+                "রূপসী ওপেন ল্যাবস (Ruposhi Open Labs)",
+                160,
+            );
             draw_detail("ওয়েবসাইট:", "github.com/RuposhiOpenLabs/bornomala", 188);
             draw_detail("প্রধান ডেভেলপার:", "Ryan Shelby (MdSagorMunshi)", 216);
             draw_detail("লাইসেন্স:", "GNU General Public License v3.0 (GPLv3)", 244);
-            draw_detail("নিরাপত্তা ও গোপনীয়তা:", "১০০% অফলাইন, জিরো কী-লগিং, জিরো ট্র্যাকিং", 272);
-            draw_detail("সমর্থিত ইনপুট মোড:", "ইউনিকোড, বিজয় ANSI, ফোনেটিক, ইংরেজি", 300);
+            draw_detail(
+                "নিরাপত্তা ও গোপনীয়তা:",
+                "১০০% অফলাইন, জিরো কী-লগিং, জিরো ট্র্যাকিং",
+                272,
+            );
+            draw_detail(
+                "সমর্থিত ইনপুট মোড:",
+                "ইউনিকোড, বিজয় ANSI, ফোনেটিক, ইংরেজি",
+                300,
+            );
             draw_detail("দ্বিমুখী রূপান্তর:", "ইউনিকোড ⇄ বিজয় এএনএসআই কনভার্টার", 328);
 
             // Blit to screen
@@ -255,12 +423,26 @@ unsafe extern "system" fn about_wnd_proc(
                 ID_BTN_ABOUT_GITHUB => {
                     let open_op = to_wide("open");
                     let url = to_wide("https://github.com/RuposhiOpenLabs/bornomala");
-                    ShellExecuteW(hwnd, open_op.as_ptr(), url.as_ptr(), std::ptr::null(), std::ptr::null(), SW_SHOWNORMAL);
+                    ShellExecuteW(
+                        hwnd,
+                        open_op.as_ptr(),
+                        url.as_ptr(),
+                        std::ptr::null(),
+                        std::ptr::null(),
+                        SW_SHOWNORMAL,
+                    );
                 }
                 ID_BTN_ABOUT_FEEDBACK => {
                     let open_op = to_wide("open");
                     let mailto = to_wide("mailto:ryn@disr.it?subject=Bornomala%20Feedback");
-                    ShellExecuteW(hwnd, open_op.as_ptr(), mailto.as_ptr(), std::ptr::null(), std::ptr::null(), SW_SHOWNORMAL);
+                    ShellExecuteW(
+                        hwnd,
+                        open_op.as_ptr(),
+                        mailto.as_ptr(),
+                        std::ptr::null(),
+                        std::ptr::null(),
+                        SW_SHOWNORMAL,
+                    );
                 }
                 ID_BTN_ABOUT_CLOSE => {
                     ShowWindow(hwnd, SW_HIDE);

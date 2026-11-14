@@ -1,5 +1,5 @@
-use bornomala_phonetic::PhoneticEngine as CorePhoneticEngine;
 use crate::events::{EngineAction, KeyEvent, Suggestion, TextEdit};
+use bornomala_phonetic::PhoneticEngine as CorePhoneticEngine;
 
 /// Avro-compatible Phonetic Transliteration Engine for Bornomala.
 /// Wraps `bornomala_phonetic::PhoneticEngine` and manages live composition state,
@@ -112,7 +112,7 @@ impl PhoneticEngine {
         }
 
         // 1. Escape: Cancel composition and clear preview
-        if event.key_code == 27 || event.key_code == 0x1B {
+        if event.key_code == 0x1B {
             if !self.core.input_buffer().is_empty() || self.last_preview_char_count > 0 {
                 let count = self.last_preview_char_count;
                 self.reset_state();
@@ -132,7 +132,7 @@ impl PhoneticEngine {
         }
 
         // 2. Tab or Down Arrow: Cycle to next suggestion
-        if (event.key_code == 9 || event.key_code == 40 || event.key_code == 0x28)
+        if (event.key_code == 0x09 || event.key_code == 0x28)
             && !self.current_suggestions.is_empty()
         {
             self.selected_candidate_idx =
@@ -153,8 +153,7 @@ impl PhoneticEngine {
         }
 
         // 3. Up Arrow: Cycle to previous suggestion
-        if (event.key_code == 38 || event.key_code == 0x26) && !self.current_suggestions.is_empty()
-        {
+        if event.key_code == 0x26 && !self.current_suggestions.is_empty() {
             if self.selected_candidate_idx == 0 {
                 self.selected_candidate_idx = self.current_suggestions.len() - 1;
             } else {
@@ -186,7 +185,7 @@ impl PhoneticEngine {
         }
 
         // 5. Backspace: Edit active composition
-        if event.key_code == 8 || event.key_code == 0x08 {
+        if event.key_code == 0x08 {
             if !self.core.input_buffer().is_empty() {
                 self.core.pop_char();
                 if self.core.input_buffer().is_empty() {
@@ -227,7 +226,7 @@ impl PhoneticEngine {
         }
 
         // 6. Space or Enter: Commit current composition + trailing space/newline
-        if event.key_code == 32 || event.key_code == 13 || event.key_code == 0x20 || event.key_code == 0x0D {
+        if event.key_code == 0x20 || event.key_code == 0x0D {
             if !self.core.input_buffer().is_empty() {
                 let chosen = if !self.current_suggestions.is_empty() {
                     self.current_suggestions[self.selected_candidate_idx].clone()
@@ -238,11 +237,7 @@ impl PhoneticEngine {
                 let roman = self.core.input_buffer().to_string();
                 self.core.record_selection(&roman, &chosen);
 
-                let trailing = if event.key_code == 32 || event.key_code == 0x20 {
-                    " "
-                } else {
-                    "\n"
-                };
+                let trailing = if event.key_code == 0x20 { " " } else { "\n" };
 
                 let edit = TextEdit::ReplaceLast {
                     count: self.last_preview_char_count,

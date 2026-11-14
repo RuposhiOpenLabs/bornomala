@@ -9,7 +9,9 @@
 
 use super::api::*;
 use bornomala_engine::converter::BanglaConverter;
-use bornomala_engine::doc_converter::{convert_file, default_output_path, ConversionDirection, DocumentFormat};
+use bornomala_engine::doc_converter::{
+    convert_file, default_output_path, ConversionDirection, DocumentFormat,
+};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 
@@ -129,33 +131,99 @@ impl ConverterWindow {
 
             let font_name = to_wide("Nirmala UI");
             FONT_TITLE = CreateFontW(
-                -17, 0, 0, 0, FW_BOLD, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -17,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_SUBTITLE = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_LABEL_BOLD = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_REGULAR = CreateFontW(
-                -13, 0, 0, 0, FW_NORMAL, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_BTN = CreateFontW(
-                -12, 0, 0, 0, FW_BOLD, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_TEXT_BOX = CreateFontW(
-                -15, 0, 0, 0, FW_NORMAL, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -15,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
 
@@ -204,16 +272,34 @@ unsafe extern "system" fn converter_wnd_proc(
             // Tabs Bar: Text Converter vs Document Converter
             // -------------------------------------------------------------
             let btn_tab_text = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📝 টেক্সট রূপান্তর (Live Text)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📝 টেক্সট রূপান্তর (Live Text)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                20, 80, 240, 34, hwnd, IDC_TAB_TEXT, hinst, std::ptr::null_mut(),
+                20,
+                80,
+                240,
+                34,
+                hwnd,
+                IDC_TAB_TEXT,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_tab_text, WM_SETFONT, FONT_BTN as WPARAM, 1);
 
             let btn_tab_doc = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📄 নথি ও ফাইল রূপান্তর (DOCX, DOC, PDF, TXT)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📄 নথি ও ফাইল রূপান্তর (DOCX, DOC, PDF, TXT)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                268, 80, 340, 34, hwnd, IDC_TAB_DOC, hinst, std::ptr::null_mut(),
+                268,
+                80,
+                340,
+                34,
+                hwnd,
+                IDC_TAB_DOC,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_tab_doc, WM_SETFONT, FONT_BTN as WPARAM, 1);
 
@@ -221,77 +307,169 @@ unsafe extern "system" fn converter_wnd_proc(
             // TAB 1: TEXT CONVERSION CONTROLS
             // -------------------------------------------------------------
             let lbl_u = CreateWindowExW(
-                0, static_cls.as_ptr(),
+                0,
+                static_cls.as_ptr(),
                 to_wide("ইউনিকোড বাংলা টেক্সট (ওয়েবসাইট, অফিস, ব্রাউজার, সামাজিক মাধ্যম):").as_ptr(),
                 WS_CHILD | WS_VISIBLE,
-                20, 124, 600, 20, hwnd, IDC_LBL_U, hinst, std::ptr::null_mut(),
+                20,
+                124,
+                600,
+                20,
+                hwnd,
+                IDC_LBL_U,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(lbl_u, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
             LBL_U_HWND = lbl_u;
 
             let btn_copy_u = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📋 ইউনিকোড কপি").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📋 ইউনিকোড কপি").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                670, 120, 134, 26, hwnd, IDC_BTN_COPY_U, hinst, std::ptr::null_mut(),
+                670,
+                120,
+                134,
+                26,
+                hwnd,
+                IDC_BTN_COPY_U,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_copy_u, WM_SETFONT, FONT_BTN as WPARAM, 1);
             BTN_COPY_U_HWND = btn_copy_u;
 
             let edit_u = CreateWindowExW(
-                WS_EX_CLIENTEDGE, edit_cls.as_ptr(), std::ptr::null(),
-                WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
-                20, 148, 784, 154, hwnd, IDC_EDIT_UNICODE, hinst, std::ptr::null_mut(),
+                WS_EX_CLIENTEDGE,
+                edit_cls.as_ptr(),
+                std::ptr::null(),
+                WS_CHILD
+                    | WS_VISIBLE
+                    | WS_VSCROLL
+                    | WS_BORDER
+                    | ES_MULTILINE
+                    | ES_AUTOVSCROLL
+                    | ES_WANTRETURN,
+                20,
+                148,
+                784,
+                154,
+                hwnd,
+                IDC_EDIT_UNICODE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(edit_u, WM_SETFONT, FONT_TEXT_BOX as WPARAM, 1);
             EDIT_U_HWND = edit_u;
 
             // Center Actions Row
             let btn_u2a = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("⬇ ইউনিকোড ➔ বিজয় ANSI").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("⬇ ইউনিকোড ➔ বিজয় ANSI").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-                20, 310, 230, 34, hwnd, IDC_BTN_U2A, hinst, std::ptr::null_mut(),
+                20,
+                310,
+                230,
+                34,
+                hwnd,
+                IDC_BTN_U2A,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_u2a, WM_SETFONT, FONT_BTN as WPARAM, 1);
             BTN_U2A_HWND = btn_u2a;
 
             let btn_a2u = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("⬆ বিজয় ANSI ➔ ইউনিকোড").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("⬆ বিজয় ANSI ➔ ইউনিকোড").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-                260, 310, 230, 34, hwnd, IDC_BTN_A2U, hinst, std::ptr::null_mut(),
+                260,
+                310,
+                230,
+                34,
+                hwnd,
+                IDC_BTN_A2U,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_a2u, WM_SETFONT, FONT_BTN as WPARAM, 1);
             BTN_A2U_HWND = btn_a2u;
 
             let btn_clr = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("🗑 উভয় বক্স মুছুন (Clear All)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("🗑 উভয় বক্স মুছুন (Clear All)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                584, 310, 220, 34, hwnd, IDC_BTN_CLEAR, hinst, std::ptr::null_mut(),
+                584,
+                310,
+                220,
+                34,
+                hwnd,
+                IDC_BTN_CLEAR,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_clr, WM_SETFONT, FONT_BTN as WPARAM, 1);
             BTN_CLEAR_HWND = btn_clr;
 
             // Bottom ANSI Section
             let lbl_a = CreateWindowExW(
-                0, static_cls.as_ptr(),
-                to_wide("বিজয় এএনএসআই টেক্সট (SutonnyMJ ANSI — প্রেস, প্রিন্ট, ফটোশপ, ইলাস্ট্রেটর):").as_ptr(),
+                0,
+                static_cls.as_ptr(),
+                to_wide("বিজয় এএনএসআই টেক্সট (SutonnyMJ ANSI — প্রেস, প্রিন্ট, ফটোশপ, ইলাস্ট্রেটর):")
+                    .as_ptr(),
                 WS_CHILD | WS_VISIBLE,
-                20, 354, 600, 20, hwnd, IDC_LBL_A, hinst, std::ptr::null_mut(),
+                20,
+                354,
+                600,
+                20,
+                hwnd,
+                IDC_LBL_A,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(lbl_a, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
             LBL_A_HWND = lbl_a;
 
             let btn_copy_a = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📋 ANSI কপি").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📋 ANSI কপি").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                670, 350, 134, 26, hwnd, IDC_BTN_COPY_A, hinst, std::ptr::null_mut(),
+                670,
+                350,
+                134,
+                26,
+                hwnd,
+                IDC_BTN_COPY_A,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_copy_a, WM_SETFONT, FONT_BTN as WPARAM, 1);
             BTN_COPY_A_HWND = btn_copy_a;
 
             let edit_a = CreateWindowExW(
-                WS_EX_CLIENTEDGE, edit_cls.as_ptr(), std::ptr::null(),
-                WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
-                20, 378, 784, 154, hwnd, IDC_EDIT_ANSI, hinst, std::ptr::null_mut(),
+                WS_EX_CLIENTEDGE,
+                edit_cls.as_ptr(),
+                std::ptr::null(),
+                WS_CHILD
+                    | WS_VISIBLE
+                    | WS_VSCROLL
+                    | WS_BORDER
+                    | ES_MULTILINE
+                    | ES_AUTOVSCROLL
+                    | ES_WANTRETURN,
+                20,
+                378,
+                784,
+                154,
+                hwnd,
+                IDC_EDIT_ANSI,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(edit_a, WM_SETFONT, FONT_TEXT_BOX as WPARAM, 1);
             EDIT_A_HWND = edit_a;
@@ -301,95 +479,201 @@ unsafe extern "system" fn converter_wnd_proc(
             // -------------------------------------------------------------
             // 1. Source Document
             let doc_src_lbl = CreateWindowExW(
-                0, static_cls.as_ptr(),
-                to_wide("ধাপ ১: যে ফাইলটি রূপান্তর করতে চান তা নির্বাচন করুন (Word .docx, .doc, PDF বা .txt):").as_ptr(),
-                WS_CHILD, 20, 126, 640, 20, hwnd, IDC_DOC_SRC_LBL, hinst, std::ptr::null_mut(),
+                0,
+                static_cls.as_ptr(),
+                to_wide(
+                    "ধাপ ১: যে ফাইলটি রূপান্তর করতে চান তা নির্বাচন করুন (Word .docx, .doc, PDF বা .txt):",
+                )
+                .as_ptr(),
+                WS_CHILD,
+                20,
+                126,
+                640,
+                20,
+                hwnd,
+                IDC_DOC_SRC_LBL,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_src_lbl, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
             DOC_SRC_LBL_HWND = doc_src_lbl;
 
             let doc_src_edit = CreateWindowExW(
-                WS_EX_CLIENTEDGE, edit_cls.as_ptr(), std::ptr::null(),
+                WS_EX_CLIENTEDGE,
+                edit_cls.as_ptr(),
+                std::ptr::null(),
                 WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-                20, 150, 620, 32, hwnd, IDC_DOC_SRC_EDIT, hinst, std::ptr::null_mut(),
+                20,
+                150,
+                620,
+                32,
+                hwnd,
+                IDC_DOC_SRC_EDIT,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_src_edit, WM_SETFONT, FONT_REGULAR as WPARAM, 1);
             DOC_SRC_EDIT_HWND = doc_src_edit;
 
             let doc_src_btn = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📂 ফাইল ব্রাউজ (Browse)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📂 ফাইল ব্রাউজ (Browse)").as_ptr(),
                 WS_CHILD | BS_PUSHBUTTON,
-                648, 149, 156, 34, hwnd, IDC_DOC_SRC_BTN, hinst, std::ptr::null_mut(),
+                648,
+                149,
+                156,
+                34,
+                hwnd,
+                IDC_DOC_SRC_BTN,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_src_btn, WM_SETFONT, FONT_BTN as WPARAM, 1);
             DOC_SRC_BTN_HWND = doc_src_btn;
 
             let doc_badge = CreateWindowExW(
-                0, static_cls.as_ptr(), to_wide("ফরম্যাট: নির্বাচন করুন").as_ptr(),
-                WS_CHILD, 20, 186, 300, 18, hwnd, IDC_DOC_FORMAT_BADGE, hinst, std::ptr::null_mut(),
+                0,
+                static_cls.as_ptr(),
+                to_wide("ফরম্যাট: নির্বাচন করুন").as_ptr(),
+                WS_CHILD,
+                20,
+                186,
+                300,
+                18,
+                hwnd,
+                IDC_DOC_FORMAT_BADGE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_badge, WM_SETFONT, FONT_SUBTITLE as WPARAM, 1);
             DOC_FORMAT_BADGE_HWND = doc_badge;
 
             // 2. Conversion Direction
             let doc_dir_lbl = CreateWindowExW(
-                0, static_cls.as_ptr(),
+                0,
+                static_cls.as_ptr(),
                 to_wide("ধাপ ২: রূপান্তরের দিক নির্ধারণ করুন:").as_ptr(),
-                WS_CHILD, 20, 216, 640, 20, hwnd, IDC_DOC_DIR_LBL, hinst, std::ptr::null_mut(),
+                WS_CHILD,
+                20,
+                216,
+                640,
+                20,
+                hwnd,
+                IDC_DOC_DIR_LBL,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_dir_lbl, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
             DOC_DIR_LBL_HWND = doc_dir_lbl;
 
             let doc_radio_a2u = CreateWindowExW(
-                0, btn_cls.as_ptr(),
-                to_wide("বিজয় এএনএসআই (SutonnyMJ) ➔ ইউনিকোড (Unicode) [প্রস্তাবিত — পুরাতন ডক আধুনিকীকরণ]").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide(
+                    "বিজয় এএনএসআই (SutonnyMJ) ➔ ইউনিকোড (Unicode) [প্রস্তাবিত — পুরাতন ডক আধুনিকীকরণ]",
+                )
+                .as_ptr(),
                 WS_CHILD | BS_AUTORADIOBUTTON,
-                24, 240, 750, 24, hwnd, IDC_DOC_RADIO_A2U, hinst, std::ptr::null_mut(),
+                24,
+                240,
+                750,
+                24,
+                hwnd,
+                IDC_DOC_RADIO_A2U,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_radio_a2u, WM_SETFONT, FONT_REGULAR as WPARAM, 1);
             SendMessageW(doc_radio_a2u, BM_SETCHECK, BST_CHECKED as WPARAM, 0);
             DOC_RADIO_A2U_HWND = doc_radio_a2u;
 
             let doc_radio_u2a = CreateWindowExW(
-                0, btn_cls.as_ptr(),
-                to_wide("ইউনিকোড (Unicode) ➔ বিজয় এএনএসআই (SutonnyMJ) [প্রেস ও প্রিন্টিং ডিজাইনের জন্য]").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide(
+                    "ইউনিকোড (Unicode) ➔ বিজয় এএনএসআই (SutonnyMJ) [প্রেস ও প্রিন্টিং ডিজাইনের জন্য]",
+                )
+                .as_ptr(),
                 WS_CHILD | BS_AUTORADIOBUTTON,
-                24, 268, 750, 24, hwnd, IDC_DOC_RADIO_U2A, hinst, std::ptr::null_mut(),
+                24,
+                268,
+                750,
+                24,
+                hwnd,
+                IDC_DOC_RADIO_U2A,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_radio_u2a, WM_SETFONT, FONT_REGULAR as WPARAM, 1);
             DOC_RADIO_U2A_HWND = doc_radio_u2a;
 
             // 3. Destination Output File
             let doc_out_lbl = CreateWindowExW(
-                0, static_cls.as_ptr(),
+                0,
+                static_cls.as_ptr(),
                 to_wide("ধাপ ৩: রূপান্তরিত ফাইল সংরক্ষণের গন্তব্য (Output File):").as_ptr(),
-                WS_CHILD, 20, 304, 640, 20, hwnd, IDC_DOC_OUT_LBL, hinst, std::ptr::null_mut(),
+                WS_CHILD,
+                20,
+                304,
+                640,
+                20,
+                hwnd,
+                IDC_DOC_OUT_LBL,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_out_lbl, WM_SETFONT, FONT_LABEL_BOLD as WPARAM, 1);
             DOC_OUT_LBL_HWND = doc_out_lbl;
 
             let doc_out_edit = CreateWindowExW(
-                WS_EX_CLIENTEDGE, edit_cls.as_ptr(), std::ptr::null(),
+                WS_EX_CLIENTEDGE,
+                edit_cls.as_ptr(),
+                std::ptr::null(),
                 WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-                20, 328, 620, 32, hwnd, IDC_DOC_OUT_EDIT, hinst, std::ptr::null_mut(),
+                20,
+                328,
+                620,
+                32,
+                hwnd,
+                IDC_DOC_OUT_EDIT,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_out_edit, WM_SETFONT, FONT_REGULAR as WPARAM, 1);
             DOC_OUT_EDIT_HWND = doc_out_edit;
 
             let doc_out_btn = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📁 গন্তব্য ব্রাউজ").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📁 গন্তব্য ব্রাউজ").as_ptr(),
                 WS_CHILD | BS_PUSHBUTTON,
-                648, 327, 156, 34, hwnd, IDC_DOC_OUT_BTN, hinst, std::ptr::null_mut(),
+                648,
+                327,
+                156,
+                34,
+                hwnd,
+                IDC_DOC_OUT_BTN,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_out_btn, WM_SETFONT, FONT_BTN as WPARAM, 1);
             DOC_OUT_BTN_HWND = doc_out_btn;
 
             // 4. Hero Convert Button
             let doc_convert_btn = CreateWindowExW(
-                0, btn_cls.as_ptr(),
+                0,
+                btn_cls.as_ptr(),
                 to_wide("⚡ নথি রূপান্তর করুন (Convert Document Now)").as_ptr(),
                 WS_CHILD | BS_DEFPUSHBUTTON,
-                20, 376, 784, 42, hwnd, IDC_DOC_CONVERT_BTN, hinst, std::ptr::null_mut(),
+                20,
+                376,
+                784,
+                42,
+                hwnd,
+                IDC_DOC_CONVERT_BTN,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_convert_btn, WM_SETFONT, FONT_TITLE as WPARAM, 1);
             DOC_CONVERT_BTN_HWND = doc_convert_btn;
@@ -404,18 +688,36 @@ unsafe extern "system" fn converter_wnd_proc(
             DOC_RESULT_LBL_HWND = doc_result_lbl;
 
             let doc_open_folder = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📂 ফোল্ডার খুলুন (Open Folder)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📂 ফোল্ডার খুলুন (Open Folder)").as_ptr(),
                 WS_CHILD | BS_PUSHBUTTON,
-                20, 486, 220, 34, hwnd, IDC_DOC_OPEN_FOLDER, hinst, std::ptr::null_mut(),
+                20,
+                486,
+                220,
+                34,
+                hwnd,
+                IDC_DOC_OPEN_FOLDER,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_open_folder, WM_SETFONT, FONT_BTN as WPARAM, 1);
             EnableWindow(doc_open_folder, 0);
             DOC_OPEN_FOLDER_HWND = doc_open_folder;
 
             let doc_open_file = CreateWindowExW(
-                0, btn_cls.as_ptr(), to_wide("📄 ফাইলটি খুলুন (Open File)").as_ptr(),
+                0,
+                btn_cls.as_ptr(),
+                to_wide("📄 ফাইলটি খুলুন (Open File)").as_ptr(),
                 WS_CHILD | BS_PUSHBUTTON,
-                250, 486, 220, 34, hwnd, IDC_DOC_OPEN_FILE, hinst, std::ptr::null_mut(),
+                250,
+                486,
+                220,
+                34,
+                hwnd,
+                IDC_DOC_OPEN_FILE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(doc_open_file, WM_SETFONT, FONT_BTN as WPARAM, 1);
             EnableWindow(doc_open_file, 0);
@@ -424,11 +726,22 @@ unsafe extern "system" fn converter_wnd_proc(
             // -------------------------------------------------------------
             // BOTTOM STATUS BAR
             // -------------------------------------------------------------
-            let status_text = to_wide("প্রস্তুত (Ready) | ১০০% অফলাইন ও নিরাপদ | Ruposhi Open Labs — Lead: Ryan Shelby");
+            let status_text = to_wide(
+                "প্রস্তুত (Ready) | ১০০% অফলাইন ও নিরাপদ | Ruposhi Open Labs — Lead: Ryan Shelby",
+            );
             let lbl_status = CreateWindowExW(
-                0, static_cls.as_ptr(), status_text.as_ptr(),
+                0,
+                static_cls.as_ptr(),
+                status_text.as_ptr(),
                 WS_CHILD | WS_VISIBLE,
-                20, 642, 784, 24, hwnd, IDC_LABEL_STATUS, hinst, std::ptr::null_mut(),
+                20,
+                642,
+                784,
+                24,
+                hwnd,
+                IDC_LABEL_STATUS,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(lbl_status, WM_SETFONT, FONT_SUBTITLE as WPARAM, 1);
             STATUS_HWND = lbl_status;
@@ -463,7 +776,12 @@ unsafe extern "system" fn converter_wnd_proc(
 
             // 2. Bangladesh Forest Green Header Banner
             let header_brush = CreateSolidBrush(color_green);
-            let header_rc = RECT { left: 0, top: 0, right: w, bottom: 68 };
+            let header_rc = RECT {
+                left: 0,
+                top: 0,
+                right: w,
+                bottom: 68,
+            };
             FillRect(mem_dc, &header_rc, header_brush);
             DeleteObject(header_brush);
 
@@ -483,20 +801,53 @@ unsafe extern "system" fn converter_wnd_proc(
             SetTextColor(mem_dc, rgb(255, 255, 255));
             SelectObject(mem_dc, FONT_TITLE);
             let logo_txt = to_wide("ব");
-            let mut logo_rc = RECT { left: 20, top: 12, right: 68, bottom: 56 };
-            DrawTextW(mem_dc, logo_txt.as_ptr(), -1, &mut logo_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            let mut logo_rc = RECT {
+                left: 20,
+                top: 12,
+                right: 68,
+                bottom: 56,
+            };
+            DrawTextW(
+                mem_dc,
+                logo_txt.as_ptr(),
+                -1,
+                &mut logo_rc,
+                DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+            );
 
             // Title & Subtitle text in header
             SetTextColor(mem_dc, rgb(255, 255, 255));
             let title_txt = to_wide("বর্ণমালা রূপান্তরকারী — Bornomala Universal Converter");
-            let mut title_rc = RECT { left: 80, top: 12, right: w - 20, bottom: 36 };
-            DrawTextW(mem_dc, title_txt.as_ptr(), -1, &mut title_rc, DT_LEFT | DT_SINGLELINE);
+            let mut title_rc = RECT {
+                left: 80,
+                top: 12,
+                right: w - 20,
+                bottom: 36,
+            };
+            DrawTextW(
+                mem_dc,
+                title_txt.as_ptr(),
+                -1,
+                &mut title_rc,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             SetTextColor(mem_dc, color_gold);
             SelectObject(mem_dc, FONT_SUBTITLE);
             let sub_txt = to_wide("দ্বিমুখী রূপান্তর: ইউনিকোড ⇄ বিজয় ANSI | ডকু রূপান্তর: DOCX • DOC • PDF • TXT (১০০% নিখুঁত লেআউট)");
-            let mut sub_rc = RECT { left: 80, top: 38, right: w - 20, bottom: 58 };
-            DrawTextW(mem_dc, sub_txt.as_ptr(), -1, &mut sub_rc, DT_LEFT | DT_SINGLELINE);
+            let mut sub_rc = RECT {
+                left: 80,
+                top: 38,
+                right: w - 20,
+                bottom: 58,
+            };
+            DrawTextW(
+                mem_dc,
+                sub_txt.as_ptr(),
+                -1,
+                &mut sub_rc,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // 4. Subtle line separator above status bar
             let line_pen = CreatePen(PS_SOLID, 1, rgb(200, 220, 210));
@@ -530,9 +881,7 @@ unsafe extern "system" fn converter_wnd_proc(
             BRUSH_WHITE as LRESULT
         }
 
-        WM_CTLCOLORBTN => {
-            BRUSH_BG as LRESULT
-        }
+        WM_CTLCOLORBTN => BRUSH_BG as LRESULT,
 
         WM_COMMAND => {
             let id = wparam & 0xFFFF;
@@ -553,7 +902,10 @@ unsafe extern "system" fn converter_wnd_proc(
                     let (ansi_result, _) = conv.unicode_to_ansi(&unicode_text);
                     set_edit_text(EDIT_A_HWND, &ansi_result);
 
-                    let status = format!("সফলভাবে ইউনিকোড থেকে বিজয় ANSI রূপান্তর সম্পন্ন ({} অক্ষর)।", ansi_result.chars().count());
+                    let status = format!(
+                        "সফলভাবে ইউনিকোড থেকে বিজয় ANSI রূপান্তর সম্পন্ন ({} অক্ষর)।",
+                        ansi_result.chars().count()
+                    );
                     SetWindowTextW(STATUS_HWND, to_wide(&status).as_ptr());
                 }
 
@@ -563,27 +915,39 @@ unsafe extern "system" fn converter_wnd_proc(
                     let unicode_result = conv.ansi_to_unicode(&ansi_text);
                     set_edit_text(EDIT_U_HWND, &unicode_result);
 
-                    let status = format!("সফলভাবে বিজয় ANSI থেকে ইউনিকোড রূপান্তর সম্পন্ন ({} অক্ষর)।", unicode_result.chars().count());
+                    let status = format!(
+                        "সফলভাবে বিজয় ANSI থেকে ইউনিকোড রূপান্তর সম্পন্ন ({} অক্ষর)।",
+                        unicode_result.chars().count()
+                    );
                     SetWindowTextW(STATUS_HWND, to_wide(&status).as_ptr());
                 }
 
                 IDC_BTN_COPY_U => {
                     let text = get_edit_text(EDIT_U_HWND);
                     set_clipboard_text(hwnd, &text);
-                    SetWindowTextW(STATUS_HWND, to_wide("ইউনিকোড টেক্সট ক্লিপবোর্ডে কপি করা হয়েছে।").as_ptr());
+                    SetWindowTextW(
+                        STATUS_HWND,
+                        to_wide("ইউনিকোড টেক্সট ক্লিপবোর্ডে কপি করা হয়েছে।").as_ptr(),
+                    );
                 }
 
                 IDC_BTN_COPY_A => {
                     let text = get_edit_text(EDIT_A_HWND);
                     set_clipboard_text(hwnd, &text);
-                    SetWindowTextW(STATUS_HWND, to_wide("ANSI টেক্সট ক্লিপবোর্ডে কপি করা হয়েছে।").as_ptr());
+                    SetWindowTextW(
+                        STATUS_HWND,
+                        to_wide("ANSI টেক্সট ক্লিপবোর্ডে কপি করা হয়েছে।").as_ptr(),
+                    );
                 }
 
                 IDC_BTN_CLEAR => {
                     let empty = to_wide("");
                     SetWindowTextW(EDIT_U_HWND, empty.as_ptr());
                     SetWindowTextW(EDIT_A_HWND, empty.as_ptr());
-                    SetWindowTextW(STATUS_HWND, to_wide("উভয় টেক্সট বক্স মুছে ফেলা হয়েছে।").as_ptr());
+                    SetWindowTextW(
+                        STATUS_HWND,
+                        to_wide("উভয় টেক্সট বক্স মুছে ফেলা হয়েছে।").as_ptr(),
+                    );
                 }
 
                 IDC_DOC_SRC_BTN => {
@@ -595,19 +959,30 @@ unsafe extern "system" fn converter_wnd_proc(
                         SetWindowTextW(DOC_FORMAT_BADGE_HWND, to_wide(&badge_text).as_ptr());
 
                         // Auto-suggest target output path
-                        let is_a2u = SendMessageW(DOC_RADIO_A2U_HWND, BM_GETCHECK, 0, 0) == BST_CHECKED;
-                        let dir = if is_a2u { ConversionDirection::AnsiToUnicode } else { ConversionDirection::UnicodeToAnsi };
+                        let is_a2u =
+                            SendMessageW(DOC_RADIO_A2U_HWND, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                        let dir = if is_a2u {
+                            ConversionDirection::AnsiToUnicode
+                        } else {
+                            ConversionDirection::UnicodeToAnsi
+                        };
                         let out_path = default_output_path(&path, dir);
                         set_edit_text(DOC_OUT_EDIT_HWND, &out_path.to_string_lossy());
 
-                        let msg = format!("ফাইল নির্বাচিত: {}", path.file_name().unwrap_or_default().to_string_lossy());
+                        let msg = format!(
+                            "ফাইল নির্বাচিত: {}",
+                            path.file_name().unwrap_or_default().to_string_lossy()
+                        );
                         SetWindowTextW(STATUS_HWND, to_wide(&msg).as_ptr());
                     }
                 }
 
                 IDC_DOC_OUT_BTN => {
                     let curr_src = get_edit_text(DOC_SRC_EDIT_HWND);
-                    let filter_ext = Path::new(&curr_src).extension().and_then(|s| s.to_str()).unwrap_or("docx");
+                    let filter_ext = Path::new(&curr_src)
+                        .extension()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("docx");
                     if let Some(path) = prompt_save_document(hwnd, filter_ext) {
                         set_edit_text(DOC_OUT_EDIT_HWND, &path.to_string_lossy());
                     }
@@ -637,7 +1012,10 @@ unsafe extern "system" fn converter_wnd_proc(
                         ConversionDirection::UnicodeToAnsi
                     };
 
-                    SetWindowTextW(STATUS_HWND, to_wide("নথি রূপান্তর প্রক্রিয়াধীন, অনুগ্রহ করে অপেক্ষা করুন...").as_ptr());
+                    SetWindowTextW(
+                        STATUS_HWND,
+                        to_wide("নথি রূপান্তর প্রক্রিয়াধীন, অনুগ্রহ করে অপেক্ষা করুন...").as_ptr(),
+                    );
 
                     match convert_file(&src_path, out_path.as_deref(), direction) {
                         Ok(rep) => {
@@ -650,7 +1028,10 @@ unsafe extern "system" fn converter_wnd_proc(
                                 rep.duration_ms
                             );
                             SetWindowTextW(DOC_RESULT_LBL_HWND, to_wide(&result_text).as_ptr());
-                            SetWindowTextW(STATUS_HWND, to_wide("নথি সফলভাবে সংরক্ষিত হয়েছে!").as_ptr());
+                            SetWindowTextW(
+                                STATUS_HWND,
+                                to_wide("নথি সফলভাবে সংরক্ষিত হয়েছে!").as_ptr(),
+                            );
                             EnableWindow(DOC_OPEN_FOLDER_HWND, 1);
                             EnableWindow(DOC_OPEN_FILE_HWND, 1);
                         }
@@ -756,7 +1137,10 @@ unsafe fn prompt_open_document(owner: HWND) -> Option<PathBuf> {
     let mut file_buf = vec![0u16; 1024];
 
     let filter = to_wide_filter(&[
-        ("সমর্থিত সকল নথি (*.docx, *.doc, *.pdf, *.txt)", "*.docx;*.doc;*.pdf;*.txt"),
+        (
+            "সমর্থিত সকল নথি (*.docx, *.doc, *.pdf, *.txt)",
+            "*.docx;*.doc;*.pdf;*.txt",
+        ),
         ("Microsoft Word নথি (*.docx)", "*.docx"),
         ("Word ৯৭-২০০৩ নথি (*.doc)", "*.doc"),
         ("PDF দলিল (*.pdf)", "*.pdf"),
@@ -776,7 +1160,10 @@ unsafe fn prompt_open_document(owner: HWND) -> Option<PathBuf> {
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
 
     if GetOpenFileNameW(&mut ofn) != 0 {
-        let len = file_buf.iter().position(|&c| c == 0).unwrap_or(file_buf.len());
+        let len = file_buf
+            .iter()
+            .position(|&c| c == 0)
+            .unwrap_or(file_buf.len());
         let path_str = String::from_utf16_lossy(&file_buf[..len]);
         Some(PathBuf::from(path_str))
     } else {
@@ -816,7 +1203,10 @@ unsafe fn prompt_save_document(owner: HWND, default_ext: &str) -> Option<PathBuf
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
 
     if GetSaveFileNameW(&mut ofn) != 0 {
-        let len = file_buf.iter().position(|&c| c == 0).unwrap_or(file_buf.len());
+        let len = file_buf
+            .iter()
+            .position(|&c| c == 0)
+            .unwrap_or(file_buf.len());
         let path_str = String::from_utf16_lossy(&file_buf[..len]);
         Some(PathBuf::from(path_str))
     } else {

@@ -133,7 +133,7 @@ impl BornomalaEngine {
         }
 
         // Ctrl + Space toggle for Phonetic
-        if event.ctrl && !event.alt && (event.key_code == 32 || event.key_code == 0x20) {
+        if event.ctrl && !event.alt && event.key_code == 0x20 {
             let next_scheme = if self.scheme == InputScheme::Phonetic {
                 InputScheme::PassThrough
             } else {
@@ -155,7 +155,7 @@ impl BornomalaEngine {
         }
 
         // F12 toggle for Phonetic
-        if event.key_code == 123 || event.key_code == 0x7B {
+        if event.key_code == 0x7B {
             let next_scheme = if self.scheme == InputScheme::Phonetic {
                 InputScheme::PassThrough
             } else {

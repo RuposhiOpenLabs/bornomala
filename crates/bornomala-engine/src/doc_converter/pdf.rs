@@ -3,12 +3,12 @@
 //! Decodes PDF content streams, converts text strings in Tj and TJ operators,
 //! and writes out the converted PDF while preserving graphics, images, and layout.
 
-use std::path::Path;
 use lopdf::content::Operation;
 use lopdf::{Document, Object, StringFormat};
+use std::path::Path;
 
-use crate::converter::BanglaConverter;
 use super::{ConversionDirection, DocConvertError};
+use crate::converter::BanglaConverter;
 
 pub fn convert_pdf(
     source_path: &Path,
@@ -20,7 +20,8 @@ pub fn convert_pdf(
 
     if doc.is_encrypted() {
         return Err(DocConvertError::Pdf(
-            "PDF ফাইলটি পাসওয়ার্ড দ্বারা সুরক্ষিত (Encrypted)। অনুগ্রহ করে পাসওয়ার্ড অপসারণ করে আবার চেষ্টা করুন।".to_string(),
+            "PDF ফাইলটি পাসওয়ার্ড দ্বারা সুরক্ষিত (Encrypted)। অনুগ্রহ করে পাসওয়ার্ড অপসারণ করে আবার চেষ্টা করুন।"
+                .to_string(),
         ));
     }
 
@@ -80,7 +81,8 @@ fn transform_pdf_operation(
         // Tj: Show text string
         "Tj" | "'" => {
             if let Some(Object::String(ref mut bytes, ref mut format)) = op.operands.get_mut(0) {
-                let (new_bytes, count, new_fmt) = convert_pdf_string(bytes, *format, converter, direction);
+                let (new_bytes, count, new_fmt) =
+                    convert_pdf_string(bytes, *format, converter, direction);
                 if count > 0 {
                     *bytes = new_bytes;
                     *format = new_fmt;
@@ -92,7 +94,8 @@ fn transform_pdf_operation(
         // " : Set spacing, move to next line, and show text string
         "\"" => {
             if let Some(Object::String(ref mut bytes, ref mut format)) = op.operands.get_mut(2) {
-                let (new_bytes, count, new_fmt) = convert_pdf_string(bytes, *format, converter, direction);
+                let (new_bytes, count, new_fmt) =
+                    convert_pdf_string(bytes, *format, converter, direction);
                 if count > 0 {
                     *bytes = new_bytes;
                     *format = new_fmt;
@@ -106,7 +109,8 @@ fn transform_pdf_operation(
             if let Some(Object::Array(ref mut items)) = op.operands.get_mut(0) {
                 for item in items.iter_mut() {
                     if let Object::String(ref mut bytes, ref mut format) = item {
-                        let (new_bytes, count, new_fmt) = convert_pdf_string(bytes, *format, converter, direction);
+                        let (new_bytes, count, new_fmt) =
+                            convert_pdf_string(bytes, *format, converter, direction);
                         if count > 0 {
                             *bytes = new_bytes;
                             *format = new_fmt;

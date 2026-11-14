@@ -234,7 +234,11 @@ pub fn separate_padding(word: &str) -> (&str, &str, &str) {
         (Some(start_idx), Some(end_idx)) => {
             let start_byte = chars[start_idx].0;
             let end_byte = chars[end_idx].0 + chars[end_idx].1.len_utf8();
-            (&word[..start_byte], &word[start_byte..end_byte], &word[end_byte..])
+            (
+                &word[..start_byte],
+                &word[start_byte..end_byte],
+                &word[end_byte..],
+            )
         }
         _ => ("", word, ""),
     }
@@ -248,7 +252,12 @@ fn has_reph_ambiguity(word: &str) -> bool {
     let lower = word.to_ascii_lowercase();
     let chars: Vec<char> = lower.chars().collect();
     for i in 0..chars.len().saturating_sub(1) {
-        if chars[i] == 'r' && is_ascii_consonant(chars[i + 1]) && chars[i + 1] != 'r' && chars[i + 1] != 'y' && chars[i + 1] != 'w' {
+        if chars[i] == 'r'
+            && is_ascii_consonant(chars[i + 1])
+            && chars[i + 1] != 'r'
+            && chars[i + 1] != 'y'
+            && chars[i + 1] != 'w'
+        {
             return true;
         }
     }
@@ -256,18 +265,81 @@ fn has_reph_ambiguity(word: &str) -> bool {
 }
 
 fn is_ascii_consonant(c: char) -> bool {
-    matches!(c, 'b' | 'c' | 'd' | 'f' | 'g' | 'h' | 'j' | 'k' | 'l' | 'm' | 'n' | 'p' | 'q' | 'r' | 's' | 't' | 'v' | 'w' | 'x' | 'y' | 'z')
+    matches!(
+        c,
+        'b' | 'c'
+            | 'd'
+            | 'f'
+            | 'g'
+            | 'h'
+            | 'j'
+            | 'k'
+            | 'l'
+            | 'm'
+            | 'n'
+            | 'p'
+            | 'q'
+            | 'r'
+            | 's'
+            | 't'
+            | 'v'
+            | 'w'
+            | 'x'
+            | 'y'
+            | 'z'
+    )
 }
 
 fn is_core_bengali_word(w: &str) -> bool {
     matches!(
         w,
-        "আমি" | "তুমি" | "আমরা" | "তোমরা" | "তিনি" | "তারা" | "তার" | "তাদের" |
-        "বাংলা" | "বাংলাদেশ" | "কর্ম" | "কর্মফল" | "বর্ণ" | "বর্ণমালা" | "ধর্ম" |
-        "ডাক্তার" | "শিক্ষক" | "শিক্ষা" | "স্বাধীনতা" | "দুঃখ" | "এবং" | "শেষ" |
-        "আপনি" | "লালশাক" | "লালরং" | "সোনার" | "প্রথম" | "কাজ" | "কথা" | "সময়" |
-        "জীবন" | "মানুষ" | "দেশ" | "সরকার" | "ঢাকা" | "বই" | "পানি" | "ভাত" |
-        "আজ" | "কাল" | "ভালো" | "মন্দ" | "এক" | "দুই" | "তিন" | "চার" | "পাঁচ"
+        "আমি"
+            | "তুমি"
+            | "আমরা"
+            | "তোমরা"
+            | "তিনি"
+            | "তারা"
+            | "তার"
+            | "তাদের"
+            | "বাংলা"
+            | "বাংলাদেশ"
+            | "কর্ম"
+            | "কর্মফল"
+            | "বর্ণ"
+            | "বর্ণমালা"
+            | "ধর্ম"
+            | "ডাক্তার"
+            | "শিক্ষক"
+            | "শিক্ষা"
+            | "স্বাধীনতা"
+            | "দুঃখ"
+            | "এবং"
+            | "শেষ"
+            | "আপনি"
+            | "লালশাক"
+            | "লালরং"
+            | "সোনার"
+            | "প্রথম"
+            | "কাজ"
+            | "কথা"
+            | "সময়"
+            | "জীবন"
+            | "মানুষ"
+            | "দেশ"
+            | "সরকার"
+            | "ঢাকা"
+            | "বই"
+            | "পানি"
+            | "ভাত"
+            | "আজ"
+            | "কাল"
+            | "ভালো"
+            | "মন্দ"
+            | "এক"
+            | "দুই"
+            | "তিন"
+            | "চার"
+            | "পাঁচ"
     )
 }
 
@@ -295,7 +367,11 @@ pub fn levenshtein_distance(a: &str, b: &str) -> usize {
 
     for i in 1..=m {
         for j in 1..=n {
-            let cost = if a_chars[i - 1] == b_chars[j - 1] { 0 } else { 1 };
+            let cost = if a_chars[i - 1] == b_chars[j - 1] {
+                0
+            } else {
+                1
+            };
             dp[i][j] = (dp[i - 1][j] + 1)
                 .min(dp[i][j - 1] + 1)
                 .min(dp[i - 1][j - 1] + cost);
@@ -307,9 +383,13 @@ pub fn levenshtein_distance(a: &str, b: &str) -> usize {
 
 fn dirs_fallback_memory_path() -> PathBuf {
     if let Ok(app_data) = std::env::var("APPDATA") {
-        PathBuf::from(app_data).join("Bornomala").join("phonetic_memory.enc")
+        PathBuf::from(app_data)
+            .join("Bornomala")
+            .join("phonetic_memory.enc")
     } else if let Ok(home) = std::env::var("HOME") {
-        PathBuf::from(home).join(".bornomala").join("phonetic_memory.enc")
+        PathBuf::from(home)
+            .join(".bornomala")
+            .join("phonetic_memory.enc")
     } else {
         PathBuf::from("phonetic_memory.enc")
     }

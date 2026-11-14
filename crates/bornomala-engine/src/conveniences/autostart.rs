@@ -1,5 +1,5 @@
-use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 
 pub const REGISTRY_RUN_KEY: &str = r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run";
 pub const REGISTRY_VALUE_NAME: &str = "Bornomala";
@@ -145,5 +145,6 @@ if %ERRORLEVEL% EQU 0 (
 ) else (
     echo [INFO] Bornomala was not registered in startup run list.
 )
-"#.to_string()
+"#
+    .to_string()
 }

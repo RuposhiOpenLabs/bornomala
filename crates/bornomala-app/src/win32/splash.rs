@@ -10,7 +10,8 @@ pub const SPLASH_WIDTH: i32 = 320;
 pub const SPLASH_HEIGHT: i32 = 320;
 pub const SPLASH_DURATION_MS: u32 = 2500;
 
-static SPLASH_BMP_BYTES: &[u8] = include_bytes!("../../../../assets/branding/startup_screen_bn.bmp");
+static SPLASH_BMP_BYTES: &[u8] =
+    include_bytes!("../../../../assets/branding/startup_screen_bn.bmp");
 static IS_SPLASH_DISMISSED: AtomicBool = AtomicBool::new(false);
 static ON_SPLASH_DISMISS: Mutex<Option<Box<dyn Fn() + Send + 'static>>> = Mutex::new(None);
 
@@ -142,9 +143,7 @@ unsafe extern "system" fn splash_wnd_proc(
             0
         }
 
-        WM_DESTROY => {
-            0
-        }
+        WM_DESTROY => 0,
 
         _ => DefWindowProcW(hwnd, msg, wparam, lparam),
     }

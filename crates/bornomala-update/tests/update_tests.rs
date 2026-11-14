@@ -1,12 +1,12 @@
+use bornomala_update::{
+    bytes_to_hex, IntegrityVerifier, ManifestFileEntry, ReleaseManifest, StagedUpdatePlanner,
+    UpdateChecker, UpdateError, UpdatePreferences,
+};
 use ed25519_dalek::Signer;
 use ed25519_dalek::SigningKey;
 use rand_core::OsRng;
 use std::fs;
 use tempfile::tempdir;
-use bornomala_update::{
-    bytes_to_hex, IntegrityVerifier, ManifestFileEntry, ReleaseManifest,
-    StagedUpdatePlanner, UpdateChecker, UpdateError, UpdatePreferences,
-};
 
 #[test]
 fn test_ed25519_signature_and_hash_verification() {
@@ -33,7 +33,8 @@ fn test_ed25519_signature_and_hash_verification() {
 
     // 3. Wrong key fails
     let other_key = SigningKey::generate(&mut csprng);
-    let other_verifier = IntegrityVerifier::new(other_key.verifying_key().as_bytes(), None).unwrap();
+    let other_verifier =
+        IntegrityVerifier::new(other_key.verifying_key().as_bytes(), None).unwrap();
     assert!(matches!(
         other_verifier.verify_manifest_signature(manifest_content, &signature.to_bytes()),
         Err(UpdateError::BadSignature)
@@ -42,16 +43,30 @@ fn test_ed25519_signature_and_hash_verification() {
 
 #[test]
 fn test_rollback_prevention() {
-    assert!(IntegrityVerifier::is_version_strictly_greater("0.1.0", "0.2.0"));
-    assert!(IntegrityVerifier::is_version_strictly_greater("0.1.9", "0.2.0"));
-    assert!(IntegrityVerifier::is_version_strictly_greater("1.0.0", "1.0.1"));
-    assert!(IntegrityVerifier::is_version_strictly_greater("v0.1.0", "v0.2.0"));
+    assert!(IntegrityVerifier::is_version_strictly_greater(
+        "0.1.0", "0.2.0"
+    ));
+    assert!(IntegrityVerifier::is_version_strictly_greater(
+        "0.1.9", "0.2.0"
+    ));
+    assert!(IntegrityVerifier::is_version_strictly_greater(
+        "1.0.0", "1.0.1"
+    ));
+    assert!(IntegrityVerifier::is_version_strictly_greater(
+        "v0.1.0", "v0.2.0"
+    ));
 
     // Equal versions rejected
-    assert!(!IntegrityVerifier::is_version_strictly_greater("0.2.0", "0.2.0"));
+    assert!(!IntegrityVerifier::is_version_strictly_greater(
+        "0.2.0", "0.2.0"
+    ));
     // Older versions rejected
-    assert!(!IntegrityVerifier::is_version_strictly_greater("0.2.0", "0.1.9"));
-    assert!(!IntegrityVerifier::is_version_strictly_greater("1.0.0", "0.9.9"));
+    assert!(!IntegrityVerifier::is_version_strictly_greater(
+        "0.2.0", "0.1.9"
+    ));
+    assert!(!IntegrityVerifier::is_version_strictly_greater(
+        "1.0.0", "0.9.9"
+    ));
 }
 
 #[test]
@@ -79,13 +94,17 @@ fn test_installation_tamper_detection() {
     let verifier = IntegrityVerifier::new(&dummy_key, None).unwrap();
 
     // Clean verification
-    assert!(verifier.verify_installation_integrity(base_path, &manifest).is_ok());
+    assert!(verifier
+        .verify_installation_integrity(base_path, &manifest)
+        .is_ok());
 
     // Tamper the file
     fs::write(&file1_path, b"maliciously-altered-dll-content").unwrap();
 
     // Verification must detect tampering
-    let err = verifier.verify_installation_integrity(base_path, &manifest).unwrap_err();
+    let err = verifier
+        .verify_installation_integrity(base_path, &manifest)
+        .unwrap_err();
     assert!(matches!(err, UpdateError::Tampered(_)));
 }
 
@@ -126,7 +145,10 @@ fn test_github_release_checker_parsing() {
     let cand = res.unwrap();
     assert_eq!(cand.version, "0.2.0");
     assert_eq!(cand.asset_name, "Bornomala-Setup-v0.2.0.exe");
-    assert_eq!(cand.expected_sha256.as_deref(), Some("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+    assert_eq!(
+        cand.expected_sha256.as_deref(),
+        Some("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    );
 
     // 2. When installed is already v0.2.0, returns None
     let res_current = UpdateChecker::parse_latest_release(json_release, "0.2.0").unwrap();

@@ -35,10 +35,7 @@ impl CandidateMemory {
 
     /// Record that the user picked a specific Bangla candidate for a Roman input.
     pub fn record_selection(&mut self, roman: &str, candidate: &str) {
-        let entry = self
-            .selections
-            .entry(roman.to_string())
-            .or_default();
+        let entry = self.selections.entry(roman.to_string()).or_default();
         let count = entry.entry(candidate.to_string()).or_insert(0);
         *count = count.saturating_add(1);
 

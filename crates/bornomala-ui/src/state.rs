@@ -1,6 +1,6 @@
-use bornomala_engine::{BornomalaEngine, InputScheme};
 use crate::localization::Language;
 use crate::theme::ThemeMode;
+use bornomala_engine::{BornomalaEngine, InputScheme};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

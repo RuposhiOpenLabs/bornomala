@@ -1,12 +1,10 @@
 use std::fs::File;
 use std::io::{Read, Write};
 use tempfile::tempdir;
-use zip::write::FileOptions;
+use zip::write::SimpleFileOptions;
 use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
-use bornomala_engine::doc_converter::{
-    convert_file, ConversionDirection, DocumentFormat,
-};
+use bornomala_engine::doc_converter::{convert_file, ConversionDirection, DocumentFormat};
 
 #[test]
 fn test_txt_conversion_bidirectional() {
@@ -21,7 +19,8 @@ fn test_txt_conversion_bidirectional() {
         &ansi_path,
         Some(&unicode_out),
         ConversionDirection::AnsiToUnicode,
-    ).unwrap();
+    )
+    .unwrap();
 
     assert_eq!(report.format, DocumentFormat::Txt);
     assert!(unicode_out.exists());
@@ -36,7 +35,8 @@ fn test_txt_conversion_bidirectional() {
         &unicode_out,
         Some(&roundtrip_ansi),
         ConversionDirection::UnicodeToAnsi,
-    ).unwrap();
+    )
+    .unwrap();
 
     assert_eq!(report_rev.format, DocumentFormat::Txt);
     assert!(roundtrip_ansi.exists());
@@ -54,10 +54,13 @@ fn test_docx_conversion_layout_preserving() {
     {
         let file = File::create(&docx_in).unwrap();
         let mut zip = ZipWriter::new(file);
-        let opts = FileOptions::default().compression_method(CompressionMethod::Deflated);
+        let opts = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
 
         zip.start_file("[Content_Types].xml", opts).unwrap();
-        zip.write_all(b"<Types><Default Extension=\"xml\" ContentType=\"application/xml\"/></Types>").unwrap();
+        zip.write_all(
+            b"<Types><Default Extension=\"xml\" ContentType=\"application/xml\"/></Types>",
+        )
+        .unwrap();
 
         zip.start_file("word/document.xml", opts).unwrap();
         let doc_xml = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -87,7 +90,12 @@ fn test_docx_conversion_layout_preserving() {
 
     // Convert ANSI -> Unicode
     let docx_out = dir.path().join("test_output_unicode.docx");
-    let rep = convert_file(&docx_in, Some(&docx_out), ConversionDirection::AnsiToUnicode).unwrap();
+    let rep = convert_file(
+        &docx_in,
+        Some(&docx_out),
+        ConversionDirection::AnsiToUnicode,
+    )
+    .unwrap();
     assert_eq!(rep.format, DocumentFormat::Docx);
     assert!(docx_out.exists());
 
@@ -130,8 +138,8 @@ fn test_pdf_conversion() {
 
     // Create a simple valid PDF using lopdf
     {
-        use lopdf::{Document, Object, Dictionary, Stream};
         use lopdf::content::{Content, Operation};
+        use lopdf::{Dictionary, Document, Object, Stream};
 
         let mut doc = Document::with_version("1.5");
         let pages_id = doc.new_object_id();
@@ -197,7 +205,8 @@ fn test_doc_conversion() {
     assert!(out_str.contains("Kalpurush"));
     // Also test converting to .docx from .doc
     let docx_out = dir.path().join("converted_from_doc.docx");
-    let rep_docx = convert_file(&doc_in, Some(&docx_out), ConversionDirection::AnsiToUnicode).unwrap();
+    let rep_docx =
+        convert_file(&doc_in, Some(&docx_out), ConversionDirection::AnsiToUnicode).unwrap();
     assert!(docx_out.exists());
     assert_eq!(rep_docx.format, DocumentFormat::Doc);
 }

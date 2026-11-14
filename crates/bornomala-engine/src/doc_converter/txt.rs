@@ -1,10 +1,10 @@
 //! Plain Text File (.txt) Converter
 //! Supports UTF-8, UTF-8 BOM, and Windows-1252/ANSI text files.
 
+use super::{ConversionDirection, DocConvertError};
+use crate::converter::BanglaConverter;
 use std::fs;
 use std::path::Path;
-use crate::converter::BanglaConverter;
-use super::{ConversionDirection, DocConvertError};
 
 pub fn convert_txt(
     source_path: &Path,

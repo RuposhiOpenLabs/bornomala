@@ -10,7 +10,8 @@ pub static PREPROCESSED_PATTERNS_JSON: &[u8] = include_bytes!("../data/preproces
 pub static SOURCE_COMMON_PATTERNS: &str = include_str!("../data/source-common-patterns.txt");
 
 static WORDS_FST: Lazy<FstTree<&'static [u8]>> = Lazy::new(|| FstTree::from_fst(WORDS_FST_BYTES));
-static PATTERNS_FST: Lazy<FstTree<&'static [u8]>> = Lazy::new(|| FstTree::from_fst(PATTERNS_FST_BYTES));
+static PATTERNS_FST: Lazy<FstTree<&'static [u8]>> =
+    Lazy::new(|| FstTree::from_fst(PATTERNS_FST_BYTES));
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -46,7 +47,10 @@ impl PhoneticDictionary {
 
     pub fn is_valid_word(&self, word: &str) -> bool {
         let words = Lazy::force(&WORDS_FST);
-        words.matching_node(word).and_then(|n| n.get_word()).is_some()
+        words
+            .matching_node(word)
+            .and_then(|n| n.get_word())
+            .is_some()
     }
 
     /// Query dictionary suggestions for a Roman phonetic input string.

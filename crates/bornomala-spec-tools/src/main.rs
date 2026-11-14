@@ -1,7 +1,5 @@
+use bornomala_engine::{BanglaConverter, BornomalaEngine, InputScheme, KeyEvent, TextEdit};
 use std::fs;
-use bornomala_engine::{
-    BanglaConverter, BornomalaEngine, InputScheme, KeyEvent, TextEdit,
-};
 
 fn main() {
     println!("=== Bornomala Specification & Test Vector Validation Suite ===");
@@ -177,21 +175,48 @@ fn validate_phonetic_vectors() {
         let conf = v["confidence"].as_str().unwrap();
 
         engine.reset_all_states();
+        let mut actual = String::new();
         for ch in input.chars() {
             let ev = KeyEvent::new_down(ch as u32, Some(ch), ch.is_uppercase(), false, false);
-            engine.process_key(&ev);
-        }
-        let space_ev = KeyEvent::new_down(32, Some(' '), false, false, false);
-        let act = engine.process_key(&space_ev);
-
-        let mut actual = String::new();
-        for edit in act.edits {
-            if let TextEdit::Insert(s) = edit {
-                if s != " " {
-                    actual.push_str(&s);
+            let act = engine.process_key(&ev);
+            for edit in act.edits {
+                match edit {
+                    TextEdit::Insert(s) => actual.push_str(&s),
+                    TextEdit::ReplaceLast { count, text } => {
+                        for _ in 0..count {
+                            actual.pop();
+                        }
+                        actual.push_str(&text);
+                    }
+                    TextEdit::DeleteBack(count) => {
+                        for _ in 0..count {
+                            actual.pop();
+                        }
+                    }
+                    TextEdit::PassThrough => actual.push(ch),
                 }
             }
         }
+        let space_ev = KeyEvent::new_down(0x20, Some(' '), false, false, false);
+        let act = engine.process_key(&space_ev);
+        for edit in act.edits {
+            match edit {
+                TextEdit::Insert(s) => actual.push_str(&s),
+                TextEdit::ReplaceLast { count, text } => {
+                    for _ in 0..count {
+                        actual.pop();
+                    }
+                    actual.push_str(&text);
+                }
+                TextEdit::DeleteBack(count) => {
+                    for _ in 0..count {
+                        actual.pop();
+                    }
+                }
+                TextEdit::PassThrough => actual.push(' '),
+            }
+        }
+        let actual = actual.trim_end().to_string();
 
         print!("  Vector [{} - {} - input: '{}']: ", id, conf, input);
         if actual == expected {
@@ -223,7 +248,10 @@ fn validate_converter_vectors() {
         if ansi_out == a && uni_out == u {
             println!("PASS (Unicode '{}' <-> ANSI '{}')", u, a);
         } else {
-            println!("FAIL (u->a: '{}' vs '{}', a->u: '{}' vs '{}')", ansi_out, a, uni_out, u);
+            println!(
+                "FAIL (u->a: '{}' vs '{}', a->u: '{}' vs '{}')",
+                ansi_out, a, uni_out, u
+            );
         }
     }
 }

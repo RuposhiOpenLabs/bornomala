@@ -4,17 +4,17 @@
 //! and footnotes, while switching font metadata between SutonnyMJ and Kalpurush/Nirmala UI.
 //! All tables, images, margins, styles, and page layouts are preserved 100%.
 
-use std::fs::File;
-use std::io::{Cursor, Read, Write};
-use std::path::Path;
 use quick_xml::events::{BytesStart, BytesText, Event};
 use quick_xml::reader::Reader;
 use quick_xml::writer::Writer;
-use zip::write::FileOptions;
+use std::fs::File;
+use std::io::{Cursor, Read, Write};
+use std::path::Path;
+use zip::write::SimpleFileOptions;
 use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
-use crate::converter::BanglaConverter;
 use super::{ConversionDirection, DocConvertError};
+use crate::converter::BanglaConverter;
 
 pub fn convert_docx(
     source_path: &Path,
@@ -38,32 +38,41 @@ pub fn convert_docx(
     let mut total_chars = 0usize;
     let mut total_runs = 0usize;
 
-    let options = FileOptions::default().compression_method(CompressionMethod::Deflated);
+    let options = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
 
     for i in 0..archive.len() {
-        let mut entry = archive.by_index(i)
+        let mut entry = archive
+            .by_index(i)
             .map_err(|e| DocConvertError::Docx(format!("ZIP এন্ট্রি পড়তে সমস্যা: {}", e)))?;
-        let name = entry.name().to_string();
+        let name = entry
+            .name()
+            .map_err(|e| DocConvertError::Docx(format!("ZIP এন্ট্রি নাম পড়তে সমস্যা: {}", e)))?
+            .to_string();
 
         if is_target_xml(&name) {
             let mut xml_content = String::new();
-            entry.read_to_string(&mut xml_content)
+            entry
+                .read_to_string(&mut xml_content)
                 .map_err(|e| DocConvertError::Docx(format!("XML পাঠে ব্যর্থতা: {}", e)))?;
 
-            let (converted_xml, chars, runs) = transform_word_xml(&xml_content, &converter, direction)?;
+            let (converted_xml, chars, runs) =
+                transform_word_xml(&xml_content, &converter, direction)?;
             total_chars += chars;
             total_runs += runs;
 
-            zip_writer.start_file(&name, options)
+            zip_writer
+                .start_file(&name, options)
                 .map_err(|e| DocConvertError::Docx(format!("ZIP ফাইল তৈরি ব্যর্থ: {}", e)))?;
             zip_writer.write_all(converted_xml.as_bytes())?;
         } else if name == "word/fontTable.xml" {
             let mut xml_content = String::new();
-            entry.read_to_string(&mut xml_content)
+            entry
+                .read_to_string(&mut xml_content)
                 .map_err(|e| DocConvertError::Docx(format!("fontTable পাঠে ব্যর্থতা: {}", e)))?;
 
             let updated_font_table = update_font_table(&xml_content, direction);
-            zip_writer.start_file(&name, options)
+            zip_writer
+                .start_file(&name, options)
                 .map_err(|e| DocConvertError::Docx(format!("fontTable সংরক্ষণে ব্যর্থ: {}", e)))?;
             zip_writer.write_all(updated_font_table.as_bytes())?;
         } else {
@@ -71,13 +80,15 @@ pub fn convert_docx(
             let mut buffer = Vec::new();
             entry.read_to_end(&mut buffer)?;
 
-            zip_writer.start_file(&name, options)
+            zip_writer
+                .start_file(&name, options)
                 .map_err(|e| DocConvertError::Docx(format!("ফাইল স্থানান্তর ব্যর্থ: {}", e)))?;
             zip_writer.write_all(&buffer)?;
         }
     }
 
-    zip_writer.finish()
+    zip_writer
+        .finish()
         .map_err(|e| DocConvertError::Docx(format!("নতুন DOCX প্যাকেজ সম্পন্ন করতে ব্যর্থ: {}", e)))?;
 
     let msg = format!(
@@ -123,7 +134,8 @@ fn transform_word_xml(
                 if name.as_ref() == b"w:t" || name.as_ref().ends_with(b":t") {
                     in_text_node = true;
                 }
-                writer.write_event(Event::Start(e.clone()))
+                writer
+                    .write_event(Event::Start(e.clone()))
                     .map_err(|err| DocConvertError::Docx(err.to_string()))?;
             }
 
@@ -133,7 +145,8 @@ fn transform_word_xml(
                 if name.as_ref() == b"w:t" || name.as_ref().ends_with(b":t") {
                     in_text_node = false;
                 }
-                writer.write_event(Event::End(e.clone()))
+                writer
+                    .write_event(Event::End(e.clone()))
                     .map_err(|err| DocConvertError::Docx(err.to_string()))?;
             }
 
@@ -142,10 +155,12 @@ fn transform_word_xml(
                 let name = e.name();
                 if name.as_ref() == b"w:rFonts" || name.as_ref().ends_with(b":rFonts") {
                     let modified_fonts = transform_font_tag(e, direction);
-                    writer.write_event(Event::Empty(modified_fonts))
+                    writer
+                        .write_event(Event::Empty(modified_fonts))
                         .map_err(|err| DocConvertError::Docx(err.to_string()))?;
                 } else {
-                    writer.write_event(Event::Empty(e.clone()))
+                    writer
+                        .write_event(Event::Empty(e.clone()))
                         .map_err(|err| DocConvertError::Docx(err.to_string()))?;
                 }
             }
@@ -153,7 +168,8 @@ fn transform_word_xml(
             // Handle text node content
             Ok(Event::Text(ref e)) => {
                 if in_text_node {
-                    let raw_text = e.unescape()
+                    let raw_text = e
+                        .unescape()
                         .map_err(|err| DocConvertError::Docx(err.to_string()))?;
                     let (converted, count) = match direction {
                         ConversionDirection::UnicodeToAnsi => {
@@ -175,16 +191,19 @@ fn transform_word_xml(
                     chars_count += count;
                     runs_count += 1;
 
-                    writer.write_event(Event::Text(BytesText::new(&converted)))
+                    writer
+                        .write_event(Event::Text(BytesText::new(&converted)))
                         .map_err(|err| DocConvertError::Docx(err.to_string()))?;
                 } else {
-                    writer.write_event(Event::Text(e.clone()))
+                    writer
+                        .write_event(Event::Text(e.clone()))
                         .map_err(|err| DocConvertError::Docx(err.to_string()))?;
                 }
             }
 
             Ok(other) => {
-                writer.write_event(other)
+                writer
+                    .write_event(other)
                     .map_err(|err| DocConvertError::Docx(err.to_string()))?;
             }
 
@@ -200,7 +219,10 @@ fn transform_word_xml(
     Ok((result_str, chars_count, runs_count))
 }
 
-fn transform_font_tag<'a>(e: &'a BytesStart<'a>, direction: ConversionDirection) -> BytesStart<'static> {
+fn transform_font_tag<'a>(
+    e: &'a BytesStart<'a>,
+    direction: ConversionDirection,
+) -> BytesStart<'static> {
     let mut new_elem = BytesStart::new(String::from_utf8_lossy(e.name().as_ref()).to_string());
 
     let target_font = match direction {

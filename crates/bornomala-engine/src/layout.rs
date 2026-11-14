@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -110,7 +110,8 @@ impl LayoutDefinition {
 }
 
 /// Embedded default layouts.
-pub static EMBEDDED_CLASSIC_UNICODE: &str = include_str!("../../../data/layouts/classic_unicode.json");
+pub static EMBEDDED_CLASSIC_UNICODE: &str =
+    include_str!("../../../data/layouts/classic_unicode.json");
 pub static EMBEDDED_CLASSIC_ANSI: &str = include_str!("../../../data/layouts/classic_ansi.json");
 
 /// Load the default Classic Unicode layout.

@@ -104,7 +104,10 @@ pub fn get_preloaded_fonts() -> &'static [PreloadedFont] {
     &PRELOADED_FONTS
 }
 
-pub fn generate_powershell_font_installer(font_source_dir: &str, scope: FontInstallScope) -> String {
+pub fn generate_powershell_font_installer(
+    font_source_dir: &str,
+    scope: FontInstallScope,
+) -> String {
     let (reg_key, dest_dir) = match scope {
         FontInstallScope::CurrentUser => (
             r"HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts",

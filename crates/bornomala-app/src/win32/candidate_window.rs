@@ -89,18 +89,57 @@ impl CandidateWindow {
                 let font_name_fallback = to_wide("Segoe UI");
 
                 let mut hfont = CreateFontW(
-                    -16, 0, 0, 0, 600, 0, 0, 0, 1, 0, 0, 4, 0, font_name_bn.as_ptr(),
+                    -16,
+                    0,
+                    0,
+                    0,
+                    600,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    4,
+                    0,
+                    font_name_bn.as_ptr(),
                 );
                 if hfont == 0 {
                     hfont = CreateFontW(
-                        -15, 0, 0, 0, 600, 0, 0, 0, 1, 0, 0, 4, 0, font_name_fallback.as_ptr(),
+                        -15,
+                        0,
+                        0,
+                        0,
+                        600,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        4,
+                        0,
+                        font_name_fallback.as_ptr(),
                     );
                 }
                 state.font_bengali = hfont;
 
                 let font_name_roman = to_wide("Segoe UI");
                 state.font_roman = CreateFontW(
-                    -13, 0, 0, 0, 600, 0, 0, 0, 1, 0, 0, 4, 0, font_name_roman.as_ptr(),
+                    -13,
+                    0,
+                    0,
+                    0,
+                    600,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    4,
+                    0,
+                    font_name_roman.as_ptr(),
                 );
 
                 // Palette: Cream #fbf3dc, Deep Green #006a4e, Vivid Red #f42a41
@@ -326,17 +365,7 @@ unsafe extern "system" fn candidate_window_proc(
                 SelectObject(mem_dc, old_font);
 
                 // Blit buffer to screen
-                BitBlt(
-                    hdc,
-                    0,
-                    0,
-                    rect.right,
-                    rect.bottom,
-                    mem_dc,
-                    0,
-                    0,
-                    SRCCOPY,
-                );
+                BitBlt(hdc, 0, 0, rect.right, rect.bottom, mem_dc, 0, 0, SRCCOPY);
 
                 SelectObject(mem_dc, old_bm);
                 DeleteObject(mem_bm);

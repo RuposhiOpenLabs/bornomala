@@ -106,7 +106,9 @@ impl AppConfig {
     /// Returns the default path `%APPDATA%\Bornomala\settings.json` on Windows.
     pub fn default_path() -> PathBuf {
         if let Ok(appdata) = std::env::var("APPDATA") {
-            PathBuf::from(appdata).join("Bornomala").join(DEFAULT_CONFIG_FILE)
+            PathBuf::from(appdata)
+                .join("Bornomala")
+                .join(DEFAULT_CONFIG_FILE)
         } else {
             PathBuf::from(DEFAULT_CONFIG_FILE)
         }

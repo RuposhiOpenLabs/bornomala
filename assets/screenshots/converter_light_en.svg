@@ -1,53 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="480" viewBox="0 0 760 480">
-  <rect width="760" height="480" rx="12" fill="#F7F8F6" stroke="#D1DCD5" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="520" viewBox="0 0 760 520">
+  <rect width="760" height="520" rx="12" fill="#F7F8F6" stroke="#D1DCD5" stroke-width="2"/>
   
-  <!-- Header Bar -->
-  <rect width="760" height="56" rx="12" fill="#006A4E"/>
-  <text x="24" y="35" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF">Unicode &amp; ANSI (SutonnyMJ) Converter</text>
+  <!-- Header Bar (Forest Green with Crimson Circle) -->
+  <rect width="760" height="64" rx="12" fill="#006A4E"/>
   
-  <!-- Direction Toggle Indicator -->
-  <g transform="translate(440, 12)">
-    <rect width="296" height="32" rx="6" fill="rgba(255,255,255,0.15)"/>
-    <text x="148" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ইউনিকোড ➔ এএনএসআই (সুতোন্নীএমজে)</text>
+  <!-- Crimson Circle Emblem with Bengali Bo -->
+  <circle cx="44" cy="32" r="20" fill="#F42A41"/>
+  <text x="44" y="39" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ব</text>
+  
+  <text x="76" y="28" font-family="sans-serif, 'SolaimanLipi'" font-size="16" font-weight="bold" fill="#FFFFFF">Unicode &amp; ANSI (SutonnyMJ) Converter</text>
+  <text x="76" y="48" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="#F5C518">দ্বিমুখী রূপান্তর: ইউনিকোড ⇄ বিজয় ANSI | ডকু রূপান্তর: DOCX • PDF • TXT</text>
+  
+  <!-- Tab Switcher Bar -->
+  <g transform="translate(24, 76)">
+    <rect width="200" height="32" rx="6" fill="#006A4E"/>
+    <text x="100" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">📝 টেক্সট রূপান্তর</text>
+
+    <rect x="210" width="260" height="32" rx="6" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <text x="340" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="#1A241E" text-anchor="middle">📄 নথি রূপান্তর (DOCX, PDF, TXT)</text>
+
+    <rect x="480" width="256" height="32" rx="6" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <text x="608" y="21" font-family="sans-serif, 'SolaimanLipi'" font-size="11" font-weight="bold" fill="#5A6B60" text-anchor="middle">মোড: ইউনিকোড ➔ এএনএসআই (সুতোন্নীএমজে)</text>
   </g>
 
   <!-- Left Box: Unicode Text Area -->
-  <g transform="translate(24, 76)">
+  <g transform="translate(24, 120)">
     <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#1A241E">Unicode Bangla Text</text>
-    <rect y="24" width="336" height="260" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <rect y="24" width="336" height="230" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
     <text x="14" y="56" font-family="sans-serif, 'SolaimanLipi'" font-size="14" fill="#1A241E">আমার সোনার বাংলা, আমি তোমায় ভালোবাসি।</text>
   </g>
 
   <!-- Center Action Button -->
-  <g transform="translate(368, 180)">
+  <g transform="translate(368, 210)">
     <circle cx="12" cy="12" r="22" fill="#006A4E" stroke="#D1DCD5" stroke-width="1"/>
     <text x="12" y="19" font-family="sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">⇄</text>
   </g>
 
   <!-- Right Box: ANSI Text Area -->
-  <g transform="translate(400, 76)">
+  <g transform="translate(400, 120)">
     <text x="0" y="16" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#1A241E">Legacy ANSI / SutonnyMJ Text</text>
-    <rect y="24" width="336" height="260" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <rect y="24" width="336" height="230" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
     <text x="14" y="56" font-family="sans-serif, monospace" font-size="14" fill="#1A241E">Avgvi †mvbvi evsjv, Avwg †Zvgvq fv‡jvevwm|</text>
   </g>
 
   <!-- Status & Message -->
-  <rect x="24" y="372" width="712" height="36" rx="6" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1"/>
-  <circle cx="40" cy="390" r="5" fill="#28A745"/>
-  <text x="54" y="395" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="#1A241E">Ready (lossless mapping verified)</text>
+  <rect x="24" y="388" width="712" height="34" rx="6" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1"/>
+  <circle cx="40" cy="405" r="5" fill="#28A745"/>
+  <text x="54" y="410" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="#1A241E">Ready (lossless mapping verified)</text>
 
   <!-- Bottom Buttons -->
-  <g transform="translate(24, 422)">
-    <rect x="0" y="0" width="140" height="38" rx="8" fill="#006A4E"/>
-    <text x="70" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Convert</text>
+  <g transform="translate(24, 436)">
+    <rect x="0" y="0" width="160" height="38" rx="8" fill="#006A4E"/>
+    <text x="80" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Convert</text>
 
-    <rect x="152" y="0" width="140" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
-    <text x="222" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#1A241E" text-anchor="middle">Switch Direction ⇄</text>
+    <rect x="172" y="0" width="160" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <text x="252" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#1A241E" text-anchor="middle">Switch Direction ⇄</text>
 
-    <rect x="304" y="0" width="140" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
-    <text x="374" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#1A241E" text-anchor="middle">Copy to Clipboard</text>
+    <rect x="344" y="0" width="140" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <text x="414" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#1A241E" text-anchor="middle">Copy to Clipboard</text>
 
-    <rect x="456" y="0" width="120" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
-    <text x="516" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#C21F35" text-anchor="middle">Clear Text</text>
+    <rect x="496" y="0" width="120" height="38" rx="8" fill="#FFFFFF" stroke="#D1DCD5" stroke-width="1.5"/>
+    <text x="556" y="24" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#C21F35" text-anchor="middle">Clear Text</text>
   </g>
 </svg>

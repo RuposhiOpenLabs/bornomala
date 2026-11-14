@@ -1,6 +1,6 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
-use bornomala_engine::{BornomalaEngine, EngineAction, InputScheme, KeyEvent, TextEdit};
 use crate::host_adapter::HostAdapter;
+use bornomala_engine::{BornomalaEngine, EngineAction, InputScheme, KeyEvent, TextEdit};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// Watchdog threshold: after 5 consecutive unhandled engine errors in a host,
 /// Bornomala automatically enters fail-safe pass-through to protect the host process.

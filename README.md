@@ -32,7 +32,7 @@ Bornomala is a clean, modern, signed, and completely free Bangla typing suite an
 * **Classic Fixed Layout (Legacy ANSI Output):** Produces legacy SutonnyMJ glyphs (`Ctrl+Alt+B`) for compatibility with existing government forms, land registry documents, and publishing workflows without needing cracked software.
 * **Avro-Compatible Phonetic Typing:** Full Banglish-to-Bangla phonetic transliteration (`Ctrl+Space` or `F12`) with 100% Avro 5.6.0 compatibility (289 rules, 2,472 autocorrect entries from `autodict.dct`, 159k+ word dictionary FST, and 737 morphological suffixes). Features **live inline composition** and an **anchored floating candidate window** following the caret in real time, plus **beyond-Avro** innovations (context-aware n-gram reranking, custom abbreviations, sub-millisecond search, and locally encrypted candidate learning).
 * **Bijoy/Ekushe-Style Startup Splash Screen & Auto-Startup:** Displays an elegant, familiar centered splash screen on system startup or app launch, then automatically hides itself after 2.5 seconds to reveal the floating bar and system tray.
-* **Lossless Bidirectional Converter:** High-fidelity conversion between modern Unicode and legacy ANSI (SutonnyMJ) text.
+* **Lossless Universal Document & Text Converter:** High-fidelity conversion between modern Unicode and legacy ANSI (SutonnyMJ) supporting plain text, Word documents (`.docx`), legacy Word documents (`.doc` Word 97-2003 via compound binary streams), and portable documents (`.pdf`), fully preserving original formatting, tables, images, margins, and page layouts.
 * **Government Office Conveniences:**
   * **Amount in Words:** Bidirectional English & Bangla conversion of currency amounts (Taka and Paisa).
   * **Revised Bangla Calendar:** Official 2019 Bangladesh revision (Baishakh–Ashwin: 31 days).
@@ -55,7 +55,7 @@ Bornomala is a clean, modern, signed, and completely free Bangla typing suite an
 2. **ক্লাসিক এএনএসআই লেআউট (সুতোন্নীএমজে):** পুরনো সরকারি ফর্ম ও দলিলের জন্য সুতোন্নী ফন্ট উপযোগী লেগ্যাসি এএনএসআই টাইপিং (`Ctrl+Alt+B`)।
 3. **ফোনেটিক টাইপিং (অভ্র ১০০% সামঞ্জস্যপূর্ণ):** ইংরেজি হরফে লিখে খাঁটি বাংলা উচ্চারণভিত্তিক টাইপিং (`Ctrl+Space` বা `F12`)। অভ্র ৫.৬.০ এর ২৮৯টি রুল, ২,৪৭২টি অটো-কারেক্ট এন্ট্রি, ১,৫৯,০০০+ শব্দের এফএসটি ডিকশনারি ও ৭৩৭টি প্রত্যয় অন্তর্ভুক্ত। টাইপ করার সাথে সাথে রিয়েল-টাইম **লাইভ ইনলাইন কম্পোজিশন** ও ক্যারেটের নিচে নো-ফোকাস **ফ্লোটিং ক্যান্ডিডেট প্রিভিউ উইন্ডো** দৃশ্যমান হয়। এছাড়াও এতে রয়েছে কনটেক্সট-সচেতন র‍্যাংকিং ও কাস্টম সংক্ষেপণ।
 4. **স্বয়ংক্রিয় স্টার্টআপ ও ক্লাসিক স্প্ল্যাশ স্ক্রিন:** কম্পিউটার চালু হলে বা অ্যাপ ওপেন করলে বিজয় বা একুশের ন্যায় স্ক্রিনের মাঝখানে পরিচিত স্টার্টআপ স্প্ল্যাশ স্ক্রিন দেখাবে এবং ২.৫ সেকেন্ড পর নিজে নিজেই লুকিয়ে যাবে।
-5. **দ্বিমুখী রূপান্তরক (Unicode <-> ANSI):** কোনো তথ্যের বিকৃতি ছাড়াই ইউনিকোড থেকে সুতোন্নী এবং সুতোন্নী থেকে ইউনিকোডে টেক্সট কনভার্সন।
+5. **শক্তিশালী সর্বজনীন ডকুমেন্ট রূপান্তরক (DOCX, DOC, PDF, TXT):** কোনো ফরম্যাটিং বা লেআউট পরিবর্তন ছাড়াই মূল টেবিল, ছবি, মার্জিন ও স্টাইল অক্ষুণ্ণ রেখে ওয়ার্ড ডকুমেন্ট (`.docx`, `.doc`), পিডিএফ (`.pdf`) এবং প্লেইন টেক্সট ফাইল দ্বিমুখীভাবে ইউনিকোড এবং সুতোন্নী এএনএসআই-তে রূপান্তর।
 6. **অফিসিয়াল সহায়তা টুলস:**
    * চেকে বা নথিতে টাকার পরিমাণ কথায় লেখা (টাকা ও পয়সা — বাংলা ও ইংরেজিতে)।
    * বাংলাদেশ সরকারের ২০১৯ সালের সংশোধিত বাংলা ক্যালেন্ডার অনুযায়ী তারিখ রূপান্তর।
@@ -69,11 +69,13 @@ Bornomala is a clean, modern, signed, and completely free Bangla typing suite an
 
 | Crate | Purpose |
 |---|---|
-| [`bornomala-engine`](crates/bornomala-engine) | Pure Rust platform-agnostic core: Unicode engine, ANSI engine, Avro Phonetic engine, Converter, and Office Conveniences. |
-| [`bornomala-tsf`](crates/bornomala-tsf) | Windows Text Services Framework (TSF) in-process COM DLL with panic catch boundaries and watchdog protection. |
+| [`bornomala-app`](crates/bornomala-app) | Native Windows application entry point, floating toolbar, Desi-themed Converter UI, settings, and tray integration. |
+| [`bornomala-engine`](crates/bornomala-engine) | Pure Rust platform-agnostic core: Unicode engine, ANSI engine, Universal Document Converter (DOCX, DOC, PDF, TXT), and Office Conveniences. |
+| [`bornomala-phonetic`](crates/bornomala-phonetic) | 100% Avro 5.6.0 compatible standalone phonetic transliteration engine, 159k word FST dictionary, suffix engine, candidate ranking, and beyond-Avro n-gram learning. |
+| [`bornomala-tsf`](crates/bornomala-tsf) | Windows Text Services Framework (TSF) in-process COM DLL with live inline composition, candidate window, panic catch boundaries, and watchdog protection. |
 | [`bornomala-ui`](crates/bornomala-ui) | Design system, bilingual localization (BN/EN), themes (Light/Dark/High-Contrast/Large-Text), and vector renderer. |
 | [`bornomala-update`](crates/bornomala-update) | Ed25519 cryptographic signature & SHA-256 hash verifier, anti-tamper checking, and rollback protection. |
-| [`bornomala-cli`](crates/bornomala-cli) | Terminal utility for text conversion, amount in words, calendar calculation, and typing inspection. |
+| [`bornomala-cli`](crates/bornomala-cli) | Terminal utility for text and document conversion, amount in words, calendar calculation, and typing inspection. |
 | [`bornomala-lab`](crates/bornomala-lab) | Interactive full-screen terminal typing lab with side-by-side Unicode and ANSI visualizers. |
 | [`bornomala-spec-tools`](crates/bornomala-spec-tools) | Automated specification and test vector validation runner. |
 
@@ -127,8 +129,8 @@ Download the Windows installer package:
   6. `SutonnyMJ Regular.ttf` (Classic ANSI Font for Land Registry & Publishing)
   7. `AdorshoLipi_20-07-2007.ttf` (Literary & Educational Standard)
   8. `Bangla.ttf` (Universal OpenType Font)
-* **Interactive Font Conflict Resolution Popup:**
-  If any of these fonts already exist on your system, the setup shows an interactive prompt asking whether you want to **Replace with Preloaded Font** or **Keep Existing Version**.
+* **Interactive Font Conflict Resolution:**
+  If any of these fonts already exist on your system, the setup shows an interactive prompt offering **Install All (Replace All)**, **Skip All (Keep Existing)**, or **Per-Font Decision (Ask Each Font)**.
 * **Automatic System Refresh:** The setup automatically broadcasts `WM_FONTCHANGE` upon completion so MS Word, Photoshop, Excel, and Illustrator immediately recognize the fonts without requiring a reboot.
 * **Auto-Startup & Splash Screen:** Optionally registers Bornomala in Windows startup to display the Bijoy/Ekushe-style splash screen on launch.
 

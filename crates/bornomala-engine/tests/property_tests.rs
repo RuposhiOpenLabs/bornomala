@@ -1,5 +1,5 @@
-use proptest::prelude::*;
 use bornomala_engine::{convert_digits, BornomalaEngine, InputScheme, KeyEvent};
+use proptest::prelude::*;
 
 proptest! {
     #[test]

@@ -35,9 +35,18 @@ fn parse_hotkey_str(s: &str) -> Option<(u32, u32)> {
     }
 
     let vk = match key_part.to_uppercase().as_str() {
-        "F1" => 0x70, "F2" => 0x71, "F3" => 0x72, "F4" => 0x73,
-        "F5" => 0x74, "F6" => 0x75, "F7" => 0x76, "F8" => 0x77,
-        "F9" => 0x78, "F10" => 0x79, "F11" => 0x7A, "F12" => 0x7B,
+        "F1" => 0x70,
+        "F2" => 0x71,
+        "F3" => 0x72,
+        "F4" => 0x73,
+        "F5" => 0x74,
+        "F6" => 0x75,
+        "F7" => 0x76,
+        "F8" => 0x77,
+        "F9" => 0x78,
+        "F10" => 0x79,
+        "F11" => 0x7A,
+        "F12" => 0x7B,
         "SPACE" => VK_SPACE,
         "RETURN" | "ENTER" => VK_RETURN,
         s if s.len() == 1 => {
@@ -78,7 +87,9 @@ impl KeyboardHook {
             let mut engine = BornomalaEngine::new(initial_scheme);
             for rule in &cfg.custom_rules {
                 if rule.enabled {
-                    engine.expander_mut().insert_snippet(rule.trigger.clone(), rule.replacement.clone());
+                    engine
+                        .expander_mut()
+                        .insert_snippet(rule.trigger.clone(), rule.replacement.clone());
                 }
             }
             GLOBAL_ENGINE = Some(Mutex::new(engine));
@@ -86,12 +97,7 @@ impl KeyboardHook {
             Self::register_all_hotkeys(hwnd, &cfg);
 
             // Install low-level keyboard hook
-            HOOK_HANDLE = SetWindowsHookExW(
-                WH_KEYBOARD_LL,
-                low_level_keyboard_proc,
-                hinstance,
-                0,
-            );
+            HOOK_HANDLE = SetWindowsHookExW(WH_KEYBOARD_LL, low_level_keyboard_proc, hinstance, 0);
         }
     }
 
@@ -146,7 +152,9 @@ impl KeyboardHook {
                 if let Ok(mut engine) = engine_mutex.lock() {
                     for rule in &cfg.custom_rules {
                         if rule.enabled {
-                            engine.expander_mut().insert_snippet(rule.trigger.clone(), rule.replacement.clone());
+                            engine
+                                .expander_mut()
+                                .insert_snippet(rule.trigger.clone(), rule.replacement.clone());
                         }
                     }
                 }
@@ -195,7 +203,10 @@ impl KeyboardHook {
         unsafe {
             if let Some(ref engine_mutex) = GLOBAL_ENGINE {
                 if let Ok(mut engine) = engine_mutex.lock() {
-                    if let Some(action) = engine.phonetic_engine_mut().select_candidate_and_commit(idx) {
+                    if let Some(action) = engine
+                        .phonetic_engine_mut()
+                        .select_candidate_and_commit(idx)
+                    {
                         for edit in &action.edits {
                             match edit {
                                 TextEdit::ReplaceLast { count, text } => {
@@ -275,16 +286,26 @@ unsafe extern "system" fn low_level_keyboard_proc(
 
         // Map VK to char
         let ch = match vk {
-            0x41..=0x5A => { // A-Z
+            0x41..=0x5A => {
+                // A-Z
                 let base = if shift_down { 'A' } else { 'a' };
                 let offset = (vk - 0x41) as u8;
                 Some((base as u8 + offset) as char)
             }
-            0x30..=0x39 => { // 0-9
+            0x30..=0x39 => {
+                // 0-9
                 let c = if shift_down {
                     match vk {
-                        0x31 => '!', 0x32 => '@', 0x33 => '#', 0x34 => '$', 0x35 => '%',
-                        0x36 => '^', 0x37 => '&', 0x38 => '*', 0x39 => '(', 0x30 => ')',
+                        0x31 => '!',
+                        0x32 => '@',
+                        0x33 => '#',
+                        0x34 => '$',
+                        0x35 => '%',
+                        0x36 => '^',
+                        0x37 => '&',
+                        0x38 => '*',
+                        0x39 => '(',
+                        0x30 => ')',
                         _ => '0',
                     }
                 } else {
@@ -346,7 +367,9 @@ unsafe extern "system" fn low_level_keyboard_proc(
                         if !candidates.is_empty() {
                             let roman = engine.phonetic_engine().roman_buffer();
                             let sel_idx = engine.phonetic_engine().selected_candidate_index();
-                            super::candidate_window::CandidateWindow::update_and_show(roman, candidates, sel_idx);
+                            super::candidate_window::CandidateWindow::update_and_show(
+                                roman, candidates, sel_idx,
+                            );
                         } else {
                             super::candidate_window::CandidateWindow::hide();
                         }
@@ -380,7 +403,11 @@ unsafe fn inject_backspaces(count: usize) {
         in_up.ki.dwFlags = KEYEVENTF_KEYUP;
         inputs.push(in_up);
     }
-    SendInput(inputs.len() as u32, inputs.as_ptr(), std::mem::size_of::<INPUT>() as i32);
+    SendInput(
+        inputs.len() as u32,
+        inputs.as_ptr(),
+        std::mem::size_of::<INPUT>() as i32,
+    );
 }
 
 unsafe fn inject_unicode_text(text: &str) {
@@ -406,5 +433,9 @@ unsafe fn inject_unicode_text(text: &str) {
         inputs.push(in_up);
     }
 
-    SendInput(inputs.len() as u32, inputs.as_ptr(), std::mem::size_of::<INPUT>() as i32);
+    SendInput(
+        inputs.len() as u32,
+        inputs.as_ptr(),
+        std::mem::size_of::<INPUT>() as i32,
+    );
 }

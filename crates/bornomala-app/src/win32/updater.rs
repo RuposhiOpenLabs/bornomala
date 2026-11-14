@@ -15,9 +15,7 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use bornomala_update::{
-    IntegrityVerifier, UpdateCandidate, UpdateChecker, UpdatePreferences,
-};
+use bornomala_update::{IntegrityVerifier, UpdateCandidate, UpdateChecker, UpdatePreferences};
 
 use super::api::*;
 
@@ -47,7 +45,12 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
             match UpdateChecker::parse_latest_release(&json_response, current_version) {
                 Ok(Some(candidate)) => {
                     let prefs = UpdatePreferences::load();
-                    if !is_manual && !prefs.should_notify(&candidate.version, SHOWN_THIS_SESSION.load(Ordering::SeqCst)) {
+                    if !is_manual
+                        && !prefs.should_notify(
+                            &candidate.version,
+                            SHOWN_THIS_SESSION.load(Ordering::SeqCst),
+                        )
+                    {
                         return;
                     }
 
@@ -68,7 +71,12 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
                                 current_version
                             );
                             let title = "বর্ণমালা আপডেট";
-                            MessageBoxW(0, to_wide(&msg).as_ptr(), to_wide(title).as_ptr(), 0x00000040);
+                            MessageBoxW(
+                                0,
+                                to_wide(&msg).as_ptr(),
+                                to_wide(title).as_ptr(),
+                                0x00000040,
+                            );
                         }
                     }
                 }
@@ -77,7 +85,12 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
                         unsafe {
                             let msg = format!("আপডেট পরীক্ষা করতে ব্যর্থ হয়েছে:\n{}", e);
                             let title = "বর্ণমালা আপডেট ত্রুটি";
-                            MessageBoxW(0, to_wide(&msg).as_ptr(), to_wide(title).as_ptr(), 0x00000010);
+                            MessageBoxW(
+                                0,
+                                to_wide(&msg).as_ptr(),
+                                to_wide(title).as_ptr(),
+                                0x00000010,
+                            );
                         }
                     }
                 }
@@ -88,7 +101,12 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
                 unsafe {
                     let msg = format!("সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি:\n{}", e);
                     let title = "বর্ণমালা আপডেট ত্রুটি";
-                    MessageBoxW(0, to_wide(&msg).as_ptr(), to_wide(title).as_ptr(), 0x00000010);
+                    MessageBoxW(
+                        0,
+                        to_wide(&msg).as_ptr(),
+                        to_wide(title).as_ptr(),
+                        0x00000010,
+                    );
                 }
             }
         }
@@ -306,7 +324,19 @@ impl UpdatePromptWindow {
 
         // Create Buttons
         let btn_font = CreateFontW(
-            -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+            -13,
+            0,
+            0,
+            0,
+            FW_BOLD,
+            0,
+            0,
+            0,
+            DEFAULT_CHARSET,
+            0,
+            0,
+            CLEARTYPE_QUALITY,
+            0,
             to_wide("Nirmala UI").as_ptr(),
         );
 
@@ -316,7 +346,10 @@ impl UpdatePromptWindow {
             to_wide("BUTTON").as_ptr(),
             to_wide("এখনই আপডেট করুন (Update Now)").as_ptr(),
             WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-            24, 200, 200, 38,
+            24,
+            200,
+            200,
+            38,
             hwnd,
             BTN_UPDATE_NOW,
             hinst,
@@ -330,7 +363,10 @@ impl UpdatePromptWindow {
             to_wide("BUTTON").as_ptr(),
             to_wide("পরে মনে করিয়ে দিন (Later)").as_ptr(),
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-            234, 200, 140, 38,
+            234,
+            200,
+            140,
+            38,
             hwnd,
             BTN_LATER,
             hinst,
@@ -344,7 +380,10 @@ impl UpdatePromptWindow {
             to_wide("BUTTON").as_ptr(),
             to_wide("বাদ দিন (Skip)").as_ptr(),
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-            382, 200, 74, 38,
+            382,
+            200,
+            74,
+            38,
             hwnd,
             BTN_SKIP,
             hinst,
@@ -370,7 +409,12 @@ unsafe extern "system" fn prompt_wnd_proc(
 
             // 1. Header Banner (Bornomala Green #066a4a)
             let header_brush = CreateSolidBrush(rgb(6, 106, 74));
-            let header_rect = RECT { left: 0, top: 0, right: 480, bottom: 58 };
+            let header_rect = RECT {
+                left: 0,
+                top: 0,
+                right: 480,
+                bottom: 58,
+            };
             FillRect(hdc, &header_rect, header_brush);
             DeleteObject(header_brush);
 
@@ -378,38 +422,107 @@ unsafe extern "system" fn prompt_wnd_proc(
             SetTextColor(hdc, rgb(254, 247, 222)); // Cream text
 
             let header_font = CreateFontW(
-                -17, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -17,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let old_font = SelectObject(hdc, header_font);
-            let mut h_text_rect = RECT { left: 20, top: 16, right: 460, bottom: 50 };
+            let mut h_text_rect = RECT {
+                left: 20,
+                top: 16,
+                right: 460,
+                bottom: 50,
+            };
             let title_text = to_wide("বর্ণমালার নতুন সংস্করণ প্রকাশিত হয়েছে!");
-            DrawTextW(hdc, title_text.as_ptr(), -1, &mut h_text_rect, DT_LEFT | DT_SINGLELINE);
+            DrawTextW(
+                hdc,
+                title_text.as_ptr(),
+                -1,
+                &mut h_text_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // 2. Body Text
             let cand_clone = PROMPT_CANDIDATE.lock().ok().and_then(|c| c.clone());
             if let Some(ref cand) = cand_clone {
                 SetTextColor(hdc, rgb(6, 106, 74));
                 let body_font = CreateFontW(
-                    -14, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                    -14,
+                    0,
+                    0,
+                    0,
+                    FW_BOLD,
+                    0,
+                    0,
+                    0,
+                    DEFAULT_CHARSET,
+                    0,
+                    0,
+                    CLEARTYPE_QUALITY,
+                    0,
                     to_wide("Nirmala UI").as_ptr(),
                 );
                 SelectObject(hdc, body_font);
 
                 let ver_str = format!("নতুন সংস্করণ: v{} (আপনার সংস্করণ: v0.1.0)", cand.version);
-                let mut v_rect = RECT { left: 24, top: 72, right: 460, bottom: 96 };
-                DrawTextW(hdc, to_wide(&ver_str).as_ptr(), -1, &mut v_rect, DT_LEFT | DT_SINGLELINE);
+                let mut v_rect = RECT {
+                    left: 24,
+                    top: 72,
+                    right: 460,
+                    bottom: 96,
+                };
+                DrawTextW(
+                    hdc,
+                    to_wide(&ver_str).as_ptr(),
+                    -1,
+                    &mut v_rect,
+                    DT_LEFT | DT_SINGLELINE,
+                );
 
                 let desc_font = CreateFontW(
-                    -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                    -12,
+                    0,
+                    0,
+                    0,
+                    FW_NORMAL,
+                    0,
+                    0,
+                    0,
+                    DEFAULT_CHARSET,
+                    0,
+                    0,
+                    CLEARTYPE_QUALITY,
+                    0,
                     to_wide("Nirmala UI").as_ptr(),
                 );
                 SelectObject(hdc, desc_font);
                 SetTextColor(hdc, rgb(30, 40, 35));
 
                 let note_str = "এই সংস্করণে নতুন ফিচার, গতি বৃদ্ধি ও নিরাপত্তা হালনাগাদ যুক্ত হয়েছে।\nআপডেটটি সম্পূর্ণ স্বয়ংক্রিয় এবং কোনো ফাইল পুনরায় কনফিগার করতে হবে না।";
-                let mut d_rect = RECT { left: 24, top: 104, right: 456, bottom: 180 };
-                DrawTextW(hdc, to_wide(note_str).as_ptr(), -1, &mut d_rect, DT_LEFT | DT_WORDBREAK);
+                let mut d_rect = RECT {
+                    left: 24,
+                    top: 104,
+                    right: 456,
+                    bottom: 180,
+                };
+                DrawTextW(
+                    hdc,
+                    to_wide(note_str).as_ptr(),
+                    -1,
+                    &mut d_rect,
+                    DT_LEFT | DT_WORDBREAK,
+                );
 
                 DeleteObject(body_font);
                 DeleteObject(desc_font);
@@ -480,8 +593,8 @@ pub struct DownloaderWindow;
 static mut DL_HWND: HWND = 0;
 static DL_PROGRESS_PCT: AtomicU64 = AtomicU64::new(0);
 static DL_DOWNLOADED_MB: AtomicU64 = AtomicU64::new(0); // in KB
-static DL_TOTAL_MB: AtomicU64 = AtomicU64::new(0);      // in KB
-static DL_SPEED_KB: AtomicU64 = AtomicU64::new(0);      // in KB/s
+static DL_TOTAL_MB: AtomicU64 = AtomicU64::new(0); // in KB
+static DL_SPEED_KB: AtomicU64 = AtomicU64::new(0); // in KB/s
 static DL_CANCEL_FLAG: Mutex<Option<Arc<AtomicBool>>> = Mutex::new(None);
 static DL_STATUS_MSG: Mutex<String> = Mutex::new(String::new());
 
@@ -540,14 +653,29 @@ impl DownloaderWindow {
             to_wide("BUTTON").as_ptr(),
             to_wide("বাতিল (Cancel)").as_ptr(),
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-            340, 165, 110, 34,
+            340,
+            165,
+            110,
+            34,
             hwnd,
             BTN_CANCEL_DOWNLOAD,
             hinst,
             std::ptr::null_mut(),
         );
         let btn_font = CreateFontW(
-            -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+            -13,
+            0,
+            0,
+            0,
+            FW_BOLD,
+            0,
+            0,
+            0,
+            DEFAULT_CHARSET,
+            0,
+            0,
+            CLEARTYPE_QUALITY,
+            0,
             to_wide("Nirmala UI").as_ptr(),
         );
         SendMessageW(cancel_btn, WM_SETFONT, btn_font, 1);
@@ -649,22 +777,30 @@ impl DownloaderWindow {
                                     "নিরাপত্তা সতর্কতা: ডাউনলোড করা ফাইলের ক্রিপ্টোগ্রাফিক যাচাইকরণ ব্যর্থ হয়েছে!\n({})\n\nসম্ভাব্য ম্যালওয়্যার প্রতিরোধে ফাইলটি মুছে ফেলা হয়েছে।",
                                     err
                                 );
-                                MessageBoxW(0, to_wide(&msg).as_ptr(), to_wide("নিরাপত্তা ত্রুটি").as_ptr(), 0x00000010);
+                                MessageBoxW(
+                                    0,
+                                    to_wide(&msg).as_ptr(),
+                                    to_wide("নিরাপত্তা ত্রুটি").as_ptr(),
+                                    0x00000010,
+                                );
                             }
                         }
                     }
                 }
-                Err(err) => {
-                    unsafe {
-                        ShowWindow(DL_HWND, SW_HIDE);
-                        DestroyWindow(DL_HWND);
-                        DL_HWND = 0;
-                        if !err.contains("cancelled") {
-                            let msg = format!("ডাউনলোড সম্পন্ন করা সম্ভব হয়নি:\n{}", err);
-                            MessageBoxW(0, to_wide(&msg).as_ptr(), to_wide("ডাউনলোড ত্রুটি").as_ptr(), 0x00000010);
-                        }
+                Err(err) => unsafe {
+                    ShowWindow(DL_HWND, SW_HIDE);
+                    DestroyWindow(DL_HWND);
+                    DL_HWND = 0;
+                    if !err.contains("cancelled") {
+                        let msg = format!("ডাউনলোড সম্পন্ন করা সম্ভব হয়নি:\n{}", err);
+                        MessageBoxW(
+                            0,
+                            to_wide(&msg).as_ptr(),
+                            to_wide("ডাউনলোড ত্রুটি").as_ptr(),
+                            0x00000010,
+                        );
                     }
-                }
+                },
             }
         });
     }
@@ -700,13 +836,36 @@ unsafe extern "system" fn dl_wnd_proc(
 
             // Title
             let title_font = CreateFontW(
-                -16, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -16,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let old_font = SelectObject(mem_dc, title_font);
             SetTextColor(mem_dc, rgb(6, 106, 74));
-            let mut t_rect = RECT { left: 24, top: 18, right: 456, bottom: 44 };
-            DrawTextW(mem_dc, to_wide("বর্ণমালা আপডেট ডাউনলোড হচ্ছে...").as_ptr(), -1, &mut t_rect, DT_LEFT | DT_SINGLELINE);
+            let mut t_rect = RECT {
+                left: 24,
+                top: 18,
+                right: 456,
+                bottom: 44,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("বর্ণমালা আপডেট ডাউনলোড হচ্ছে...").as_ptr(),
+                -1,
+                &mut t_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Progress Bar Track
             let track_brush = CreateSolidBrush(rgb(230, 220, 195));
@@ -732,7 +891,19 @@ unsafe extern "system" fn dl_wnd_proc(
 
             // Stats: Left = Downloaded / Total (Pct), Right = Live Speed
             let stats_font = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, stats_font);
@@ -754,16 +925,49 @@ unsafe extern "system" fn dl_wnd_proc(
                 format!("{} KB/s", speed_kb)
             };
 
-            let mut sl_rect = RECT { left: 26, top: 94, right: 280, bottom: 120 };
-            DrawTextW(mem_dc, to_wide(&stats_left).as_ptr(), -1, &mut sl_rect, DT_LEFT | DT_SINGLELINE);
+            let mut sl_rect = RECT {
+                left: 26,
+                top: 94,
+                right: 280,
+                bottom: 120,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide(&stats_left).as_ptr(),
+                -1,
+                &mut sl_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
-            let mut sr_rect = RECT { left: 280, top: 94, right: 454, bottom: 120 };
-            DrawTextW(mem_dc, to_wide(&stats_right).as_ptr(), -1, &mut sr_rect, DT_RIGHT | DT_SINGLELINE);
+            let mut sr_rect = RECT {
+                left: 280,
+                top: 94,
+                right: 454,
+                bottom: 120,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide(&stats_right).as_ptr(),
+                -1,
+                &mut sr_rect,
+                DT_RIGHT | DT_SINGLELINE,
+            );
 
             // Status message
             let status_text = get_dl_status();
-            let mut st_rect = RECT { left: 26, top: 126, right: 454, bottom: 154 };
-            DrawTextW(mem_dc, to_wide(&status_text).as_ptr(), -1, &mut st_rect, DT_LEFT | DT_SINGLELINE);
+            let mut st_rect = RECT {
+                left: 26,
+                top: 126,
+                right: 454,
+                bottom: 154,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide(&status_text).as_ptr(),
+                -1,
+                &mut st_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Copy to screen DC
             BitBlt(hdc, 0, 0, w, h, mem_dc, 0, 0, 0x00CC0020);
@@ -868,7 +1072,19 @@ pub unsafe fn run_update_wizard(payload_path: &str, target_version: &str) {
     WIZARD_HWND = hwnd;
 
     let btn_font = CreateFontW(
-        -14, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+        -14,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        0,
+        0,
+        0,
+        DEFAULT_CHARSET,
+        0,
+        0,
+        CLEARTYPE_QUALITY,
+        0,
         to_wide("Nirmala UI").as_ptr(),
     );
 
@@ -878,7 +1094,10 @@ pub unsafe fn run_update_wizard(payload_path: &str, target_version: &str) {
         to_wide("BUTTON").as_ptr(),
         to_wide("আপডেট করুন (Update)").as_ptr(),
         WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-        180, 190, 180, 42,
+        180,
+        190,
+        180,
+        42,
         hwnd,
         BTN_WIZARD_UPDATE,
         hinst,
@@ -892,7 +1111,10 @@ pub unsafe fn run_update_wizard(payload_path: &str, target_version: &str) {
         to_wide("BUTTON").as_ptr(),
         to_wide("বাতিল (Cancel)").as_ptr(),
         WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-        372, 190, 94, 42,
+        372,
+        190,
+        94,
+        42,
         hwnd,
         BTN_WIZARD_CANCEL,
         hinst,
@@ -923,7 +1145,12 @@ unsafe extern "system" fn wizard_wnd_proc(
 
             // Header Banner
             let header_brush = CreateSolidBrush(rgb(6, 106, 74));
-            let header_rect = RECT { left: 0, top: 0, right: 500, bottom: 64 };
+            let header_rect = RECT {
+                left: 0,
+                top: 0,
+                right: 500,
+                bottom: 64,
+            };
             FillRect(hdc, &header_rect, header_brush);
             DeleteObject(header_brush);
 
@@ -931,28 +1158,89 @@ unsafe extern "system" fn wizard_wnd_proc(
             SetTextColor(hdc, rgb(254, 247, 222));
 
             let h_font = CreateFontW(
-                -18, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -18,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let old_font = SelectObject(hdc, h_font);
-            let mut ht_rect = RECT { left: 24, top: 18, right: 480, bottom: 50 };
-            DrawTextW(hdc, to_wide("বর্ণমালা আপডেট করতে প্রস্তুত (Ready to Update)").as_ptr(), -1, &mut ht_rect, DT_LEFT | DT_SINGLELINE);
+            let mut ht_rect = RECT {
+                left: 24,
+                top: 18,
+                right: 480,
+                bottom: 50,
+            };
+            DrawTextW(
+                hdc,
+                to_wide("বর্ণমালা আপডেট করতে প্রস্তুত (Ready to Update)").as_ptr(),
+                -1,
+                &mut ht_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Body Area
             SetTextColor(hdc, rgb(6, 106, 74));
             let b_font = CreateFontW(
-                -14, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -14,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(hdc, b_font);
 
             let cur_target_ver = WIZARD_VERSION.lock().map(|v| v.clone()).unwrap_or_default();
-            let trans_text = format!("হালনাগাদ সংস্করণ: v{} (এক-ক্লিকে স্বয়ংক্রিয় আপডেট)", cur_target_ver);
-            let mut v_rect = RECT { left: 24, top: 80, right: 480, bottom: 106 };
-            DrawTextW(hdc, to_wide(&trans_text).as_ptr(), -1, &mut v_rect, DT_LEFT | DT_SINGLELINE);
+            let trans_text = format!(
+                "হালনাগাদ সংস্করণ: v{} (এক-ক্লিকে স্বয়ংক্রিয় আপডেট)",
+                cur_target_ver
+            );
+            let mut v_rect = RECT {
+                left: 24,
+                top: 80,
+                right: 480,
+                bottom: 106,
+            };
+            DrawTextW(
+                hdc,
+                to_wide(&trans_text).as_ptr(),
+                -1,
+                &mut v_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             let note_font = CreateFontW(
-                -13, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(hdc, note_font);
@@ -965,8 +1253,19 @@ unsafe extern "system" fn wizard_wnd_proc(
                 "আপডেট প্যাকেজটি সফলভাবে ডাউনলোড ও ডিজিটাল স্বাক্ষর যাচাই করা হয়েছে।\n'আপডেট করুন' বাটনে ক্লিক করলে বর্ণমালা স্বয়ংক্রিয়ভাবে আপডেট হয়ে পুনরায় চালু হবে।"
             };
 
-            let mut i_rect = RECT { left: 24, top: 114, right: 476, bottom: 180 };
-            DrawTextW(hdc, to_wide(instructions).as_ptr(), -1, &mut i_rect, DT_LEFT | DT_WORDBREAK);
+            let mut i_rect = RECT {
+                left: 24,
+                top: 114,
+                right: 476,
+                bottom: 180,
+            };
+            DrawTextW(
+                hdc,
+                to_wide(instructions).as_ptr(),
+                -1,
+                &mut i_rect,
+                DT_LEFT | DT_WORDBREAK,
+            );
 
             SelectObject(hdc, old_font);
             DeleteObject(h_font);
@@ -1028,9 +1327,7 @@ unsafe extern "system" fn wizard_wnd_proc(
                     std::thread::sleep(std::time::Duration::from_millis(600));
 
                     // 2. Execute verified setup with /S (Silent update - no manual setup required)
-                    let _status = std::process::Command::new(&payload)
-                        .arg("/S")
-                        .status();
+                    let _status = std::process::Command::new(&payload).arg("/S").status();
 
                     // 3. Restart the newly updated Bornomala app
                     let install_dir = r"C:\Program Files\Bornomala\bornomala.exe";

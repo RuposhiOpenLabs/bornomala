@@ -31,24 +31,68 @@ impl SvgRenderer {
             .replace('\'', "&apos;")
     }
 
-    fn render_floating_bar(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_floating_bar(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 560;
         let height = 54;
 
-        let unicode_bg = if state.scheme == InputScheme::ClassicUnicode { pal.primary_green } else { pal.surface };
-        let unicode_fg = if state.scheme == InputScheme::ClassicUnicode { "#FFFFFF" } else { pal.text_primary };
+        let unicode_bg = if state.scheme == InputScheme::ClassicUnicode {
+            pal.primary_green
+        } else {
+            pal.surface
+        };
+        let unicode_fg = if state.scheme == InputScheme::ClassicUnicode {
+            "#FFFFFF"
+        } else {
+            pal.text_primary
+        };
 
-        let ansi_bg = if state.scheme == InputScheme::ClassicAnsi { pal.primary_green } else { pal.surface };
-        let ansi_fg = if state.scheme == InputScheme::ClassicAnsi { "#FFFFFF" } else { pal.text_primary };
+        let ansi_bg = if state.scheme == InputScheme::ClassicAnsi {
+            pal.primary_green
+        } else {
+            pal.surface
+        };
+        let ansi_fg = if state.scheme == InputScheme::ClassicAnsi {
+            "#FFFFFF"
+        } else {
+            pal.text_primary
+        };
 
-        let phonetic_bg = if state.scheme == InputScheme::Phonetic { pal.primary_green } else { pal.surface };
-        let phonetic_fg = if state.scheme == InputScheme::Phonetic { "#FFFFFF" } else { pal.text_primary };
+        let phonetic_bg = if state.scheme == InputScheme::Phonetic {
+            pal.primary_green
+        } else {
+            pal.surface
+        };
+        let phonetic_fg = if state.scheme == InputScheme::Phonetic {
+            "#FFFFFF"
+        } else {
+            pal.text_primary
+        };
 
-        let english_bg = if state.scheme == InputScheme::PassThrough { pal.primary_green } else { pal.surface };
-        let english_fg = if state.scheme == InputScheme::PassThrough { "#FFFFFF" } else { pal.text_primary };
+        let english_bg = if state.scheme == InputScheme::PassThrough {
+            pal.primary_green
+        } else {
+            pal.surface
+        };
+        let english_fg = if state.scheme == InputScheme::PassThrough {
+            "#FFFFFF"
+        } else {
+            pal.text_primary
+        };
 
-        let status_color = if state.is_pass_through { pal.accessible_red } else { "#28A745" };
-        let status_title = if state.is_pass_through { strings.status_passthrough } else { strings.status_active };
+        let status_color = if state.is_pass_through {
+            pal.accessible_red
+        } else {
+            "#28A745"
+        };
+        let status_title = if state.is_pass_through {
+            strings.status_passthrough
+        } else {
+            strings.status_active
+        };
 
         format!(
             r###"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -125,30 +169,75 @@ impl SvgRenderer {
         )
     }
 
-    fn render_osk(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_osk(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 840;
         let height = 340;
 
         // Sample key definitions for 4 rows
         let row1 = [
-            ("`", "~", "1"), ("1", "!", "১"), ("2", "৥", "২"), ("3", "#", "৩"), ("4", "৳", "৪"),
-            ("5", "%", "৫"), ("6", "৲", "৬"), ("7", "ঁ", "৭"), ("8", "*", "৮"), ("9", "(", "৯"),
-            ("0", ")", "০"), ("-", "_", "-"), ("=", "+", "="), ("BS", "←", "←")
+            ("`", "~", "1"),
+            ("1", "!", "১"),
+            ("2", "৥", "২"),
+            ("3", "#", "৩"),
+            ("4", "৳", "৪"),
+            ("5", "%", "৫"),
+            ("6", "৲", "৬"),
+            ("7", "ঁ", "৭"),
+            ("8", "*", "৮"),
+            ("9", "(", "৯"),
+            ("0", ")", "০"),
+            ("-", "_", "-"),
+            ("=", "+", "="),
+            ("BS", "←", "←"),
         ];
         let row2 = [
-            ("Tab", "⇥", "⇥"), ("Q", "ং", "ঙ"), ("W", "য়", "য"), ("E", "ঢ", "ড"), ("R", "ফ", "প"),
-            ("T", "ঠ", "ট"), ("Y", "ছ", "চ"), ("U", "ঝ", "জ"), ("I", "ঞ", "হ"), ("O", "ঘ", "গ"),
-            ("P", "ঢ়", "ড়"), ("[", "{", "["), ("]", "}", "]"), ("\\", "|", "\\")
+            ("Tab", "⇥", "⇥"),
+            ("Q", "ং", "ঙ"),
+            ("W", "য়", "য"),
+            ("E", "ঢ", "ড"),
+            ("R", "ফ", "প"),
+            ("T", "ঠ", "ট"),
+            ("Y", "ছ", "চ"),
+            ("U", "ঝ", "জ"),
+            ("I", "ঞ", "হ"),
+            ("O", "ঘ", "গ"),
+            ("P", "ঢ়", "ড়"),
+            ("[", "{", "["),
+            ("]", "}", "]"),
+            ("\\", "|", "\\"),
         ];
         let row3 = [
-            ("Caps", "⇪", "⇪"), ("A", "র্", "ৃ"), ("S", "ূ", "ু"), ("D", "ী", "ি"), ("F", "অ", "া"),
-            ("G", "।", "্"), ("H", "ভ", "ব"), ("J", "খ", "ক"), ("K", "থ", "ত"), ("L", "ধ", "দ"),
-            (";", ":", ";"), ("'", "\"", "'"), ("Enter", "↵", "↵")
+            ("Caps", "⇪", "⇪"),
+            ("A", "র্", "ৃ"),
+            ("S", "ূ", "ু"),
+            ("D", "ী", "ি"),
+            ("F", "অ", "া"),
+            ("G", "।", "্"),
+            ("H", "ভ", "ব"),
+            ("J", "খ", "ক"),
+            ("K", "থ", "ত"),
+            ("L", "ধ", "দ"),
+            (";", ":", ";"),
+            ("'", "\"", "'"),
+            ("Enter", "↵", "↵"),
         ];
         let row4 = [
-            ("Shift", "⇧", "⇧"), ("Z", "্র", "্য"), ("X", "ঔ", "ও"), ("C", "ৈ", "ে"), ("V", "ল", "র"),
-            ("B", "ণ", "ন"), ("N", "ষ", "শ"), ("M", "স", "ণ"), (",", "<", ","), (".", ">", "."),
-            ("/", "?", "/"), ("Shift", "⇧", "⇧")
+            ("Shift", "⇧", "⇧"),
+            ("Z", "্র", "্য"),
+            ("X", "ঔ", "ও"),
+            ("C", "ৈ", "ে"),
+            ("V", "ল", "র"),
+            ("B", "ণ", "ন"),
+            ("N", "ষ", "শ"),
+            ("M", "স", "ণ"),
+            (",", "<", ","),
+            (".", ">", "."),
+            ("/", "?", "/"),
+            ("Shift", "⇧", "⇧"),
         ];
 
         let mut svg = format!(
@@ -175,7 +264,17 @@ impl SvgRenderer {
         let mut x = 0.0;
         for (latin, shift, norm) in row1 {
             let kw = if latin == "BS" { 76.0 } else { 52.0 };
-            svg.push_str(&Self::render_key(x, 0.0, kw, 48.0, latin, shift, norm, pal, state.osk_shift));
+            svg.push_str(&Self::render_key(
+                x,
+                0.0,
+                kw,
+                48.0,
+                latin,
+                shift,
+                norm,
+                pal,
+                state.osk_shift,
+            ));
             x += kw + 6.0;
         }
 
@@ -183,15 +282,41 @@ impl SvgRenderer {
         let mut x = 0.0;
         for (latin, shift, norm) in row2 {
             let kw = if latin == "Tab" { 70.0 } else { 52.0 };
-            svg.push_str(&Self::render_key(x, 54.0, kw, 48.0, latin, shift, norm, pal, state.osk_shift));
+            svg.push_str(&Self::render_key(
+                x,
+                54.0,
+                kw,
+                48.0,
+                latin,
+                shift,
+                norm,
+                pal,
+                state.osk_shift,
+            ));
             x += kw + 6.0;
         }
 
         // Render Row 3
         let mut x = 0.0;
         for (latin, shift, norm) in row3 {
-            let kw = if latin == "Caps" { 80.0 } else if latin == "Enter" { 84.0 } else { 52.0 };
-            svg.push_str(&Self::render_key(x, 108.0, kw, 48.0, latin, shift, norm, pal, state.osk_shift));
+            let kw = if latin == "Caps" {
+                80.0
+            } else if latin == "Enter" {
+                84.0
+            } else {
+                52.0
+            };
+            svg.push_str(&Self::render_key(
+                x,
+                108.0,
+                kw,
+                48.0,
+                latin,
+                shift,
+                norm,
+                pal,
+                state.osk_shift,
+            ));
             x += kw + 6.0;
         }
 
@@ -199,7 +324,17 @@ impl SvgRenderer {
         let mut x = 0.0;
         for (latin, shift, norm) in row4 {
             let kw = if latin == "Shift" { 96.0 } else { 52.0 };
-            svg.push_str(&Self::render_key(x, 162.0, kw, 48.0, latin, shift, norm, pal, state.osk_shift));
+            svg.push_str(&Self::render_key(
+                x,
+                162.0,
+                kw,
+                48.0,
+                latin,
+                shift,
+                norm,
+                pal,
+                state.osk_shift,
+            ));
             x += kw + 6.0;
         }
 
@@ -278,7 +413,11 @@ impl SvgRenderer {
         )
     }
 
-    fn render_converter(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_converter(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 760;
         let height = 520;
 
@@ -382,14 +521,26 @@ impl SvgRenderer {
         )
     }
 
-    fn render_settings(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_settings(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 640;
         let height = 580;
 
         let autostart_knob_x = if state.auto_startup_enabled { 43 } else { 25 };
-        let autostart_color = if state.auto_startup_enabled { pal.primary_green } else { pal.border };
+        let autostart_color = if state.auto_startup_enabled {
+            pal.primary_green
+        } else {
+            pal.border
+        };
         let splash_knob_x = if state.show_startup_screen { 43 } else { 25 };
-        let splash_color = if state.show_startup_screen { pal.primary_green } else { pal.border };
+        let splash_color = if state.show_startup_screen {
+            pal.primary_green
+        } else {
+            pal.border
+        };
 
         format!(
             r###"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -467,7 +618,11 @@ impl SvgRenderer {
         )
     }
 
-    fn render_welcome(_state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_welcome(
+        _state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 680;
         let height = 460;
 
@@ -522,7 +677,11 @@ impl SvgRenderer {
         )
     }
 
-    fn render_about(_state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_about(
+        _state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 580;
         let height = 500;
 
@@ -598,7 +757,11 @@ impl SvgRenderer {
         )
     }
 
-    fn render_startup_screen(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_startup_screen(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 520;
         let height = 560;
 
@@ -610,13 +773,18 @@ impl SvgRenderer {
             strings
         };
 
-        let is_bn = state.startup_screen_bengali_by_default || state.language == crate::localization::Language::Bangla;
+        let is_bn = state.startup_screen_bengali_by_default
+            || state.language == crate::localization::Language::Bangla;
         let img_path = if is_bn {
             "../branding/startup_screen_bn.png"
         } else {
             "../branding/startup_screen_en.png"
         };
-        let countdown_suffix = if is_bn { "(২.৫ সেকেন্ড)" } else { "(2.5s)" };
+        let countdown_suffix = if is_bn {
+            "(২.৫ সেকেন্ড)"
+        } else {
+            "(2.5s)"
+        };
 
         format!(
             r###"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
@@ -724,7 +892,11 @@ impl SvgRenderer {
         )
     }
 
-    fn render_installer_setup(state: &UiState, pal: &ThemePalette, strings: &crate::localization::Strings) -> String {
+    fn render_installer_setup(
+        state: &UiState,
+        pal: &ThemePalette,
+        strings: &crate::localization::Strings,
+    ) -> String {
         let width = 680;
         let height = 560;
 

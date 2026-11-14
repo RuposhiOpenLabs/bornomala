@@ -66,7 +66,9 @@ impl ReleaseManifest {
 pub fn hex_to_bytes(hex: &str) -> Result<Vec<u8>, UpdateError> {
     let clean = hex.trim();
     if clean.len() % 2 != 0 {
-        return Err(UpdateError::InvalidPublicKey("Odd hex string length".into()));
+        return Err(UpdateError::InvalidPublicKey(
+            "Odd hex string length".into(),
+        ));
     }
     (0..clean.len())
         .step_by(2)
@@ -104,7 +106,10 @@ impl IntegrityVerifier {
         Self::new(&p_arr, Some(&b_arr))
     }
 
-    pub fn new(primary_key_bytes: &[u8; 32], backup_key_bytes: Option<&[u8; 32]>) -> Result<Self, UpdateError> {
+    pub fn new(
+        primary_key_bytes: &[u8; 32],
+        backup_key_bytes: Option<&[u8; 32]>,
+    ) -> Result<Self, UpdateError> {
         let primary_key = VerifyingKey::from_bytes(primary_key_bytes)
             .map_err(|e| UpdateError::InvalidPublicKey(e.to_string()))?;
         let backup_key = if let Some(bytes) = backup_key_bytes {
@@ -123,7 +128,11 @@ impl IntegrityVerifier {
     }
 
     /// Verifies manifest bytes against an Ed25519 signature.
-    pub fn verify_manifest_signature(&self, manifest_bytes: &[u8], signature_bytes: &[u8]) -> Result<(), UpdateError> {
+    pub fn verify_manifest_signature(
+        &self,
+        manifest_bytes: &[u8],
+        signature_bytes: &[u8],
+    ) -> Result<(), UpdateError> {
         if signature_bytes.len() != 64 {
             return Err(UpdateError::BadSignature);
         }
@@ -147,7 +156,11 @@ impl IntegrityVerifier {
         let parse_version = |v: &str| -> Vec<u64> {
             v.trim_start_matches(|c| c == 'v' || c == 'V')
                 .split('.')
-                .map(|p| p.chars().take_while(|c| c.is_ascii_digit()).collect::<String>())
+                .map(|p| {
+                    p.chars()
+                        .take_while(|c| c.is_ascii_digit())
+                        .collect::<String>()
+                })
                 .filter_map(|s| s.parse::<u64>().ok())
                 .collect()
         };
@@ -159,7 +172,11 @@ impl IntegrityVerifier {
     }
 
     /// Performs self-protection integrity audit on installed directory.
-    pub fn verify_installation_integrity(&self, base_dir: &Path, manifest: &ReleaseManifest) -> Result<(), UpdateError> {
+    pub fn verify_installation_integrity(
+        &self,
+        base_dir: &Path,
+        manifest: &ReleaseManifest,
+    ) -> Result<(), UpdateError> {
         let mut tampered_files = Vec::new();
 
         for entry in &manifest.files {
@@ -272,7 +289,9 @@ impl UpdateChecker {
             return Ok(None);
         }
 
-        let clean_version = release.tag_name.trim_start_matches(|c| c == 'v' || c == 'V');
+        let clean_version = release
+            .tag_name
+            .trim_start_matches(|c| c == 'v' || c == 'V');
         if !IntegrityVerifier::is_version_strictly_greater(installed_version, clean_version) {
             return Ok(None);
         }
@@ -295,7 +314,9 @@ impl UpdateChecker {
 
         Ok(Some(UpdateCandidate {
             version: clean_version.to_string(),
-            title: release.name.unwrap_or_else(|| format!("Bornomala v{}", clean_version)),
+            title: release
+                .name
+                .unwrap_or_else(|| format!("Bornomala v{}", clean_version)),
             release_notes: body,
             download_url: asset.browser_download_url.clone(),
             asset_name: asset.name.clone(),
@@ -331,7 +352,9 @@ pub struct UpdatePreferences {
 impl UpdatePreferences {
     pub fn default_path() -> PathBuf {
         if let Ok(appdata) = std::env::var("APPDATA") {
-            PathBuf::from(appdata).join("Bornomala").join("update_prefs.json")
+            PathBuf::from(appdata)
+                .join("Bornomala")
+                .join("update_prefs.json")
         } else {
             PathBuf::from("update_prefs.json")
         }
@@ -394,7 +417,10 @@ pub struct StagedUpdatePlanner;
 
 impl StagedUpdatePlanner {
     /// Plans staged side-by-side extraction into versioned folder.
-    pub fn prepare_stage_directory(app_root: &Path, new_version: &str) -> Result<PathBuf, io::Error> {
+    pub fn prepare_stage_directory(
+        app_root: &Path,
+        new_version: &str,
+    ) -> Result<PathBuf, io::Error> {
         let stage_dir = app_root.join(format!("app-v{}", new_version));
         fs::create_dir_all(&stage_dir)?;
         Ok(stage_dir)

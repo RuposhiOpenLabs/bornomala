@@ -211,7 +211,10 @@ impl BanglaConverter {
             // Check if there is a Ya-phala (্ + য) or Ra-phala (্ + র) at the end of cluster
             let mut has_yaphala = false;
             let mut has_raphala = false;
-            if cluster_end > cluster_start && cluster_end + 1 < chars.len() && chars[cluster_end] == '\u{09CD}' {
+            if cluster_end > cluster_start
+                && cluster_end + 1 < chars.len()
+                && chars[cluster_end] == '\u{09CD}'
+            {
                 if chars[cluster_end + 1] == '\u{09AF}' {
                     has_yaphala = true;
                     cluster_end += 2;
@@ -225,7 +228,11 @@ impl BanglaConverter {
             let mut prebase_kar: Option<char> = None;
             let mut postbase_kar: Option<char> = None;
             let mut split_kar: Option<char> = None;
-            let mut next_pos = if cluster_end > cluster_start { cluster_end } else { cluster_start + 1 };
+            let mut next_pos = if cluster_end > cluster_start {
+                cluster_end
+            } else {
+                cluster_start + 1
+            };
 
             if cluster_end > cluster_start && cluster_end < chars.len() {
                 let v = chars[cluster_end];
@@ -235,7 +242,10 @@ impl BanglaConverter {
                 } else if v == '\u{09CB}' || v == '\u{09CC}' {
                     split_kar = Some(v);
                     next_pos = cluster_end + 1;
-                } else if matches!(v, '\u{09BE}' | '\u{09C0}' | '\u{09C1}' | '\u{09C2}' | '\u{09C3}') {
+                } else if matches!(
+                    v,
+                    '\u{09BE}' | '\u{09C0}' | '\u{09C1}' | '\u{09C2}' | '\u{09C3}'
+                ) {
                     postbase_kar = Some(v);
                     next_pos = cluster_end + 1;
                 }
@@ -341,7 +351,10 @@ impl BanglaConverter {
                 if base_start < chars.len() {
                     let mut base_end = base_start + 1;
                     // Check if base is a multi-char conjunct or has hasanta
-                    while base_end < chars.len() && chars[base_end] == '&' && base_end + 1 < chars.len() {
+                    while base_end < chars.len()
+                        && chars[base_end] == '&'
+                        && base_end + 1 < chars.len()
+                    {
                         base_end += 2;
                     }
 

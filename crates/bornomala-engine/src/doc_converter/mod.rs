@@ -42,7 +42,11 @@ pub enum DocumentFormat {
 
 impl DocumentFormat {
     pub fn from_path(path: &Path) -> Self {
-        match path.extension().and_then(|s| s.to_str()).map(|s| s.to_ascii_lowercase()) {
+        match path
+            .extension()
+            .and_then(|s| s.to_str())
+            .map(|s| s.to_ascii_lowercase())
+        {
             Some(ref ext) if ext == "docx" => DocumentFormat::Docx,
             Some(ref ext) if ext == "doc" => DocumentFormat::Doc,
             Some(ref ext) if ext == "pdf" => DocumentFormat::Pdf,
@@ -98,7 +102,10 @@ pub enum DocConvertError {
 /// Generates a default output file path with "_converted" suffix.
 pub fn default_output_path(source: &Path, direction: ConversionDirection) -> PathBuf {
     let parent = source.parent().unwrap_or_else(|| Path::new(""));
-    let stem = source.file_stem().and_then(|s| s.to_str()).unwrap_or("document");
+    let stem = source
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("document");
     let ext = source.extension().and_then(|s| s.to_str()).unwrap_or("txt");
 
     let suffix = match direction {
@@ -132,20 +139,15 @@ pub fn convert_file(
     let start_time = Instant::now();
 
     let (chars, items, msg) = match format {
-        DocumentFormat::Txt => {
-            txt::convert_txt(source_path, &out_buf, direction)?
-        }
-        DocumentFormat::Docx => {
-            docx::convert_docx(source_path, &out_buf, direction)?
-        }
-        DocumentFormat::Doc => {
-            doc::convert_doc(source_path, &out_buf, direction)?
-        }
-        DocumentFormat::Pdf => {
-            pdf::convert_pdf(source_path, &out_buf, direction)?
-        }
+        DocumentFormat::Txt => txt::convert_txt(source_path, &out_buf, direction)?,
+        DocumentFormat::Docx => docx::convert_docx(source_path, &out_buf, direction)?,
+        DocumentFormat::Doc => doc::convert_doc(source_path, &out_buf, direction)?,
+        DocumentFormat::Pdf => pdf::convert_pdf(source_path, &out_buf, direction)?,
         DocumentFormat::Unknown => {
-            let ext = source_path.extension().and_then(|s| s.to_str()).unwrap_or("");
+            let ext = source_path
+                .extension()
+                .and_then(|s| s.to_str())
+                .unwrap_or("");
             return Err(DocConvertError::UnsupportedFormat(ext.to_string()));
         }
     };

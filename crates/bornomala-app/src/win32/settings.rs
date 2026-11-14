@@ -113,11 +113,35 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let font_label = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let font_normal = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
 
@@ -125,10 +149,18 @@ unsafe extern "system" fn settings_wnd_proc(
             // SECTION 1: সাধারণ ও স্টার্টআপ (General & Startup)
             // ================================================================
             let chk_tray = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("টাস্কবার / সিস্টেম ট্রে-তে শুরু করুন (Start minimized in tray)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                30, 95, 340, 22, hwnd, ID_CHK_START_TRAY, hinst, std::ptr::null_mut(),
+                30,
+                95,
+                340,
+                22,
+                hwnd,
+                ID_CHK_START_TRAY,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_tray, WM_SETFONT, font_normal, 1);
             if config.toolbar_minimized {
@@ -136,10 +168,18 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let chk_autostart = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("কম্পিউটার চালুর সাথে স্বয়ংক্রিয়ভাবে চালু করুন (Auto-launch on startup)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                30, 120, 360, 22, hwnd, ID_CHK_AUTO_START, hinst, std::ptr::null_mut(),
+                30,
+                120,
+                360,
+                22,
+                hwnd,
+                ID_CHK_AUTO_START,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_autostart, WM_SETFONT, font_normal, 1);
             if config.launch_on_startup {
@@ -147,10 +187,18 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let chk_splash = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("স্টার্টআপ স্প্ল্যাশ স্ক্রিন দেখান (Show authentic startup screen)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                30, 145, 340, 22, hwnd, ID_CHK_SHOW_SPLASH, hinst, std::ptr::null_mut(),
+                30,
+                145,
+                340,
+                22,
+                hwnd,
+                ID_CHK_SHOW_SPLASH,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_splash, WM_SETFONT, font_normal, 1);
             if config.show_splash_screen {
@@ -159,24 +207,60 @@ unsafe extern "system" fn settings_wnd_proc(
 
             // Default Mode Radios
             let r_en = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(), to_wide("ইংরেজি (EN)").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
+                to_wide("ইংরেজি (EN)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
-                160, 175, 95, 22, hwnd, ID_RADIO_MODE_EN, hinst, std::ptr::null_mut(),
+                160,
+                175,
+                95,
+                22,
+                hwnd,
+                ID_RADIO_MODE_EN,
+                hinst,
+                std::ptr::null_mut(),
             );
             let r_uni = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(), to_wide("ইউনিকোড").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
+                to_wide("ইউনিকোড").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
-                260, 175, 80, 22, hwnd, ID_RADIO_MODE_UNI, hinst, std::ptr::null_mut(),
+                260,
+                175,
+                80,
+                22,
+                hwnd,
+                ID_RADIO_MODE_UNI,
+                hinst,
+                std::ptr::null_mut(),
             );
             let r_ansi = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(), to_wide("বিজয় এএনএসআই").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
+                to_wide("বিজয় এএনএসআই").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
-                345, 175, 115, 22, hwnd, ID_RADIO_MODE_ANSI, hinst, std::ptr::null_mut(),
+                345,
+                175,
+                115,
+                22,
+                hwnd,
+                ID_RADIO_MODE_ANSI,
+                hinst,
+                std::ptr::null_mut(),
             );
             let r_pho = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(), to_wide("ফোনেটিক").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
+                to_wide("ফোনেটিক").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
-                465, 175, 80, 22, hwnd, ID_RADIO_MODE_PHO, hinst, std::ptr::null_mut(),
+                465,
+                175,
+                80,
+                22,
+                hwnd,
+                ID_RADIO_MODE_PHO,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(r_en, WM_SETFONT, font_normal, 1);
             SendMessageW(r_uni, WM_SETFONT, font_normal, 1);
@@ -195,9 +279,18 @@ unsafe extern "system" fn settings_wnd_proc(
             // ================================================================
             let make_edit = |id: usize, text: &str, x: i32, y: i32, w: i32| -> HWND {
                 let h = CreateWindowExW(
-                    0, to_wide("EDIT").as_ptr(), to_wide(text).as_ptr(),
+                    0,
+                    to_wide("EDIT").as_ptr(),
+                    to_wide(text).as_ptr(),
                     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
-                    x, y, w, 24, hwnd, id, hinst, std::ptr::null_mut(),
+                    x,
+                    y,
+                    w,
+                    24,
+                    hwnd,
+                    id,
+                    hinst,
+                    std::ptr::null_mut(),
                 );
                 SendMessageW(h, WM_SETFONT, font_normal, 1);
                 h
@@ -213,10 +306,18 @@ unsafe extern "system" fn settings_wnd_proc(
             // SECTION 3: টাইপিং রুলস ও কাস্টম কমান্ড (Rules & Expansion)
             // ================================================================
             let chk_dari = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("স্বয়ংক্রিয় দাঁড়ি ('.' = '।')").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                30, 316, 170, 22, hwnd, ID_CHK_AUTO_DARI, hinst, std::ptr::null_mut(),
+                30,
+                316,
+                170,
+                22,
+                hwnd,
+                ID_CHK_AUTO_DARI,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_dari, WM_SETFONT, font_normal, 1);
             if config.auto_dari {
@@ -224,10 +325,18 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let chk_jukto = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("স্মার্ট যুক্তবর্ণ সংযোগ (Auto-join)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                205, 316, 205, 22, hwnd, ID_CHK_SMART_JUKTO, hinst, std::ptr::null_mut(),
+                205,
+                316,
+                205,
+                22,
+                hwnd,
+                ID_CHK_SMART_JUKTO,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_jukto, WM_SETFONT, font_normal, 1);
             if config.smart_juktoborno {
@@ -235,10 +344,18 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let chk_sug = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("শব্দের পূর্বাভাস (Suggestions)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                415, 316, 185, 22, hwnd, ID_CHK_SUGGESTIONS, hinst, std::ptr::null_mut(),
+                415,
+                316,
+                185,
+                22,
+                hwnd,
+                ID_CHK_SUGGESTIONS,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_sug, WM_SETFONT, font_normal, 1);
             if config.enable_suggestions {
@@ -251,9 +368,18 @@ unsafe extern "system" fn settings_wnd_proc(
                 rules_text.push_str(&format!("{} = {}\r\n", rule.trigger, rule.replacement));
             }
             let edit_rules = CreateWindowExW(
-                0, to_wide("EDIT").as_ptr(), to_wide(&rules_text).as_ptr(),
+                0,
+                to_wide("EDIT").as_ptr(),
+                to_wide(&rules_text).as_ptr(),
                 WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
-                30, 370, 560, 48, hwnd, ID_EDIT_CUSTOM_RULES, hinst, std::ptr::null_mut(),
+                30,
+                370,
+                560,
+                48,
+                hwnd,
+                ID_EDIT_CUSTOM_RULES,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(edit_rules, WM_SETFONT, font_normal, 1);
 
@@ -261,10 +387,18 @@ unsafe extern "system" fn settings_wnd_proc(
             // SECTION 4: আপডেট ও চেক বাটন (Updates)
             // ================================================================
             let chk_up = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("চালু করার সময় স্বয়ংক্রিয়ভাবে আপডেট পরীক্ষা করুন").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-                30, 442, 330, 22, hwnd, ID_CHK_AUTO_UPDATE, hinst, std::ptr::null_mut(),
+                30,
+                442,
+                330,
+                22,
+                hwnd,
+                ID_CHK_AUTO_UPDATE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(chk_up, WM_SETFONT, font_normal, 1);
             if config.auto_check_updates {
@@ -272,10 +406,18 @@ unsafe extern "system" fn settings_wnd_proc(
             }
 
             let btn_chk_now = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("আপডেট চেক করুন (Check Now)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                370, 440, 220, 26, hwnd, ID_BTN_CHECK_UPDATE_NOW, hinst, std::ptr::null_mut(),
+                370,
+                440,
+                220,
+                26,
+                hwnd,
+                ID_BTN_CHECK_UPDATE_NOW,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_chk_now, WM_SETFONT, font_normal, 1);
 
@@ -283,26 +425,50 @@ unsafe extern "system" fn settings_wnd_proc(
             // FOOTER BUTTONS
             // ================================================================
             let btn_save = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("সংরক্ষণ করুন (Save Settings)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-                340, 485, 170, 38, hwnd, ID_BTN_SAVE, hinst, std::ptr::null_mut(),
+                340,
+                485,
+                170,
+                38,
+                hwnd,
+                ID_BTN_SAVE,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_save, WM_SETFONT, font_label, 1);
 
             let btn_cancel = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("বাতিল (Cancel)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                520, 485, 80, 38, hwnd, ID_BTN_CANCEL, hinst, std::ptr::null_mut(),
+                520,
+                485,
+                80,
+                38,
+                hwnd,
+                ID_BTN_CANCEL,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_cancel, WM_SETFONT, font_normal, 1);
 
             let btn_reset = CreateWindowExW(
-                0, to_wide("BUTTON").as_ptr(),
+                0,
+                to_wide("BUTTON").as_ptr(),
                 to_wide("ডিফল্ট সেটিংস (Reset)").as_ptr(),
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                30, 485, 150, 38, hwnd, ID_BTN_RESET_DEFAULTS, hinst, std::ptr::null_mut(),
+                30,
+                485,
+                150,
+                38,
+                hwnd,
+                ID_BTN_RESET_DEFAULTS,
+                hinst,
+                std::ptr::null_mut(),
             );
             SendMessageW(btn_reset, WM_SETFONT, font_normal, 1);
 
@@ -335,7 +501,12 @@ unsafe extern "system" fn settings_wnd_proc(
 
             // 1. Desi Header Banner (Forest Green #066a4a with Crimson Red Circle)
             let header_brush = CreateSolidBrush(color_green);
-            let header_rc = RECT { left: 0, top: 0, right: w, bottom: 68 };
+            let header_rc = RECT {
+                left: 0,
+                top: 0,
+                right: w,
+                bottom: 68,
+            };
             FillRect(mem_dc, &header_rc, header_brush);
             DeleteObject(header_brush);
 
@@ -358,20 +529,66 @@ unsafe extern "system" fn settings_wnd_proc(
             SetTextColor(mem_dc, rgb(254, 247, 222)); // Cream font
 
             let title_font = CreateFontW(
-                -17, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -17,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             let old_f = SelectObject(mem_dc, title_font);
-            let mut t_rect = RECT { left: 78, top: 13, right: 600, bottom: 40 };
-            DrawTextW(mem_dc, to_wide("বর্ণমালা সেটিংস ও কনফিগারেশন").as_ptr(), -1, &mut t_rect, DT_LEFT | DT_SINGLELINE);
+            let mut t_rect = RECT {
+                left: 78,
+                top: 13,
+                right: 600,
+                bottom: 40,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("বর্ণমালা সেটিংস ও কনফিগারেশন").as_ptr(),
+                -1,
+                &mut t_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             let sub_font = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, sub_font);
-            let mut st_rect = RECT { left: 78, top: 38, right: 600, bottom: 60 };
-            DrawTextW(mem_dc, to_wide("কাস্টম শর্টকাট, কমান্ড ও টাইপিং রুলস কনফিগার করুন").as_ptr(), -1, &mut st_rect, DT_LEFT | DT_SINGLELINE);
+            let mut st_rect = RECT {
+                left: 78,
+                top: 38,
+                right: 600,
+                bottom: 60,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("কাস্টম শর্টকাট, কমান্ড ও টাইপিং রুলস কনফিগার করুন").as_ptr(),
+                -1,
+                &mut st_rect,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // 2. Desi Section Container Boxes
             let border_pen = CreatePen(PS_SOLID, 1, color_card_border);
@@ -393,40 +610,141 @@ unsafe extern "system" fn settings_wnd_proc(
             // Section Titles
             SetTextColor(mem_dc, color_green);
             let sec_font = CreateFontW(
-                -13, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -13,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, sec_font);
 
             // Mode Label
-            let mut l_mode = RECT { left: 30, top: 177, right: 155, bottom: 198 };
-            DrawTextW(mem_dc, to_wide("ডিফল্ট টাইপিং মোড:").as_ptr(), -1, &mut l_mode, DT_LEFT | DT_SINGLELINE);
+            let mut l_mode = RECT {
+                left: 30,
+                top: 177,
+                right: 155,
+                bottom: 198,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("ডিফল্ট টাইপিং মোড:").as_ptr(),
+                -1,
+                &mut l_mode,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Shortcut labels
-            let mut l_pho = RECT { left: 30, top: 234, right: 125, bottom: 254 };
-            DrawTextW(mem_dc, to_wide("ফোনেটিক টগল:").as_ptr(), -1, &mut l_pho, DT_LEFT | DT_SINGLELINE);
+            let mut l_pho = RECT {
+                left: 30,
+                top: 234,
+                right: 125,
+                bottom: 254,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("ফোনেটিক টগল:").as_ptr(),
+                -1,
+                &mut l_pho,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
-            let mut l_uni = RECT { left: 220, top: 234, right: 305, bottom: 254 };
-            DrawTextW(mem_dc, to_wide("ইউনিকোড:").as_ptr(), -1, &mut l_uni, DT_LEFT | DT_SINGLELINE);
+            let mut l_uni = RECT {
+                left: 220,
+                top: 234,
+                right: 305,
+                bottom: 254,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("ইউনিকোড:").as_ptr(),
+                -1,
+                &mut l_uni,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
-            let mut l_ansi = RECT { left: 415, top: 234, right: 495, bottom: 254 };
-            DrawTextW(mem_dc, to_wide("বিজয় এএনএসআই:").as_ptr(), -1, &mut l_ansi, DT_LEFT | DT_SINGLELINE);
+            let mut l_ansi = RECT {
+                left: 415,
+                top: 234,
+                right: 495,
+                bottom: 254,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("বিজয় এএনএসআই:").as_ptr(),
+                -1,
+                &mut l_ansi,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
-            let mut l_en = RECT { left: 30, top: 266, right: 125, bottom: 286 };
-            DrawTextW(mem_dc, to_wide("ইংরেজি মোড:").as_ptr(), -1, &mut l_en, DT_LEFT | DT_SINGLELINE);
+            let mut l_en = RECT {
+                left: 30,
+                top: 266,
+                right: 125,
+                bottom: 286,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("ইংরেজি মোড:").as_ptr(),
+                -1,
+                &mut l_en,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
-            let mut l_conv = RECT { left: 240, top: 266, right: 335, bottom: 286 };
-            DrawTextW(mem_dc, to_wide("রূপান্তরকারী:").as_ptr(), -1, &mut l_conv, DT_LEFT | DT_SINGLELINE);
+            let mut l_conv = RECT {
+                left: 240,
+                top: 266,
+                right: 335,
+                bottom: 286,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("রূপান্তরকারী:").as_ptr(),
+                -1,
+                &mut l_conv,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Rules subtitle
             let lbl_font = CreateFontW(
-                -12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_NORMAL,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 to_wide("Nirmala UI").as_ptr(),
             );
             SelectObject(mem_dc, lbl_font);
             SetTextColor(mem_dc, rgb(50, 60, 55));
-            let mut l_rnote = RECT { left: 30, top: 348, right: 580, bottom: 368 };
-            DrawTextW(mem_dc, to_wide("কাস্টম শর্টকাট / টেক্সট এক্সপেনশন রুলস (প্রতি লাইনে 'সংক্ষেপ = মূল শব্দ'):").as_ptr(), -1, &mut l_rnote, DT_LEFT | DT_SINGLELINE);
+            let mut l_rnote = RECT {
+                left: 30,
+                top: 348,
+                right: 580,
+                bottom: 368,
+            };
+            DrawTextW(
+                mem_dc,
+                to_wide("কাস্টম শর্টকাট / টেক্সট এক্সপেনশন রুলস (প্রতি লাইনে 'সংক্ষেপ = মূল শব্দ'):").as_ptr(),
+                -1,
+                &mut l_rnote,
+                DT_LEFT | DT_SINGLELINE,
+            );
 
             // Blit to screen
             BitBlt(hdc, 0, 0, w, h, mem_dc, 0, 0, 0x00CC0020);
@@ -459,15 +777,48 @@ unsafe extern "system" fn settings_wnd_proc(
                     let mut config = AppConfig::load();
 
                     // 1. General & Startup
-                    config.toolbar_minimized = SendMessageW(GetDlgItem(hwnd, ID_CHK_START_TRAY as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
-                    config.launch_on_startup = SendMessageW(GetDlgItem(hwnd, ID_CHK_AUTO_START as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
-                    config.show_splash_screen = SendMessageW(GetDlgItem(hwnd, ID_CHK_SHOW_SPLASH as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    config.toolbar_minimized = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_START_TRAY as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
+                    config.launch_on_startup = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_AUTO_START as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
+                    config.show_splash_screen = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_SHOW_SPLASH as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
 
-                    if SendMessageW(GetDlgItem(hwnd, ID_RADIO_MODE_UNI as i32), BM_GETCHECK, 0, 0) == BST_CHECKED {
+                    if SendMessageW(
+                        GetDlgItem(hwnd, ID_RADIO_MODE_UNI as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED
+                    {
                         config.default_mode = "unicode".to_string();
-                    } else if SendMessageW(GetDlgItem(hwnd, ID_RADIO_MODE_ANSI as i32), BM_GETCHECK, 0, 0) == BST_CHECKED {
+                    } else if SendMessageW(
+                        GetDlgItem(hwnd, ID_RADIO_MODE_ANSI as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED
+                    {
                         config.default_mode = "ansi".to_string();
-                    } else if SendMessageW(GetDlgItem(hwnd, ID_RADIO_MODE_PHO as i32), BM_GETCHECK, 0, 0) == BST_CHECKED {
+                    } else if SendMessageW(
+                        GetDlgItem(hwnd, ID_RADIO_MODE_PHO as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED
+                    {
                         config.default_mode = "phonetic".to_string();
                     } else {
                         config.default_mode = "english".to_string();
@@ -478,7 +829,12 @@ unsafe extern "system" fn settings_wnd_proc(
                         let h = GetDlgItem(hwnd, edit_id as i32);
                         let len = SendMessageW(h, WM_GETTEXTLENGTH, 0, 0) as usize;
                         let mut buf = vec![0u16; len + 1];
-                        SendMessageW(h, WM_GETTEXT, (len + 1) as WPARAM, buf.as_mut_ptr() as LPARAM);
+                        SendMessageW(
+                            h,
+                            WM_GETTEXT,
+                            (len + 1) as WPARAM,
+                            buf.as_mut_ptr() as LPARAM,
+                        );
                         String::from_utf16_lossy(&buf[..len]).trim().to_string()
                     };
 
@@ -489,9 +845,21 @@ unsafe extern "system" fn settings_wnd_proc(
                     config.hotkey_converter = read_edit(ID_EDIT_HK_CONVERTER);
 
                     // 3. Rules
-                    config.auto_dari = SendMessageW(GetDlgItem(hwnd, ID_CHK_AUTO_DARI as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
-                    config.smart_juktoborno = SendMessageW(GetDlgItem(hwnd, ID_CHK_SMART_JUKTO as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
-                    config.enable_suggestions = SendMessageW(GetDlgItem(hwnd, ID_CHK_SUGGESTIONS as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    config.auto_dari =
+                        SendMessageW(GetDlgItem(hwnd, ID_CHK_AUTO_DARI as i32), BM_GETCHECK, 0, 0)
+                            == BST_CHECKED;
+                    config.smart_juktoborno = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_SMART_JUKTO as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
+                    config.enable_suggestions = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_SUGGESTIONS as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
 
                     // Parse multiline custom rules
                     let raw_rules = read_edit(ID_EDIT_CUSTOM_RULES);
@@ -512,7 +880,12 @@ unsafe extern "system" fn settings_wnd_proc(
                     config.custom_rules = parsed_rules;
 
                     // 4. Updates
-                    config.auto_check_updates = SendMessageW(GetDlgItem(hwnd, ID_CHK_AUTO_UPDATE as i32), BM_GETCHECK, 0, 0) == BST_CHECKED;
+                    config.auto_check_updates = SendMessageW(
+                        GetDlgItem(hwnd, ID_CHK_AUTO_UPDATE as i32),
+                        BM_GETCHECK,
+                        0,
+                        0,
+                    ) == BST_CHECKED;
 
                     // Save and apply
                     let _ = config.save();
@@ -547,7 +920,16 @@ unsafe extern "system" fn settings_wnd_proc(
                     let default_cfg = AppConfig::default();
                     let set_chk = |chk_id: usize, val: bool| {
                         let h = GetDlgItem(hwnd, chk_id as i32);
-                        SendMessageW(h, BM_SETCHECK, if val { BST_CHECKED as WPARAM } else { BST_UNCHECKED as WPARAM }, 0);
+                        SendMessageW(
+                            h,
+                            BM_SETCHECK,
+                            if val {
+                                BST_CHECKED as WPARAM
+                            } else {
+                                BST_UNCHECKED as WPARAM
+                            },
+                            0,
+                        );
                     };
 
                     set_chk(ID_CHK_START_TRAY, default_cfg.toolbar_minimized);

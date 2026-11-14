@@ -16,7 +16,9 @@ pub mod suffix;
 pub use autocorrect::{AutocorrectMatch, AutocorrectTable};
 pub use beyond_avro::{BeyondAvroConfig, ContextRanker};
 pub use dictionary::PhoneticDictionary;
-pub use engine::{levenshtein_distance, separate_padding, PhoneticEngine, PhoneticSuggestion, SuggestionSource};
+pub use engine::{
+    levenshtein_distance, separate_padding, PhoneticEngine, PhoneticSuggestion, SuggestionSource,
+};
 pub use memory::CandidateMemory;
 pub use rules::{AvroRules, MatchRule, PatternRule, PhoneticPattern};
 pub use suffix::SuffixTable;

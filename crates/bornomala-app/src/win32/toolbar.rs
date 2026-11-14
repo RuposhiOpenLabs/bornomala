@@ -19,10 +19,30 @@ static mut FONT_TITLE: HFONT = 0;
 static mut FONT_PILL: HFONT = 0;
 
 // Coordinates of interactive elements matching prototype layout
-const RECT_SEL_PILL:    RECT = RECT { left: 112, top: 4, right: 212, bottom: 28 };
-const RECT_BTN_TRAY:    RECT = RECT { left: 222, top: 4, right: 246, bottom: 28 };
-const RECT_BTN_MENU:    RECT = RECT { left: 249, top: 4, right: 273, bottom: 28 };
-const RECT_BTN_CLOSE:   RECT = RECT { left: 276, top: 4, right: 300, bottom: 28 };
+const RECT_SEL_PILL: RECT = RECT {
+    left: 112,
+    top: 4,
+    right: 212,
+    bottom: 28,
+};
+const RECT_BTN_TRAY: RECT = RECT {
+    left: 222,
+    top: 4,
+    right: 246,
+    bottom: 28,
+};
+const RECT_BTN_MENU: RECT = RECT {
+    left: 249,
+    top: 4,
+    right: 273,
+    bottom: 28,
+};
+const RECT_BTN_CLOSE: RECT = RECT {
+    left: 276,
+    top: 4,
+    right: 300,
+    bottom: 28,
+};
 
 // Command IDs
 const ID_MODE_UNICODE: usize = 101;
@@ -59,13 +79,35 @@ impl FloatingToolbar {
 
             let font_name = to_wide("Nirmala UI");
             FONT_TITLE = CreateFontW(
-                -12, 0, 0, 0, FW_BOLD, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -12,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
             FONT_PILL = CreateFontW(
-                -11, 0, 0, 0, FW_BOLD, 0, 0, 0,
-                DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0,
+                -11,
+                0,
+                0,
+                0,
+                FW_BOLD,
+                0,
+                0,
+                0,
+                DEFAULT_CHARSET,
+                0,
+                0,
+                CLEARTYPE_QUALITY,
+                0,
                 font_name.as_ptr(),
             );
 
@@ -109,7 +151,10 @@ impl FloatingToolbar {
                 SetWindowPos(
                     TOOLBAR_HWND,
                     HWND_TOPMOST,
-                    0, 0, 0, 0,
+                    0,
+                    0,
+                    0,
+                    0,
                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW,
                 );
                 InvalidateRect(TOOLBAR_HWND, std::ptr::null(), TRUE);
@@ -185,7 +230,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
             let mut ps: PAINTSTRUCT = std::mem::zeroed();
             let hdc = BeginPaint(hwnd, &mut ps);
 
-            let color_green = rgb(6, 106, 74);    // #066a4a
+            let color_green = rgb(6, 106, 74); // #066a4a
             let color_paper = rgb(251, 243, 220); // #fbf3dc
 
             // 1. Fill Background
@@ -218,15 +263,34 @@ unsafe extern "system" fn toolbar_wnd_proc(
             SetBkMode(hdc, TRANSPARENT);
             SetTextColor(hdc, color_green);
             SelectObject(hdc, FONT_TITLE);
-            let mut word_rc = RECT { left: 56, top: 2, right: 108, bottom: 30 };
+            let mut word_rc = RECT {
+                left: 56,
+                top: 2,
+                right: 108,
+                bottom: 30,
+            };
             let wide_word = to_wide("বর্ণমালা");
-            DrawTextW(hdc, wide_word.as_ptr(), -1, &mut word_rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+            DrawTextW(
+                hdc,
+                wide_word.as_ptr(),
+                -1,
+                &mut word_rc,
+                DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX,
+            );
 
             // 7. Language Selector Pill [ Flag | Mode ∨ ]
             SelectObject(hdc, parchment_brush);
             let pill_pen = CreatePen(PS_SOLID, 2, color_green);
             SelectObject(hdc, pill_pen);
-            RoundRect(hdc, RECT_SEL_PILL.left, RECT_SEL_PILL.top, RECT_SEL_PILL.right, RECT_SEL_PILL.bottom, 8, 8);
+            RoundRect(
+                hdc,
+                RECT_SEL_PILL.left,
+                RECT_SEL_PILL.top,
+                RECT_SEL_PILL.right,
+                RECT_SEL_PILL.bottom,
+                8,
+                8,
+            );
             DeleteObject(pill_pen);
 
             let current = CURRENT_SCHEME.load(Ordering::SeqCst);
@@ -247,9 +311,20 @@ unsafe extern "system" fn toolbar_wnd_proc(
             };
             SetTextColor(hdc, color_green);
             SelectObject(hdc, FONT_PILL);
-            let mut label_rc = RECT { left: 138, top: 3, right: 196, bottom: 29 };
+            let mut label_rc = RECT {
+                left: 138,
+                top: 3,
+                right: 196,
+                bottom: 29,
+            };
             let wide_mode = to_wide(mode_text);
-            DrawTextW(hdc, wide_mode.as_ptr(), -1, &mut label_rc, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+            DrawTextW(
+                hdc,
+                wide_mode.as_ptr(),
+                -1,
+                &mut label_rc,
+                DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX,
+            );
 
             // Down chevron ∨
             let chev_pen = CreatePen(PS_SOLID, 2, color_green);
@@ -363,7 +438,10 @@ unsafe extern "system" fn toolbar_wnd_proc(
 
             // 1. Clicked Language Selector Pill: Open Dropdown Scheme Menu
             if in_rect(&RECT_SEL_PILL) {
-                let mut screen_pt = POINT { x: RECT_SEL_PILL.left, y: RECT_SEL_PILL.bottom + 2 };
+                let mut screen_pt = POINT {
+                    x: RECT_SEL_PILL.left,
+                    y: RECT_SEL_PILL.bottom + 2,
+                };
                 ClientToScreen(hwnd, &mut screen_pt);
 
                 let hmenu = CreatePopupMenu();
@@ -378,14 +456,42 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     AppendMenuW(menu, flags, id, wide.as_ptr());
                 };
 
-                add_menu_item(hmenu, ID_MODE_UNICODE, "🇧🇩  ইউনিকোড (Unicode)\tCtrl+Alt+V", current == 0);
-                add_menu_item(hmenu, ID_MODE_ANSI, "🇧🇩  বিজয় এএনএসআই (Bijoy ANSI)\tCtrl+Alt+B", current == 1);
-                add_menu_item(hmenu, ID_MODE_PHONETIC, "🇧🇩  ফোনেটিক (Avro Phonetic)\tF12 / Ctrl+Space", current == 2);
+                add_menu_item(
+                    hmenu,
+                    ID_MODE_UNICODE,
+                    "🇧🇩  ইউনিকোড (Unicode)\tCtrl+Alt+V",
+                    current == 0,
+                );
+                add_menu_item(
+                    hmenu,
+                    ID_MODE_ANSI,
+                    "🇧🇩  বিজয় এএনএসআই (Bijoy ANSI)\tCtrl+Alt+B",
+                    current == 1,
+                );
+                add_menu_item(
+                    hmenu,
+                    ID_MODE_PHONETIC,
+                    "🇧🇩  ফোনেটিক (Avro Phonetic)\tF12 / Ctrl+Space",
+                    current == 2,
+                );
                 AppendMenuW(hmenu, MF_SEPARATOR, 0, std::ptr::null());
-                add_menu_item(hmenu, ID_MODE_ENGLISH, "🇬🇧  English (Pass-through)\tCtrl+Alt+E", current == 3);
+                add_menu_item(
+                    hmenu,
+                    ID_MODE_ENGLISH,
+                    "🇬🇧  English (Pass-through)\tCtrl+Alt+E",
+                    current == 3,
+                );
 
                 SetForegroundWindow(hwnd);
-                TrackPopupMenu(hmenu, 0, screen_pt.x, screen_pt.y, 0, hwnd, std::ptr::null());
+                TrackPopupMenu(
+                    hmenu,
+                    0,
+                    screen_pt.x,
+                    screen_pt.y,
+                    0,
+                    hwnd,
+                    std::ptr::null(),
+                );
                 DestroyMenu(hmenu);
                 return 0;
             }
@@ -398,7 +504,10 @@ unsafe extern "system" fn toolbar_wnd_proc(
 
             // 3. Clicked Menu button (☰) — Features Popup Menu
             if in_rect(&RECT_BTN_MENU) {
-                let mut screen_pt = POINT { x: RECT_BTN_MENU.left, y: RECT_BTN_MENU.bottom + 4 };
+                let mut screen_pt = POINT {
+                    x: RECT_BTN_MENU.left,
+                    y: RECT_BTN_MENU.bottom + 4,
+                };
                 ClientToScreen(hwnd, &mut screen_pt);
 
                 let hmenu = CreatePopupMenu();
@@ -410,18 +519,42 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     AppendMenuW(menu, MF_SEPARATOR, 0, std::ptr::null());
                 };
 
-                add_menu_item(hmenu, ID_MENU_KEYBOARD, "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...");
-                add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...");
-                add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...");
+                add_menu_item(
+                    hmenu,
+                    ID_MENU_KEYBOARD,
+                    "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...",
+                );
+                add_menu_item(
+                    hmenu,
+                    ID_MENU_SETTINGS,
+                    "⚙  কনফিগারেশন ও সেটিংস (Settings)...",
+                );
+                add_menu_item(
+                    hmenu,
+                    ID_MENU_ABOUT,
+                    "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...",
+                );
                 add_sep(hmenu);
                 add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...");
                 add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)");
-                add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...");
+                add_menu_item(
+                    hmenu,
+                    ID_MENU_UPDATE,
+                    "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...",
+                );
                 add_sep(hmenu);
                 add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)");
 
                 SetForegroundWindow(hwnd);
-                TrackPopupMenu(hmenu, 0, screen_pt.x, screen_pt.y, 0, hwnd, std::ptr::null());
+                TrackPopupMenu(
+                    hmenu,
+                    0,
+                    screen_pt.x,
+                    screen_pt.y,
+                    0,
+                    hwnd,
+                    std::ptr::null(),
+                );
                 DestroyMenu(hmenu);
                 return 0;
             }
@@ -457,24 +590,82 @@ unsafe extern "system" fn toolbar_wnd_proc(
                 AppendMenuW(menu, MF_SEPARATOR, 0, std::ptr::null());
             };
 
-            add_menu_item(hmenu, ID_MODE_UNICODE, "🇧🇩  ইউনিকোড (Unicode)\tCtrl+Alt+V", current == 0);
-            add_menu_item(hmenu, ID_MODE_ANSI, "🇧🇩  বিজয় এএনএসআই (Bijoy ANSI)\tCtrl+Alt+B", current == 1);
-            add_menu_item(hmenu, ID_MODE_PHONETIC, "🇧🇩  ফোনেটিক (Avro Phonetic)\tF12 / Ctrl+Space", current == 2);
+            add_menu_item(
+                hmenu,
+                ID_MODE_UNICODE,
+                "🇧🇩  ইউনিকোড (Unicode)\tCtrl+Alt+V",
+                current == 0,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MODE_ANSI,
+                "🇧🇩  বিজয় এএনএসআই (Bijoy ANSI)\tCtrl+Alt+B",
+                current == 1,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MODE_PHONETIC,
+                "🇧🇩  ফোনেটিক (Avro Phonetic)\tF12 / Ctrl+Space",
+                current == 2,
+            );
             add_sep(hmenu);
-            add_menu_item(hmenu, ID_MODE_ENGLISH, "🇬🇧  English (Pass-through)\tCtrl+Alt+E", current == 3);
+            add_menu_item(
+                hmenu,
+                ID_MODE_ENGLISH,
+                "🇬🇧  English (Pass-through)\tCtrl+Alt+E",
+                current == 3,
+            );
             add_sep(hmenu);
-            add_menu_item(hmenu, ID_MENU_KEYBOARD, "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...", false);
-            add_menu_item(hmenu, ID_MENU_SETTINGS, "⚙  কনফিগারেশন ও সেটিংস (Settings)...", false);
-            add_menu_item(hmenu, ID_MENU_ABOUT, "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...", false);
+            add_menu_item(
+                hmenu,
+                ID_MENU_KEYBOARD,
+                "⌨  কীবোর্ড লেআউট গাইড (Layout Guide)...",
+                false,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MENU_SETTINGS,
+                "⚙  কনফিগারেশন ও সেটিংস (Settings)...",
+                false,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MENU_ABOUT,
+                "ℹ  বর্ণমালা পরিচিতি (About Bornomala)...",
+                false,
+            );
             add_sep(hmenu);
-            add_menu_item(hmenu, ID_MENU_CONVERTER, "🔄  বাংলা রূপান্তরকারী (Converter)...", false);
-            add_menu_item(hmenu, ID_MENU_TRAY, "⬇  টাস্কবারে পাঠান (Send to system tray)", false);
-            add_menu_item(hmenu, ID_MENU_UPDATE, "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...", false);
+            add_menu_item(
+                hmenu,
+                ID_MENU_CONVERTER,
+                "🔄  বাংলা রূপান্তরকারী (Converter)...",
+                false,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MENU_TRAY,
+                "⬇  টাস্কবারে পাঠান (Send to system tray)",
+                false,
+            );
+            add_menu_item(
+                hmenu,
+                ID_MENU_UPDATE,
+                "🔄  আপডেট পরীক্ষা করুন (Check for Updates)...",
+                false,
+            );
             add_sep(hmenu);
             add_menu_item(hmenu, ID_MENU_EXIT, "✕  প্রস্থান (Exit Bornomala)", false);
 
             SetForegroundWindow(hwnd);
-            TrackPopupMenu(hmenu, 0, screen_pt.x, screen_pt.y, 0, hwnd, std::ptr::null());
+            TrackPopupMenu(
+                hmenu,
+                0,
+                screen_pt.x,
+                screen_pt.y,
+                0,
+                hwnd,
+                std::ptr::null(),
+            );
             DestroyMenu(hmenu);
             0
         }
@@ -510,7 +701,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
                         • Ctrl + Alt + E : ইংরেজি (Pass-through)\n\n\
                         যুক্তবর্ণ লেখার নিয়ম:\n\
                         প্রথম বর্ণ + G (হসন্ত) + দ্বিতীয় বর্ণ\n\
-                        উদাহরণ: k + g + k = ক্ক, k + g + t = ক্ত"
+                        উদাহরণ: k + g + k = ক্ক, k + g + t = ক্ত",
                     );
                     MessageBoxW(hwnd, msg.as_ptr(), title.as_ptr(), 0x00000040);
                 }
@@ -537,8 +728,14 @@ unsafe extern "system" fn toolbar_wnd_proc(
         }
 
         WM_DESTROY => {
-            if FONT_TITLE != 0 { DeleteObject(FONT_TITLE); FONT_TITLE = 0; }
-            if FONT_PILL != 0 { DeleteObject(FONT_PILL); FONT_PILL = 0; }
+            if FONT_TITLE != 0 {
+                DeleteObject(FONT_TITLE);
+                FONT_TITLE = 0;
+            }
+            if FONT_PILL != 0 {
+                DeleteObject(FONT_PILL);
+                FONT_PILL = 0;
+            }
             0
         }
 

@@ -65,6 +65,7 @@ Var FontConflictPolicy ; 0 = Ask, 1 = Install All (Replace All), 2 = Skip All
 !insertmacro MUI_PAGE_COMPONENTS
 
 ; Directory Selection Page
+!insertmacro MUI_DIRECTORYPAGE_INTERFACE
 Function DirectoryPre
   ${If} $INSTDIR == ""
     ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
@@ -81,13 +82,13 @@ Function DirectoryPre
 FunctionEnd
 
 Function DirectoryShow
-  FindWindow $0 "#32770" "" $HWNDPARENT
-  GetDlgItem $1 $0 1019
-  ${If} $1 != 0
-    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
-    SendMessage $1 0x00B1 0 0 ; EM_SETSEL (0, 0)
-    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
-    System::Call "user32::UpdateWindow(p $1)"
+  ; Ensure the destination edit box text is drawn immediately without needing user focus/click
+  ${If} $mui.DirectoryPage.Directory != 0
+    CreateFont $0 "Segoe UI" 9 400
+    SendMessage $mui.DirectoryPage.Directory ${WM_SETFONT} $0 1
+    SendMessage $mui.DirectoryPage.Directory ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    ShowWindow $mui.DirectoryPage.Directory ${SW_HIDE}
+    ShowWindow $mui.DirectoryPage.Directory ${SW_SHOW}
   ${EndIf}
 FunctionEnd
 
@@ -108,6 +109,7 @@ FunctionEnd
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller Pages
+!insertmacro MUI_UNCONFIRMPAGE_INTERFACE
 Function un.ConfirmPre
   ${If} $INSTDIR == ""
     ReadRegStr $0 HKLM "${PRODUCT_DIR_REGKEY}" "InstallDir"
@@ -127,20 +129,13 @@ Function un.ConfirmPre
 FunctionEnd
 
 Function un.ConfirmShow
-  FindWindow $0 "#32770" "" $HWNDPARENT
-  GetDlgItem $1 $0 1000
-  ${If} $1 != 0
-    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
-    SendMessage $1 0x00B1 0 0 ; EM_SETSEL (0, 0)
-    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
-    System::Call "user32::UpdateWindow(p $1)"
-  ${EndIf}
-  GetDlgItem $2 $0 1019
-  ${If} $2 != 0
-    SendMessage $2 ${WM_SETTEXT} 0 "STR:$INSTDIR"
-    SendMessage $2 0x00B1 0 0
-    System::Call "user32::InvalidateRect(p $2, p 0, i 1)"
-    System::Call "user32::UpdateWindow(p $2)"
+  ; Ensure uninstaller path edit box is drawn immediately with proper font and visibility
+  ${If} $mui.UnConfirmPage.Directory != 0
+    CreateFont $0 "Segoe UI" 9 400
+    SendMessage $mui.UnConfirmPage.Directory ${WM_SETFONT} $0 1
+    SendMessage $mui.UnConfirmPage.Directory ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    ShowWindow $mui.UnConfirmPage.Directory ${SW_HIDE}
+    ShowWindow $mui.UnConfirmPage.Directory ${SW_SHOW}
   ${EndIf}
 FunctionEnd
 
