@@ -14,7 +14,7 @@ members = [
 
 [workspace.package]
 version = "0.1.0"
-authors = ["Ryan Shelby <ryan@ruposhi.org>"]
+authors = ["Ryan Shelby <ryn@disr.it>"]
 edition = "2021"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/RuposhiOpenLabs/bornomala"
