@@ -83,12 +83,16 @@ FunctionEnd
 
 Function DirectoryShow
   ; Ensure the destination edit box text is drawn immediately without needing user focus/click
-  ${If} $mui.DirectoryPage.Directory != 0
-    CreateFont $0 "Segoe UI" 9 400
-    SendMessage $mui.DirectoryPage.Directory ${WM_SETFONT} $0 1
-    SendMessage $mui.DirectoryPage.Directory ${WM_SETTEXT} 0 "STR:$INSTDIR"
-    ShowWindow $mui.DirectoryPage.Directory ${SW_HIDE}
-    ShowWindow $mui.DirectoryPage.Directory ${SW_SHOW}
+  FindWindow $0 "#32770" "" $HWNDPARENT
+  GetDlgItem $1 $0 1019
+  ${If} $1 != 0
+    CreateFont $2 "Segoe UI" 9 400
+    SendMessage $1 ${WM_SETFONT} $2 1
+    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $1 0x00B1 0 0 ; EM_SETSEL (0, 0)
+    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $1)"
+    System::Call "user32::RedrawWindow(p $1, p 0, p 0, i 0x0105)" ; RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE
   ${EndIf}
 FunctionEnd
 
@@ -130,12 +134,26 @@ FunctionEnd
 
 Function un.ConfirmShow
   ; Ensure uninstaller path edit box is drawn immediately with proper font and visibility
-  ${If} $mui.UnConfirmPage.Directory != 0
-    CreateFont $0 "Segoe UI" 9 400
-    SendMessage $mui.UnConfirmPage.Directory ${WM_SETFONT} $0 1
-    SendMessage $mui.UnConfirmPage.Directory ${WM_SETTEXT} 0 "STR:$INSTDIR"
-    ShowWindow $mui.UnConfirmPage.Directory ${SW_HIDE}
-    ShowWindow $mui.UnConfirmPage.Directory ${SW_SHOW}
+  FindWindow $0 "#32770" "" $HWNDPARENT
+  GetDlgItem $1 $0 1000
+  ${If} $1 != 0
+    CreateFont $2 "Segoe UI" 9 400
+    SendMessage $1 ${WM_SETFONT} $2 1
+    SendMessage $1 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $1 0x00B1 0 0
+    System::Call "user32::InvalidateRect(p $1, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $1)"
+    System::Call "user32::RedrawWindow(p $1, p 0, p 0, i 0x0105)"
+  ${EndIf}
+  GetDlgItem $3 $0 1019
+  ${If} $3 != 0
+    CreateFont $2 "Segoe UI" 9 400
+    SendMessage $3 ${WM_SETFONT} $2 1
+    SendMessage $3 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+    SendMessage $3 0x00B1 0 0
+    System::Call "user32::InvalidateRect(p $3, p 0, i 1)"
+    System::Call "user32::UpdateWindow(p $3)"
+    System::Call "user32::RedrawWindow(p $3, p 0, p 0, i 0x0105)"
   ${EndIf}
 FunctionEnd
 
@@ -146,8 +164,8 @@ FunctionEnd
 
 !insertmacro MUI_LANGUAGE "English"
 
-; Override language font to Nirmala UI for titles, headers, and labels
-LangString ^Font ${LANG_ENGLISH} "Nirmala UI"
+; Interface font configuration: Segoe UI (standard Windows font; links to Nirmala UI for Bengali glyphs)
+LangString ^Font ${LANG_ENGLISH} "Segoe UI"
 LangString ^FontSize ${LANG_ENGLISH} "9"
 
 ; ----------------------------------------------------------------------------
@@ -327,12 +345,13 @@ font_conflict_found:
   IntCmp $FontConflictPolicy 1 do_copy_font
   IntCmp $FontConflictPolicy 2 keep_existing_font
 
-  ; Policy is 0 (Unset). Offer Install All, Skip All, or Individual choice:
-  ; If Cancel is clicked, execution falls through to prompt_single_font
-  MessageBox MB_YESNOCANCEL|MB_ICONQUESTION \
-    "Preloaded Font Conflict / ফন্ট সংঘাত:$\r$\n$\r$\nফন্ট ফাইল '$R1' ইতিমধ্যে উইন্ডোজ সিস্টেম ফন্ট ফোল্ডারে ইনস্টল করা আছে।$\r$\n$\r$\nঅনুগ্রহ করে ফন্ট ইনস্টলেশন নীতি নির্বাচন করুন:$\r$\n• [Yes / হ্যাঁ]: Install All (সকল ফন্ট প্রতিস্থাপন / Replace All)$\r$\n• [No / না]: Skip All (বিদ্যমান সব ফন্ট স্কিপ / Skip All)$\r$\n• [Cancel / বাতিল]: শুধুমাত্র এই ফন্টের সিদ্ধান্ত নিন (Ask Each Font)" \
+  ; Policy is 0 (Unset). Offer Install All, Skip All, or Skip This Font:
+  MessageBox MB_YESNOCANCEL|MB_ICONQUESTION|MB_DEFBUTTON2 \
+    "Preloaded Font Conflict / ফন্ট সংঘাত:$\r$\n$\r$\nফন্ট ফাইল '$R1' ইতিমধ্যে উইন্ডোজ সিস্টেম ফন্ট ফোল্ডারে ইনস্টল করা আছে।$\r$\nFont file '$R1' is already installed in Windows Fonts.$\r$\n$\r$\nঅনুগ্রহ করে আপনার পছন্দ নির্বাচন করুন (Select an option):$\r$\n• [Yes / হ্যাঁ]: Install All (সকল ফন্ট প্রতিস্থাপন / Replace All)$\r$\n• [No / না]: Skip All (বিদ্যমান সকল ফন্ট স্কিপ / Skip All Installed Fonts)$\r$\n• [Cancel / বাতিল]: শুধুমাত্র এই ফন্ট স্কিপ করুন (Skip '$R1' Only)" \
     IDYES set_policy_install_all IDNO set_policy_skip_all
-  Goto prompt_single_font
+  ; User selected Cancel: skip this font only without setting global policy
+  DetailPrint "শুধুমাত্র এই ফন্টটি স্কিপ করা হয়েছে: $R1"
+  Goto keep_existing_font
 
 set_policy_install_all:
   StrCpy $FontConflictPolicy 1
@@ -344,10 +363,6 @@ set_policy_skip_all:
   DetailPrint "ফন্ট নীতি সেট করা হয়েছে: Skip All (বিদ্যমান সকল ফন্ট বজায় রাখা হবে)"
   Goto keep_existing_font
 
-prompt_single_font:
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-    "ফন্ট '$R1' প্রতিস্থাপন করতে চান?$\r$\n$\r$\n• [Yes / হ্যাঁ]: শুধুমাত্র '$R1' প্রতিস্থাপন করুন$\r$\n• [No / না]: পূর্বের বিদ্যমান ফন্টটি বজায় রাখুন" \
-    IDYES do_copy_font IDNO keep_existing_font
 
 do_copy_font:
   DetailPrint "ইনস্টল হচ্ছে প্রিলোডেড ফন্ট: $R1"
