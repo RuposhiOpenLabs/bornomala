@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2026-11-24
+
+### Release v1.0.1 (Production Release)
+
+#### Fixed
+* **Phonetic Memory Isolation in Automated Tests:** Isolated phonetic candidate memory during automated test runs (`cargo test`) to eliminate cross-test state leakage, preventing property test commits from polluting sequential composition test assertions.
+* **Installer Font Conflict Resolution & Rendering:** Added bulk font conflict policy options ("Install All / Replace All" and "Skip All Existing Fonts") to NSIS setup wizard and resolved installation directory path label rendering.
+* **Dependency Cleanups:** Removed unused dependencies from `bornomala-app` and `bornomala-phonetic` manifests, eliminating build warnings.
+
+#### Added
+* **GitHub Community Templates:** Added bilingual Issue Templates (`bug_report.md`, `feature_request.md`), Issue configuration (`config.yml`), and Pull Request Template (`pull_request_template.md`).
+
+---
+
 ## [0.1.0] - 2026-11-03
 
 ### Initial Release (Linux-Direct Verified Edition)

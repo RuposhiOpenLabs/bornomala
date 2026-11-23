@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Bornomala Community Discussions (আলোচনা ফোরাম)"
+    url: "https://github.com/RuposhiOpenLabs/bornomala/discussions"
+    about: "Ask questions, share layouts, and connect with the Bengali typing community."
+  - name: "Security & Vulnerability Reporting"
+    url: "mailto:ryn@disr.it"
+    about: "Report security vulnerabilities responsibly."

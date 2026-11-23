@@ -9,7 +9,7 @@
 Unicode true
 
 !define PRODUCT_NAME "Bornomala (বর্ণমালা)"
-!define PRODUCT_VERSION "0.1.0"
+!define PRODUCT_VERSION "1.0.1"
 !define PRODUCT_PUBLISHER "Ruposhi Open Labs"
 !define PRODUCT_DEVELOPER "Ryan Shelby"
 !define PRODUCT_WEB_SITE "https://github.com/RuposhiOpenLabs/bornomala"

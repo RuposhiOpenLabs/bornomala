@@ -109,10 +109,9 @@ dependencies = [
 
 [[package]]
 name = "bornomala-app"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
- "bornomala-ui",
  "bornomala-update",
  "serde",
  "serde_json",
@@ -120,7 +119,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-cli"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "bornomala-ui",
@@ -130,7 +129,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-engine"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-phonetic",
  "cfb",
@@ -148,7 +147,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-lab"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "serde",
@@ -157,7 +156,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-phonetic"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "fst",
@@ -167,13 +166,11 @@ dependencies = [
  "serde_json",
  "sha2 0.10.9",
  "tempfile",
- "thiserror 1.0.69",
- "unicode-normalization",
 ]
 
 [[package]]
 name = "bornomala-spec-tools"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "serde",
@@ -182,7 +179,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-tsf"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "serde",
@@ -192,7 +189,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-ui"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "bornomala-engine",
  "bornomala-update",
@@ -203,7 +200,7 @@ dependencies = [
 
 [[package]]
 name = "bornomala-update"
-version = "0.1.0"
+version = "1.0.1"
 dependencies = [
  "ed25519-dalek",
  "rand_core 0.6.4",

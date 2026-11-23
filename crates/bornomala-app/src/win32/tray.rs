@@ -154,7 +154,7 @@ impl SystemTray {
                     add_item(
                         hmenu,
                         ID_MENU_HEADER,
-                        "Bornomala (বর্ণমালা) v0.1.0",
+                        "Bornomala (বর্ণমালা) v1.0.1",
                         false,
                         true,
                     );
@@ -301,7 +301,7 @@ impl SystemTray {
                 super::about::AboutWindow::open();
             }
             ID_MENU_UPDATE => {
-                super::updater::trigger_manual_update_check("0.1.0");
+                super::updater::trigger_manual_update_check("1.0.1");
             }
             ID_MENU_EXIT => unsafe {
                 PostQuitMessage(0);

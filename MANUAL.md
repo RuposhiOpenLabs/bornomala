@@ -1,6 +1,6 @@
 # Bornomala (বর্ণমালা) — User Manual & Keyboard Guide
 
-**Release:** v0.1.0-alpha  
+**Release:** v1.0.1  
 **Publisher:** [Ruposhi Open Labs](https://github.com/RuposhiOpenLabs)  
 **Developer:** [Ryan Shelby](https://github.com/MdSagorMunshi/)  
 **Support Email:** [ryn@disr.it](mailto:ryn@disr.it)  
@@ -181,7 +181,7 @@ Bornomala configures auto-startup per-user without requiring Administrator privi
 
 ## 7. Windows Installer & Preloaded Fonts (ইনস্টলেশন ও প্রিলোডেড ফন্ট)
 
-### 7.1 Windows Installer Package (`Bornomala-Setup-v0.1.0.exe`)
+### 7.1 Windows Installer Package (`Bornomala-Setup-v1.0.1.exe`)
 Bornomala provides a lightweight, native 64-bit Windows setup wizard built with NSIS:
 * **Zero Administrator Privileges Required:** Installs directly to `%LOCALAPPDATA%\Bornomala` and registers per-user COM text services, allowing use on restricted government or school workstations.
 * **Modern Animated UI / UX:** Includes lazy-animated transition cards, progress bar shimmer, and clean step-by-step guidance.

@@ -6,7 +6,7 @@
   <text x="74" y="38" font-family="sans-serif, 'SolaimanLipi'" font-size="18" font-weight="bold" fill="#FFFFFF">About Bornomala</text>
 
   <g transform="translate(32, 88)">
-    <text x="0" y="20" font-family="sans-serif, 'SolaimanLipi'" font-size="15" font-weight="bold" fill="#1A241E">Version: 0.1.0 (v0.1.0)</text>
+    <text x="0" y="20" font-family="sans-serif, 'SolaimanLipi'" font-size="15" font-weight="bold" fill="#1A241E">Version: 1.0.1 (v1.0.1)</text>
     <text x="0" y="46" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#1A241E">Publisher: Ruposhi Open Labs</text>
     <text x="0" y="70" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#1A241E">Developer: Ryan Shelby</text>
     <text x="0" y="94" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#1A241E">License: GNU General Public License v3.0 (GPLv3)</text>

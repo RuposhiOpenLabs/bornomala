@@ -119,7 +119,7 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
 
 pub fn fetch_url_string(url: &str) -> Result<String, String> {
     unsafe {
-        let user_agent = to_wide("Bornomala-UpdateChecker/0.1.0");
+        let user_agent = to_wide("Bornomala-UpdateChecker/1.0.1");
         let h_internet = InternetOpenW(
             user_agent.as_ptr(),
             INTERNET_OPEN_TYPE_PRECONFIG,
@@ -173,7 +173,7 @@ where
     F: FnMut(u64, u64, f64), // (downloaded_bytes, total_bytes, speed_bytes_per_sec)
 {
     unsafe {
-        let user_agent = to_wide("Bornomala-Downloader/0.1.0");
+        let user_agent = to_wide("Bornomala-Downloader/1.0.1");
         let h_internet = InternetOpenW(
             user_agent.as_ptr(),
             INTERNET_OPEN_TYPE_PRECONFIG,
@@ -475,7 +475,7 @@ unsafe extern "system" fn prompt_wnd_proc(
                 );
                 SelectObject(hdc, body_font);
 
-                let ver_str = format!("নতুন সংস্করণ: v{} (আপনার সংস্করণ: v0.1.0)", cand.version);
+                let ver_str = format!("নতুন সংস্করণ: v{} (আপনার সংস্করণ: v1.0.1)", cand.version);
                 let mut v_rect = RECT {
                     left: 24,
                     top: 72,

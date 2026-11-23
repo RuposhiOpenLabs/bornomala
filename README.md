@@ -118,7 +118,7 @@ cargo run -p bornomala-cli -- date 2026 12 16
 
 ### 4. Windows Installable Setup & Preloaded Fonts
 Download the Windows installer package:
-* **Installer Path:** `target/installer/Bornomala-Setup-v0.1.0.exe` (7.6 MB compressed)
+* **Installer Path:** `target/installer/Bornomala-Setup-v1.0.1.exe` (7.6 MB compressed)
 * **Custom Animated Setup Wizard:** Modern UI with smooth lazy animations, step-by-step guidance, and professional Terms & Conditions ([`TERMS.md`](TERMS.md)).
 * **8 Preloaded Government & Classic Fonts:**
   1. `Nikosh.ttf` (Government Unicode Standard)

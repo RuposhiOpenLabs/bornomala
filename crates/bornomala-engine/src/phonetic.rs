@@ -38,6 +38,15 @@ impl PhoneticEngine {
         }
     }
 
+    pub fn new_in_memory() -> Self {
+        Self {
+            core: CorePhoneticEngine::new_in_memory(),
+            last_preview_char_count: 0,
+            selected_candidate_idx: 0,
+            current_suggestions: Vec::new(),
+        }
+    }
+
     pub fn reset_state(&mut self) {
         self.core.clear_buffer();
         self.last_preview_char_count = 0;

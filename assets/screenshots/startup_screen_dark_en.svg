@@ -32,7 +32,7 @@
 
   <!-- Title & Version -->
   <text x="260" y="200" font-family="sans-serif, 'SolaimanLipi'" font-size="24" font-weight="bold" fill="#E6EDE8" text-anchor="middle">বর্ণমালা (Bornomala)</text>
-  <text x="260" y="222" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#008764" text-anchor="middle">সংস্করণ: ০.১.০ (v0.1.0)</text>
+  <text x="260" y="222" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="#008764" text-anchor="middle">সংস্করণ: ১.০.১ (v1.0.1)</text>
 
   <!-- Taglines -->
   <text x="260" y="250" font-family="sans-serif, 'SolaimanLipi'" font-size="13" fill="#8B9E91" text-anchor="middle">আপনার মাতৃভাষার জন্য কোনো লাইসেন্স কি-র প্রয়োজন নেই।</text>

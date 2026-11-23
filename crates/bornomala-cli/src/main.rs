@@ -439,7 +439,7 @@ fn handle_splash(args: &[String]) {
         "\x1b[1;32m======================================================================\x1b[0m"
     );
     if english_mode {
-        println!("\x1b[1;37m Bornomala — Free & Offline Bangla Typing Suite v0.1.0\x1b[0m");
+        println!("\x1b[1;37m Bornomala — Free & Offline Bangla Typing Suite v1.0.1\x1b[0m");
         println!("\x1b[0;36m \"Your mother tongue doesn't need a license key.\"\x1b[0m");
         println!("\x1b[1;31m No crack. No virus. No invoice.\x1b[0m");
         println!("----------------------------------------------------------------------");
@@ -549,7 +549,7 @@ fn handle_about() {
 Bornomala (বর্ণমালা) — Free, Open Source Bangla Typing Suite
 "Your mother tongue doesn't need a license key."
 ======================================================================
-Version:    0.1.0 (v0.1.0)
+Version:    1.0.1 (v1.0.1)
 Publisher:  Ruposhi Open Labs
             GitHub:  https://github.com/RuposhiOpenLabs
 
@@ -908,7 +908,7 @@ fn handle_setup(args: &[String]) {
   <div class="toast" id="toast">Status Updated</div>
 
   <footer>
-    <p>Bornomala Typing Suite v0.1.0 • Ruposhi Open Labs (<a href="https://github.com/RuposhiOpenLabs" target="_blank">github.com/RuposhiOpenLabs</a>)</p>
+    <p>Bornomala Typing Suite v1.0.1 • Ruposhi Open Labs (<a href="https://github.com/RuposhiOpenLabs" target="_blank">github.com/RuposhiOpenLabs</a>)</p>
     <p>Lead Developer: Ryan Shelby (<a href="https://github.com/MdSagorMunshi/" target="_blank">github.com/MdSagorMunshi</a>) • Support: ryn@disr.it</p>
   </footer>
 

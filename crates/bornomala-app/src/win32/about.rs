@@ -222,7 +222,7 @@ unsafe extern "system" fn about_wnd_proc(
             };
             DrawTextW(
                 mem_dc,
-                to_wide("বর্ণমালা — Bornomala v0.1.0").as_ptr(),
+                to_wide("বর্ণমালা — Bornomala v1.0.1").as_ptr(),
                 -1,
                 &mut t_rect,
                 DT_LEFT | DT_SINGLELINE,

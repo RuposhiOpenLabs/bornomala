@@ -12,7 +12,6 @@ path = "src/main.rs"
 
 [dependencies]
 bornomala-engine = { path = "../bornomala-engine" }
-bornomala-ui = { path = "../bornomala-ui" }
 bornomala-update = { path = "../bornomala-update" }
 serde = { workspace = true }
 serde_json = { workspace = true }

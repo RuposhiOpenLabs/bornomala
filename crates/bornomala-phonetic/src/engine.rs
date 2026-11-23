@@ -44,18 +44,15 @@ impl Default for PhoneticEngine {
 
 impl PhoneticEngine {
     pub fn new() -> Self {
-        let memory_path = dirs_fallback_memory_path();
-        Self {
-            rules: AvroRules::global().clone(),
-            autocorrect: AutocorrectTable::global().clone(),
-            dictionary: PhoneticDictionary::global().clone(),
-            suffix_table: SuffixTable::global().clone(),
-            memory: CandidateMemory::with_file(memory_path),
-            config: BeyondAvroConfig::default(),
-            context_ranker: ContextRanker::new(),
-            input_buffer: String::new(),
-            last_committed_word: String::new(),
-        }
+        let memory = match dirs_fallback_memory_path() {
+            Some(path) => CandidateMemory::with_file(path),
+            None => CandidateMemory::new(),
+        };
+        Self::with_custom_memory(memory)
+    }
+
+    pub fn new_in_memory() -> Self {
+        Self::with_custom_memory(CandidateMemory::new())
     }
 
     pub fn with_custom_memory(memory: CandidateMemory) -> Self {
@@ -381,17 +378,36 @@ pub fn levenshtein_distance(a: &str, b: &str) -> usize {
     dp[m][n]
 }
 
-fn dirs_fallback_memory_path() -> PathBuf {
+fn is_test_environment() -> bool {
+    if cfg!(test) || std::env::var_os("BORNOMALA_TEST").is_some() {
+        return true;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if exe.components().any(|c| c.as_os_str() == "deps") {
+            return true;
+        }
+    }
+    false
+}
+
+fn dirs_fallback_memory_path() -> Option<PathBuf> {
+    if is_test_environment() {
+        return None;
+    }
     if let Ok(app_data) = std::env::var("APPDATA") {
-        PathBuf::from(app_data)
-            .join("Bornomala")
-            .join("phonetic_memory.enc")
+        Some(
+            PathBuf::from(app_data)
+                .join("Bornomala")
+                .join("phonetic_memory.enc"),
+        )
     } else if let Ok(home) = std::env::var("HOME") {
-        PathBuf::from(home)
-            .join(".bornomala")
-            .join("phonetic_memory.enc")
+        Some(
+            PathBuf::from(home)
+                .join(".bornomala")
+                .join("phonetic_memory.enc"),
+        )
     } else {
-        PathBuf::from("phonetic_memory.enc")
+        Some(PathBuf::from("phonetic_memory.enc"))
     }
 }
 

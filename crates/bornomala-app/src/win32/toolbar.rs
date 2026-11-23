@@ -712,7 +712,7 @@ unsafe extern "system" fn toolbar_wnd_proc(
                     super::about::AboutWindow::open();
                 }
                 ID_MENU_UPDATE => {
-                    super::updater::trigger_manual_update_check("0.1.0");
+                    super::updater::trigger_manual_update_check("1.0.1");
                 }
                 ID_MENU_EXIT => {
                     PostQuitMessage(0);
