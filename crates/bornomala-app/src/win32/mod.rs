@@ -162,7 +162,7 @@ pub fn run_app(converter_only: bool, _startup_mode: bool) {
 
         // 6. Start asynchronous background GitHub update check if enabled
         if cfg.auto_check_updates {
-            updater::init_update_checker("1.0.1");
+            updater::init_update_checker(env!("CARGO_PKG_VERSION"));
         }
 
         // Standard Win32 Message Loop
@@ -235,7 +235,7 @@ unsafe extern "system" fn main_event_wnd_proc(
         }
 
         WM_BORNOMALA_TRIGGER_UPDATE_CHECK => {
-            updater::trigger_manual_update_check("1.0.1");
+            updater::trigger_manual_update_check(env!("CARGO_PKG_VERSION"));
             0
         }
 

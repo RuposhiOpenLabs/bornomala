@@ -953,7 +953,7 @@ unsafe extern "system" fn settings_wnd_proc(
                 }
 
                 ID_BTN_CHECK_UPDATE_NOW => {
-                    super::updater::trigger_manual_update_check("1.0.1");
+                    super::updater::trigger_manual_update_check(env!("CARGO_PKG_VERSION"));
                 }
 
                 _ => {}

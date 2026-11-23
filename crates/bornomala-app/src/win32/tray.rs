@@ -301,7 +301,7 @@ impl SystemTray {
                 super::about::AboutWindow::open();
             }
             ID_MENU_UPDATE => {
-                super::updater::trigger_manual_update_check("1.0.1");
+                super::updater::trigger_manual_update_check(env!("CARGO_PKG_VERSION"));
             }
             ID_MENU_EXIT => unsafe {
                 PostQuitMessage(0);

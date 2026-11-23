@@ -158,6 +158,51 @@ fn test_github_release_checker_parsing() {
     let json_prerelease = json_release.replace("\"prerelease\": false", "\"prerelease\": true");
     let res_pre = UpdateChecker::parse_latest_release(&json_prerelease, "0.1.0").unwrap();
     assert!(res_pre.is_none());
+
+    // 4. SHA-256 resolution via asset.digest
+    let json_with_digest = r#"{
+        "tag_name": "v0.3.0",
+        "name": "Bornomala v0.3.0",
+        "body": "Release without explicit BORNOMALA_SHA256 token",
+        "draft": false,
+        "prerelease": false,
+        "assets": [
+            {
+                "name": "Bornomala-Setup-v0.3.0.exe",
+                "size": 15000000,
+                "digest": "sha256:7fb0760f0104b48cf45b6b3a09cce17683707bdad76a16de5c180d8428d20273",
+                "browser_download_url": "https://github.com/RuposhiOpenLabs/bornomala/releases/download/v0.3.0/Bornomala-Setup-v0.3.0.exe"
+            }
+        ]
+    }"#;
+    let res_digest = UpdateChecker::parse_latest_release(json_with_digest, "0.2.0").unwrap();
+    assert!(res_digest.is_some());
+    assert_eq!(
+        res_digest.unwrap().expected_sha256.as_deref(),
+        Some("7fb0760f0104b48cf45b6b3a09cce17683707bdad76a16de5c180d8428d20273")
+    );
+
+    // 5. SHA-256 resolution via markdown table line matching asset name
+    let json_with_markdown_table = r###"{
+        "tag_name": "v0.3.0",
+        "name": "Bornomala v0.3.0",
+        "body": "## Checksums\n| Asset | Size | SHA-256 |\n|---|---|---|\n| `Bornomala-Setup-v0.3.0.exe` | 15MB | `7fb0760f0104b48cf45b6b3a09cce17683707bdad76a16de5c180d8428d20273` |",
+        "draft": false,
+        "prerelease": false,
+        "assets": [
+            {
+                "name": "Bornomala-Setup-v0.3.0.exe",
+                "size": 15000000,
+                "browser_download_url": "https://github.com/RuposhiOpenLabs/bornomala/releases/download/v0.3.0/Bornomala-Setup-v0.3.0.exe"
+            }
+        ]
+    }"###;
+    let res_table = UpdateChecker::parse_latest_release(json_with_markdown_table, "0.2.0").unwrap();
+    assert!(res_table.is_some());
+    assert_eq!(
+        res_table.unwrap().expected_sha256.as_deref(),
+        Some("7fb0760f0104b48cf45b6b3a09cce17683707bdad76a16de5c180d8428d20273")
+    );
 }
 
 #[test]

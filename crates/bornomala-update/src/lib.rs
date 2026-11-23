@@ -241,6 +241,8 @@ pub struct GitHubReleaseAsset {
     pub name: String,
     pub size: u64,
     pub browser_download_url: String,
+    #[serde(default)]
+    pub digest: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -256,7 +258,7 @@ pub struct GitHubRelease {
     pub assets: Vec<GitHubReleaseAsset>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UpdateCandidate {
     pub version: String,
     pub title: String,
@@ -309,7 +311,8 @@ impl UpdateChecker {
         };
 
         let body = release.body.unwrap_or_default();
-        let expected_sha256 = Self::extract_token(&body, "BORNOMALA_SHA256:");
+        let expected_sha256 =
+            Self::extract_sha256_for_asset(&body, &asset.name, asset.digest.as_deref());
         let ed25519_signature = Self::extract_token(&body, "BORNOMALA_SIG:");
 
         Ok(Some(UpdateCandidate {
@@ -324,6 +327,39 @@ impl UpdateChecker {
             expected_sha256,
             ed25519_signature,
         }))
+    }
+
+    pub fn extract_sha256_for_asset(
+        body: &str,
+        asset_name: &str,
+        asset_digest: Option<&str>,
+    ) -> Option<String> {
+        // 1. Explicit token prefix: BORNOMALA_SHA256:
+        if let Some(token) = Self::extract_token(body, "BORNOMALA_SHA256:") {
+            return Some(token);
+        }
+
+        // 2. Direct digest from GitHub Release Asset (e.g. "sha256:7fb0760f0104b48cf45b6b3a09cce17683707bdad76a16de5c180d8428d20273")
+        if let Some(d) = asset_digest {
+            let clean = d.strip_prefix("sha256:").unwrap_or(d).trim();
+            if clean.len() == 64 && clean.chars().all(|c| c.is_ascii_hexdigit()) {
+                return Some(clean.to_lowercase());
+            }
+        }
+
+        // 3. Scan release notes table or text lines mentioning asset_name for a 64-char hex string
+        for line in body.lines() {
+            if line.contains(asset_name) {
+                for part in line.split(|c: char| c == '`' || c == '|' || c.is_whitespace() || c == '(' || c == ')') {
+                    let trimmed = part.trim();
+                    if trimmed.len() == 64 && trimmed.chars().all(|c| c.is_ascii_hexdigit()) {
+                        return Some(trimmed.to_lowercase());
+                    }
+                }
+            }
+        }
+
+        None
     }
 
     fn extract_token(body: &str, prefix: &str) -> Option<String> {

@@ -21,6 +21,15 @@ use super::api::*;
 
 static SHOWN_THIS_SESSION: AtomicBool = AtomicBool::new(false);
 static PENDING_CANDIDATE: Mutex<Option<UpdateCandidate>> = Mutex::new(None);
+static CHECK_IN_PROGRESS: AtomicBool = AtomicBool::new(false);
+
+#[derive(Debug, Clone)]
+pub enum PromptAction {
+    UpdateNow(UpdateCandidate),
+    Later,
+    Skip,
+    Dismissed,
+}
 
 pub fn init_update_checker(current_version: &str) {
     let ver = current_version.to_string();
@@ -39,6 +48,20 @@ pub fn trigger_manual_update_check(current_version: &str) {
 }
 
 fn check_for_updates(current_version: &str, is_manual: bool) {
+    if CHECK_IN_PROGRESS
+        .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+        .is_err()
+    {
+        return;
+    }
+    struct CheckGuard;
+    impl Drop for CheckGuard {
+        fn drop(&mut self) {
+            CHECK_IN_PROGRESS.store(false, Ordering::SeqCst);
+        }
+    }
+    let _guard = CheckGuard;
+
     let url = UpdateChecker::GITHUB_LATEST_RELEASE_URL;
     match fetch_url_string(url) {
         Ok(json_response) => {
@@ -54,13 +77,29 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
                         return;
                     }
 
-                    // Save candidate and show the prompt window on main thread
+                    // Save candidate
                     if let Ok(mut lock) = PENDING_CANDIDATE.lock() {
                         *lock = Some(candidate.clone());
                     }
 
-                    unsafe {
-                        UpdatePromptWindow::show(candidate);
+                    let action = unsafe {
+                        UpdatePromptWindow::show(candidate.clone(), current_version)
+                    };
+
+                    match action {
+                        PromptAction::UpdateNow(cand) => unsafe {
+                            DownloaderWindow::run(cand);
+                        },
+                        PromptAction::Later => {
+                            SHOWN_THIS_SESSION.store(true, Ordering::SeqCst);
+                            let mut prefs = UpdatePreferences::load();
+                            prefs.set_postponed(&candidate.version);
+                        }
+                        PromptAction::Skip => {
+                            let mut prefs = UpdatePreferences::load();
+                            prefs.set_skip_version(&candidate.version);
+                        }
+                        PromptAction::Dismissed => {}
                     }
                 }
                 Ok(None) => {
@@ -119,7 +158,8 @@ fn check_for_updates(current_version: &str, is_manual: bool) {
 
 pub fn fetch_url_string(url: &str) -> Result<String, String> {
     unsafe {
-        let user_agent = to_wide("Bornomala-UpdateChecker/1.0.1");
+        let ua = format!("Bornomala-UpdateChecker/{}", env!("CARGO_PKG_VERSION"));
+        let user_agent = to_wide(&ua);
         let h_internet = InternetOpenW(
             user_agent.as_ptr(),
             INTERNET_OPEN_TYPE_PRECONFIG,
@@ -173,7 +213,8 @@ where
     F: FnMut(u64, u64, f64), // (downloaded_bytes, total_bytes, speed_bytes_per_sec)
 {
     unsafe {
-        let user_agent = to_wide("Bornomala-Downloader/1.0.1");
+        let ua = format!("Bornomala-Downloader/{}", env!("CARGO_PKG_VERSION"));
+        let user_agent = to_wide(&ua);
         let h_internet = InternetOpenW(
             user_agent.as_ptr(),
             INTERNET_OPEN_TYPE_PRECONFIG,
@@ -277,12 +318,16 @@ const BTN_SKIP: usize = 1003;
 pub struct UpdatePromptWindow;
 
 static mut PROMPT_HWND: HWND = 0;
-static PROMPT_CANDIDATE: Mutex<Option<UpdateCandidate>> = Mutex::new(None);
+static PROMPT_INFO: Mutex<Option<(UpdateCandidate, String)>> = Mutex::new(None);
+static PROMPT_ACTION: Mutex<Option<PromptAction>> = Mutex::new(None);
 
 impl UpdatePromptWindow {
-    pub unsafe fn show(candidate: UpdateCandidate) {
-        if let Ok(mut lock) = PROMPT_CANDIDATE.lock() {
-            *lock = Some(candidate);
+    pub unsafe fn show(candidate: UpdateCandidate, current_version: &str) -> PromptAction {
+        if let Ok(mut lock) = PROMPT_INFO.lock() {
+            *lock = Some((candidate.clone(), current_version.to_string()));
+        }
+        if let Ok(mut lock) = PROMPT_ACTION.lock() {
+            *lock = None;
         }
 
         let hinst = GetModuleHandleW(std::ptr::null());
@@ -392,7 +437,21 @@ impl UpdatePromptWindow {
         SendMessageW(btn_skp, WM_SETFONT, btn_font, 1);
 
         ShowWindow(hwnd, SW_SHOW);
+        UpdateWindow(hwnd);
         SetForegroundWindow(hwnd);
+
+        // Run modal message pump on this thread
+        let mut msg: MSG = std::mem::zeroed();
+        while GetMessageW(&mut msg, 0, 0, 0) > 0 {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+
+        PROMPT_ACTION
+            .lock()
+            .ok()
+            .and_then(|mut a| a.take())
+            .unwrap_or(PromptAction::Dismissed)
     }
 }
 
@@ -403,6 +462,12 @@ unsafe extern "system" fn prompt_wnd_proc(
     lparam: LPARAM,
 ) -> LRESULT {
     match msg {
+        WM_LBUTTONDOWN => {
+            ReleaseCapture();
+            SendMessageW(hwnd, WM_NCLBUTTONDOWN, HTCAPTION as WPARAM, 0);
+            0
+        }
+
         WM_PAINT => {
             let mut ps: PAINTSTRUCT = std::mem::zeroed();
             let hdc = BeginPaint(hwnd, &mut ps);
@@ -454,8 +519,8 @@ unsafe extern "system" fn prompt_wnd_proc(
             );
 
             // 2. Body Text
-            let cand_clone = PROMPT_CANDIDATE.lock().ok().and_then(|c| c.clone());
-            if let Some(ref cand) = cand_clone {
+            let info_clone = PROMPT_INFO.lock().ok().and_then(|c| c.clone());
+            if let Some((ref cand, ref cur_ver)) = info_clone {
                 SetTextColor(hdc, rgb(6, 106, 74));
                 let body_font = CreateFontW(
                     -14,
@@ -475,7 +540,7 @@ unsafe extern "system" fn prompt_wnd_proc(
                 );
                 SelectObject(hdc, body_font);
 
-                let ver_str = format!("নতুন সংস্করণ: v{} (আপনার সংস্করণ: v1.0.1)", cand.version);
+                let ver_str = format!("নতুন সংস্করণ: v{} (আপনার সংস্করণ: v{})", cand.version, cur_ver);
                 let mut v_rect = RECT {
                     left: 24,
                     top: 72,
@@ -538,32 +603,24 @@ unsafe extern "system" fn prompt_wnd_proc(
             let id = wparam & 0xFFFF;
             match id {
                 BTN_UPDATE_NOW => {
-                    ShowWindow(hwnd, SW_HIDE);
-                    DestroyWindow(hwnd);
-                    let cand = PROMPT_CANDIDATE.lock().ok().and_then(|mut c| c.take());
+                    let cand = PROMPT_INFO.lock().ok().and_then(|c| c.as_ref().map(|(cand, _)| cand.clone()));
                     if let Some(cand) = cand {
-                        DownloaderWindow::start(cand);
+                        if let Ok(mut lock) = PROMPT_ACTION.lock() {
+                            *lock = Some(PromptAction::UpdateNow(cand));
+                        }
                     }
+                    DestroyWindow(hwnd);
                 }
                 BTN_LATER => {
-                    // Postpone for current session, remind next boot
-                    SHOWN_THIS_SESSION.store(true, Ordering::SeqCst);
-                    let cand = PROMPT_CANDIDATE.lock().ok().and_then(|c| c.clone());
-                    if let Some(ref cand) = cand {
-                        let mut prefs = UpdatePreferences::load();
-                        prefs.set_postponed(&cand.version);
+                    if let Ok(mut lock) = PROMPT_ACTION.lock() {
+                        *lock = Some(PromptAction::Later);
                     }
-                    ShowWindow(hwnd, SW_HIDE);
                     DestroyWindow(hwnd);
                 }
                 BTN_SKIP => {
-                    // Skip this version permanently
-                    let cand = PROMPT_CANDIDATE.lock().ok().and_then(|c| c.clone());
-                    if let Some(ref cand) = cand {
-                        let mut prefs = UpdatePreferences::load();
-                        prefs.set_skip_version(&cand.version);
+                    if let Ok(mut lock) = PROMPT_ACTION.lock() {
+                        *lock = Some(PromptAction::Skip);
                     }
-                    ShowWindow(hwnd, SW_HIDE);
                     DestroyWindow(hwnd);
                 }
                 _ => {}
@@ -572,9 +629,18 @@ unsafe extern "system" fn prompt_wnd_proc(
         }
 
         WM_CLOSE => {
-            // Treat window close as "Later"
-            SHOWN_THIS_SESSION.store(true, Ordering::SeqCst);
+            if let Ok(mut lock) = PROMPT_ACTION.lock() {
+                if lock.is_none() {
+                    *lock = Some(PromptAction::Later);
+                }
+            }
             DestroyWindow(hwnd);
+            0
+        }
+
+        WM_DESTROY => {
+            PROMPT_HWND = 0;
+            PostQuitMessage(0);
             0
         }
 
@@ -587,16 +653,20 @@ unsafe extern "system" fn prompt_wnd_proc(
 // ----------------------------------------------------------------------------
 
 const BTN_CANCEL_DOWNLOAD: usize = 2001;
+const WM_DL_PROGRESS: u32 = WM_USER + 310;
+const WM_DL_FINISHED: u32 = WM_USER + 311;
 
 pub struct DownloaderWindow;
 
 static mut DL_HWND: HWND = 0;
 static DL_PROGRESS_PCT: AtomicU64 = AtomicU64::new(0);
-static DL_DOWNLOADED_MB: AtomicU64 = AtomicU64::new(0); // in KB
-static DL_TOTAL_MB: AtomicU64 = AtomicU64::new(0); // in KB
+static DL_DOWNLOADED_KB: AtomicU64 = AtomicU64::new(0); // in KB
+static DL_TOTAL_KB: AtomicU64 = AtomicU64::new(0); // in KB
 static DL_SPEED_KB: AtomicU64 = AtomicU64::new(0); // in KB/s
 static DL_CANCEL_FLAG: Mutex<Option<Arc<AtomicBool>>> = Mutex::new(None);
 static DL_STATUS_MSG: Mutex<String> = Mutex::new(String::new());
+static DL_ERROR_MSG: Mutex<String> = Mutex::new(String::new());
+static DL_TARGET_INFO: Mutex<Option<(PathBuf, String)>> = Mutex::new(None);
 
 fn set_dl_status(msg: &str) {
     if let Ok(mut lock) = DL_STATUS_MSG.lock() {
@@ -608,8 +678,33 @@ fn get_dl_status() -> String {
     DL_STATUS_MSG.lock().map(|s| s.clone()).unwrap_or_default()
 }
 
+fn set_dl_error(msg: &str) {
+    if let Ok(mut lock) = DL_ERROR_MSG.lock() {
+        *lock = msg.to_string();
+    }
+}
+
+fn get_dl_error() -> String {
+    DL_ERROR_MSG.lock().map(|s| s.clone()).unwrap_or_default()
+}
+
 impl DownloaderWindow {
-    pub unsafe fn start(candidate: UpdateCandidate) {
+    pub unsafe fn run(candidate: UpdateCandidate) {
+        let app_data = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| ".".into());
+        let update_dir = PathBuf::from(app_data).join("Bornomala").join("updates");
+        let target_file = update_dir.join(&candidate.asset_name);
+
+        if let Ok(mut lock) = DL_TARGET_INFO.lock() {
+            *lock = Some((target_file.clone(), candidate.version.clone()));
+        }
+
+        DL_PROGRESS_PCT.store(0, Ordering::SeqCst);
+        DL_DOWNLOADED_KB.store(0, Ordering::SeqCst);
+        DL_TOTAL_KB.store(0, Ordering::SeqCst);
+        DL_SPEED_KB.store(0, Ordering::SeqCst);
+        set_dl_status("গিটহাব থেকে আপডেট ফাইল ডাউনলোড হচ্ছে...");
+        set_dl_error("");
+
         let hinst = GetModuleHandleW(std::ptr::null());
         let class_name = to_wide("BornomalaDownloaderClass");
 
@@ -646,7 +741,6 @@ impl DownloaderWindow {
         );
 
         DL_HWND = hwnd;
-        set_dl_status("গিটহাব থেকে আপডেট ফাইল ডাউনলোড হচ্ছে...");
 
         let cancel_btn = CreateWindowExW(
             0,
@@ -681,6 +775,7 @@ impl DownloaderWindow {
         SendMessageW(cancel_btn, WM_SETFONT, btn_font, 1);
 
         ShowWindow(hwnd, SW_SHOW);
+        UpdateWindow(hwnd);
         SetForegroundWindow(hwnd);
 
         // Spawn background download task
@@ -689,15 +784,15 @@ impl DownloaderWindow {
             *lock = Some(cancel_flag.clone());
         }
 
-        std::thread::spawn(move || {
-            let app_data = std::env::var("LOCALAPPDATA").unwrap_or_else(|_| ".".into());
-            let update_dir = PathBuf::from(app_data).join("Bornomala").join("updates");
-            let target_file = update_dir.join(&candidate.asset_name);
+        let cand_clone = candidate.clone();
+        let target_file_clone = target_file.clone();
+        let dl_hwnd = hwnd;
 
+        std::thread::spawn(move || {
             let res = download_file_with_progress(
-                &candidate.download_url,
-                &target_file,
-                cancel_flag,
+                &cand_clone.download_url,
+                &target_file_clone,
+                cancel_flag.clone(),
                 |downloaded, total, speed| {
                     let pct = if total > 0 {
                         (downloaded * 100) / total
@@ -705,104 +800,78 @@ impl DownloaderWindow {
                         0
                     };
                     DL_PROGRESS_PCT.store(pct, Ordering::Relaxed);
-                    DL_DOWNLOADED_MB.store(downloaded / 1024, Ordering::Relaxed);
-                    DL_TOTAL_MB.store(total / 1024, Ordering::Relaxed);
+                    DL_DOWNLOADED_KB.store(downloaded / 1024, Ordering::Relaxed);
+                    DL_TOTAL_KB.store(total / 1024, Ordering::Relaxed);
                     DL_SPEED_KB.store((speed / 1024.0) as u64, Ordering::Relaxed);
 
                     unsafe {
-                        if DL_HWND != 0 {
-                            InvalidateRect(DL_HWND, std::ptr::null(), FALSE);
-                        }
+                        PostMessageW(dl_hwnd, WM_DL_PROGRESS, 0, 0);
                     }
                 },
             );
+
+            if cancel_flag.load(Ordering::SeqCst) {
+                unsafe {
+                    PostMessageW(dl_hwnd, WM_DL_FINISHED, 0, 0);
+                }
+                return;
+            }
 
             match res {
                 Ok(()) => {
                     set_dl_status("ক্রিপ্টোগ্রাফিক ডিজিটাল স্বাক্ষর ও হ্যাশ যাচাই করা হচ্ছে...");
                     unsafe {
-                        if DL_HWND != 0 {
-                            InvalidateRect(DL_HWND, std::ptr::null(), FALSE);
-                        }
+                        PostMessageW(dl_hwnd, WM_DL_PROGRESS, 0, 0);
                     }
 
                     // Cryptographic Ed25519 & SHA-256 Verification
                     let verifier_res = IntegrityVerifier::official();
                     let verified = match verifier_res {
                         Ok(verifier) => verifier.verify_downloaded_payload(
-                            &target_file,
-                            candidate.expected_sha256.as_deref(),
-                            candidate.ed25519_signature.as_deref(),
+                            &target_file_clone,
+                            cand_clone.expected_sha256.as_deref(),
+                            cand_clone.ed25519_signature.as_deref(),
                         ),
                         Err(e) => Err(e),
                     };
 
                     match verified {
-                        Ok(_) => {
-                            // Verification succeeded!
-                            unsafe {
-                                ShowWindow(DL_HWND, SW_HIDE);
-                                DestroyWindow(DL_HWND);
-                                DL_HWND = 0;
-
-                                // Request UAC Administrator permission to run the Update Wizard
-                                let current_exe = std::env::current_exe().unwrap();
-                                let runas = to_wide("runas");
-                                let exe_wide = to_wide(current_exe.to_str().unwrap());
-                                let params = format!(
-                                    "--update-wizard \"{}\" \"{}\"",
-                                    target_file.to_str().unwrap(),
-                                    candidate.version
-                                );
-                                let params_wide = to_wide(&params);
-
-                                ShellExecuteW(
-                                    0,
-                                    runas.as_ptr(),
-                                    exe_wide.as_ptr(),
-                                    params_wide.as_ptr(),
-                                    std::ptr::null(),
-                                    SW_SHOWNORMAL,
-                                );
-                            }
-                        }
+                        Ok(_) => unsafe {
+                            PostMessageW(dl_hwnd, WM_DL_FINISHED, 1, 0);
+                        },
                         Err(err) => {
-                            // Verification failed: Remove corrupt/tampered file
-                            let _ = fs::remove_file(&target_file);
+                            let _ = fs::remove_file(&target_file_clone);
+                            set_dl_error(&format!(
+                                "নিরাপত্তা সতর্কতা: ডাউনলোড করা ফাইলের ক্রিপ্টোগ্রাফিক যাচাইকরণ ব্যর্থ হয়েছে!\n({})\n\nসম্ভাব্য ম্যালওয়্যার প্রতিরোধে ফাইলটি মুছে ফেলা হয়েছে।",
+                                err
+                            ));
                             unsafe {
-                                ShowWindow(DL_HWND, SW_HIDE);
-                                DestroyWindow(DL_HWND);
-                                DL_HWND = 0;
-                                let msg = format!(
-                                    "নিরাপত্তা সতর্কতা: ডাউনলোড করা ফাইলের ক্রিপ্টোগ্রাফিক যাচাইকরণ ব্যর্থ হয়েছে!\n({})\n\nসম্ভাব্য ম্যালওয়্যার প্রতিরোধে ফাইলটি মুছে ফেলা হয়েছে।",
-                                    err
-                                );
-                                MessageBoxW(
-                                    0,
-                                    to_wide(&msg).as_ptr(),
-                                    to_wide("নিরাপত্তা ত্রুটি").as_ptr(),
-                                    0x00000010,
-                                );
+                                PostMessageW(dl_hwnd, WM_DL_FINISHED, 2, 0);
                             }
                         }
                     }
                 }
-                Err(err) => unsafe {
-                    ShowWindow(DL_HWND, SW_HIDE);
-                    DestroyWindow(DL_HWND);
-                    DL_HWND = 0;
-                    if !err.contains("cancelled") {
-                        let msg = format!("ডাউনলোড সম্পন্ন করা সম্ভব হয়নি:\n{}", err);
-                        MessageBoxW(
-                            0,
-                            to_wide(&msg).as_ptr(),
-                            to_wide("ডাউনলোড ত্রুটি").as_ptr(),
-                            0x00000010,
-                        );
+                Err(err) => {
+                    if err.contains("cancelled") {
+                        unsafe {
+                            PostMessageW(dl_hwnd, WM_DL_FINISHED, 0, 0);
+                        }
+                    } else {
+                        set_dl_error(&format!("ডাউনলোড সম্পন্ন করা সম্ভব হয়নি:\n{}", err));
+                        unsafe {
+                            PostMessageW(dl_hwnd, WM_DL_FINISHED, 3, 0);
+                        }
                     }
-                },
+                }
             }
         });
+
+        // Run modal message pump on this thread
+        let mut msg: MSG = std::mem::zeroed();
+        while GetMessageW(&mut msg, 0, 0, 0) > 0 {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
     }
 }
 
@@ -813,6 +882,12 @@ unsafe extern "system" fn dl_wnd_proc(
     lparam: LPARAM,
 ) -> LRESULT {
     match msg {
+        WM_LBUTTONDOWN => {
+            ReleaseCapture();
+            SendMessageW(hwnd, WM_NCLBUTTONDOWN, HTCAPTION as WPARAM, 0);
+            0
+        }
+
         WM_PAINT => {
             let mut ps: PAINTSTRUCT = std::mem::zeroed();
             let hdc = BeginPaint(hwnd, &mut ps);
@@ -909,8 +984,8 @@ unsafe extern "system" fn dl_wnd_proc(
             SelectObject(mem_dc, stats_font);
             SetTextColor(mem_dc, rgb(30, 50, 40));
 
-            let down_kb = DL_DOWNLOADED_MB.load(Ordering::Relaxed);
-            let tot_kb = DL_TOTAL_MB.load(Ordering::Relaxed);
+            let down_kb = DL_DOWNLOADED_KB.load(Ordering::Relaxed);
+            let tot_kb = DL_TOTAL_KB.load(Ordering::Relaxed);
             let speed_kb = DL_SPEED_KB.load(Ordering::Relaxed);
 
             let stats_left = format!(
@@ -983,6 +1058,72 @@ unsafe extern "system" fn dl_wnd_proc(
             0
         }
 
+        WM_DL_PROGRESS => {
+            InvalidateRect(hwnd, std::ptr::null(), FALSE);
+            0
+        }
+
+        WM_DL_FINISHED => {
+            let code = wparam;
+            match code {
+                1 => {
+                    // Succeeded!
+                    ShowWindow(hwnd, SW_HIDE);
+                    DestroyWindow(hwnd);
+
+                    let target_info = DL_TARGET_INFO.lock().ok().and_then(|mut t| t.take());
+                    if let Some((target_file, version)) = target_info {
+                        if let Ok(current_exe) = std::env::current_exe() {
+                            let runas = to_wide("runas");
+                            let exe_wide = to_wide(&current_exe.to_string_lossy());
+                            let params = format!(
+                                "--update-wizard \"{}\" \"{}\"",
+                                target_file.to_string_lossy(),
+                                version
+                            );
+                            let params_wide = to_wide(&params);
+
+                            ShellExecuteW(
+                                0,
+                                runas.as_ptr(),
+                                exe_wide.as_ptr(),
+                                params_wide.as_ptr(),
+                                std::ptr::null(),
+                                SW_SHOWNORMAL,
+                            );
+                        }
+                    }
+                }
+                2 => {
+                    // Verification failed
+                    let err = get_dl_error();
+                    MessageBoxW(
+                        hwnd,
+                        to_wide(&err).as_ptr(),
+                        to_wide("নিরাপত্তা ত্রুটি").as_ptr(),
+                        0x00000010,
+                    );
+                    DestroyWindow(hwnd);
+                }
+                3 => {
+                    // Download error
+                    let err = get_dl_error();
+                    MessageBoxW(
+                        hwnd,
+                        to_wide(&err).as_ptr(),
+                        to_wide("ডাউনলোড ত্রুটি").as_ptr(),
+                        0x00000010,
+                    );
+                    DestroyWindow(hwnd);
+                }
+                _ => {
+                    // Cancelled
+                    DestroyWindow(hwnd);
+                }
+            }
+            0
+        }
+
         WM_COMMAND => {
             let id = wparam & 0xFFFF;
             if id == BTN_CANCEL_DOWNLOAD {
@@ -991,9 +1132,7 @@ unsafe extern "system" fn dl_wnd_proc(
                         flag.store(true, Ordering::SeqCst);
                     }
                 }
-                ShowWindow(hwnd, SW_HIDE);
                 DestroyWindow(hwnd);
-                DL_HWND = 0;
             }
             0
         }
@@ -1005,7 +1144,12 @@ unsafe extern "system" fn dl_wnd_proc(
                 }
             }
             DestroyWindow(hwnd);
+            0
+        }
+
+        WM_DESTROY => {
             DL_HWND = 0;
+            PostQuitMessage(0);
             0
         }
 
