@@ -35,7 +35,7 @@ To preserve the safety and reputation of the Bornomala typing ecosystem, you agr
 * Falsely claim endorsement or official certification from Ruposhi Open Labs for unauthorized forks.
 
 ### 5. Preloaded Fonts Notice
-Bornomala bundles preloaded fonts (including *Nikosh*, *NikoshBAN*, *SutonnyMJ*, *AdorshoLipi*, and *Bangla*) to guarantee immediate interoperability with legacy government forms and standard Unicode documents. These fonts remain the property of their respective creators and copyright holders and are distributed under public service and fair interoperability guidelines.
+Bornomala bundles preloaded fonts (including *Nikosh*, *NikoshBAN*, *SutonnyMJ*, *AdorshoLipi*, *Bangla*, and *SumiBrush*) to guarantee immediate interoperability with legacy government forms and standard Unicode documents. These fonts remain the property of their respective creators and copyright holders and are distributed under public service and fair interoperability guidelines.
 
 ### 6. Disclaimer of Warranty & Limitation of Liability
 BORNOMALA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL RUPOSHI OPEN LABS OR RYAN SHELBY BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.

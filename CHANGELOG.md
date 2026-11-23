@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Dependency Cleanups:** Removed unused dependencies from `bornomala-app` and `bornomala-phonetic` manifests, eliminating build warnings.
 
 #### Added
+* **SumiBrush Calligraphic Fonts:** Added artistic calligraphy fonts (`SumiBrush-Regular.ttf` and `SumiBrush-Bold.ttf`) by Ryan Shelby into the preloaded font catalog (10 fonts total).
 * **GitHub Community Templates:** Added bilingual Issue Templates (`bug_report.md`, `feature_request.md`), Issue configuration (`config.yml`), and Pull Request Template (`pull_request_template.md`).
 
 ---

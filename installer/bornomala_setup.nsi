@@ -51,7 +51,7 @@ Var FontConflictPolicy ; 0 = Ask, 1 = Install All (Replace All), 2 = Skip All
 
 ; Welcome Page
 !define MUI_WELCOMEPAGE_TITLE "স্বাগতম — বর্ণমালা (Bornomala) সেটআপ উইজার্ড"
-!define MUI_WELCOMEPAGE_TEXT "বর্ণমালা হলো ১০০% মুক্ত, ওপেন সোর্স, অফলাইন ও আধুনিক বাংলা টাইপিং স্যুট।$\r$\n$\r$\nসুবিধাসমূহ:$\r$\n• ক্লাসিক ইউনিকোড ও ফোনেটিক রোমানাইজড টাইপিং (Avro ও Bijoy স্টাইল)$\r$\n• সুতোন্নী (SutonnyMJ) এএনএসআই লেআউট ও হাই-স্পিড রূপান্তরকারী$\r$\n• সরকারি প্রমিত ৮টি প্রিলোডেড ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি ইত্যাদি)$\r$\n• কোনো ক্র্যাক নেই, কোনো ভাইরাস নেই, কোনো লাইসেন্স কি-র প্রয়োজন নেই।$\r$\n$\r$\nইনস্টলেশন শুরু করতে [পরবর্তী] বাটনে ক্লিক করুন।"
+!define MUI_WELCOMEPAGE_TEXT "বর্ণমালা হলো ১০০% মুক্ত, ওপেন সোর্স, অফলাইন ও আধুনিক বাংলা টাইপিং স্যুট।$\r$\n$\r$\nসুবিধাসমূহ:$\r$\n• ক্লাসিক ইউনিকোড ও ফোনেটিক রোমানাইজড টাইপিং (Avro ও Bijoy স্টাইল)$\r$\n• সুতোন্নী (SutonnyMJ) এএনএসআই লেআউট ও হাই-স্পিড রূপান্তরকারী$\r$\n• সরকারি প্রমিত ও নান্দনিক ১০টি প্রিলোডেড ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি, সুমিব্রাশ ইত্যাদি)$\r$\n• কোনো ক্র্যাক নেই, কোনো ভাইরাস নেই, কোনো লাইসেন্স কি-র প্রয়োজন নেই।$\r$\n$\r$\nইনস্টলেশন শুরু করতে [পরবর্তী] বাটনে ক্লিক করুন।"
 !insertmacro MUI_PAGE_WELCOME
 
 ; License Page (Terms & Conditions — Clean Native UTF-16LE with BOM)
@@ -456,6 +456,8 @@ Section "Preloaded Bangla Fonts (প্রিলোডেড বাংলা ফ
   File "../fonts/SutonnyMJ Regular.ttf"
   File "../fonts/AdorshoLipi_20-07-2007.ttf"
   File "../fonts/Bangla.ttf"
+  File "../fonts/SumiBrush-Regular.ttf"
+  File "../fonts/SumiBrush-Bold.ttf"
 
   ; Install each font with conflict detection & interactive user prompt
   Push "Nikosh.ttf"
@@ -490,6 +492,14 @@ Section "Preloaded Bangla Fonts (প্রিলোডেড বাংলা ফ
   Push "Bangla (TrueType)"
   Call InstallFontWithConflictCheck
 
+  Push "SumiBrush-Regular.ttf"
+  Push "Sumi Brush Regular (TrueType)"
+  Call InstallFontWithConflictCheck
+
+  Push "SumiBrush-Bold.ttf"
+  Push "Sumi Brush Bold (TrueType)"
+  Call InstallFontWithConflictCheck
+
   ; Broadcast WM_FONTCHANGE so Word, Photoshop, Excel immediately pick up the fonts
   DetailPrint "উইন্ডোজ অ্যাপ্লিকেশনে ফন্ট আপডেট বার্তা সম্প্রচার করা হচ্ছে (WM_FONTCHANGE)..."
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0
@@ -515,7 +525,7 @@ SectionEnd
 ; ----------------------------------------------------------------------------
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "মূল টাইপিং ইঞ্জিন ও TSF টেক্সট সার্ভিস ডায়নামিক লাইব্রেরি (অবশ্যই প্রয়োজন)।"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecFonts} "সরকারি প্রমিত ৮টি বাংলা ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি ইত্যাদি)। ইতিমধ্যে থাকলে প্রতিস্থাপনের অপশন দেখানো হবে।"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecFonts} "সরকারি প্রমিত ও নান্দনিক ১০টি বাংলা ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি, সুমিব্রাশ ইত্যাদি)। ইতিমধ্যে থাকলে প্রতিস্থাপনের অপশন দেখানো হবে।"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAutostart} "কম্পিউটার চালু হওয়ার সাথে সাথে স্বয়ংক্রিয়ভাবে ব্যাকগ্রাউন্ডে বর্ণমালা চালু করবে।"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} "স্টার্ট মেনু এবং ডেস্কটপে সহজে চালুর জন্য শর্টকাট তৈরি করবে।"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END

@@ -120,7 +120,7 @@ cargo run -p bornomala-cli -- date 2026 12 16
 Download the Windows installer package:
 * **Installer Path:** `target/installer/Bornomala-Setup-v1.0.1.exe` (7.6 MB compressed)
 * **Custom Animated Setup Wizard:** Modern UI with smooth lazy animations, step-by-step guidance, and professional Terms & Conditions ([`TERMS.md`](TERMS.md)).
-* **8 Preloaded Government & Classic Fonts:**
+* **10 Preloaded Government, Classic & Artistic Fonts:**
   1. `Nikosh.ttf` (Government Unicode Standard)
   2. `NikoshBAN.ttf` (Bengali Typography Variant)
   3. `NikoshGrameen.ttf` (Grameen Display Variant)
@@ -129,6 +129,8 @@ Download the Windows installer package:
   6. `SutonnyMJ Regular.ttf` (Classic ANSI Font for Land Registry & Publishing)
   7. `AdorshoLipi_20-07-2007.ttf` (Literary & Educational Standard)
   8. `Bangla.ttf` (Universal OpenType Font)
+  9. `SumiBrush-Regular.ttf` (Artistic Calligraphic Bangla Font)
+  10. `SumiBrush-Bold.ttf` (Artistic Calligraphic Bold Bangla Font)
 * **Interactive Font Conflict Resolution:**
   If any of these fonts already exist on your system, the setup shows an interactive prompt offering **Install All (Replace All)**, **Skip All (Keep Existing)**, or **Per-Font Decision (Ask Each Font)**.
 * **Automatic System Refresh:** The setup automatically broadcasts `WM_FONTCHANGE` upon completion so MS Word, Photoshop, Excel, and Illustrator immediately recognize the fonts without requiring a reboot.

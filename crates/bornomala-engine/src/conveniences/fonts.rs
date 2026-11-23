@@ -25,7 +25,7 @@ pub struct PreloadedFont {
     pub description_bn: &'static str,
 }
 
-pub const PRELOADED_FONTS: [PreloadedFont; 8] = [
+pub const PRELOADED_FONTS: [PreloadedFont; 10] = [
     PreloadedFont {
         filename: "Nikosh.ttf",
         font_name: "Nikosh",
@@ -98,6 +98,24 @@ pub const PRELOADED_FONTS: [PreloadedFont; 8] = [
         description: "Universal Bangla Traditional OpenType Font",
         description_bn: "সার্বজনীন বাংলা ঐতিহ্যবাহী ফন্ট",
     },
+    PreloadedFont {
+        filename: "SumiBrush-Regular.ttf",
+        font_name: "Sumi Brush",
+        registry_name: "Sumi Brush Regular (TrueType)",
+        is_ansi: false,
+        is_unicode: true,
+        description: "SumiBrush Calligraphic & Artistic Bangla Font (Regular)",
+        description_bn: "সুমিব্রাশ নান্দনিক ক্যালিগ্রাফিক বাংলা ফন্ট (রেগুলার)",
+    },
+    PreloadedFont {
+        filename: "SumiBrush-Bold.ttf",
+        font_name: "Sumi Brush",
+        registry_name: "Sumi Brush Bold (TrueType)",
+        is_ansi: false,
+        is_unicode: true,
+        description: "SumiBrush Calligraphic & Artistic Bold Bangla Font",
+        description_bn: "সুমিব্রাশ নান্দনিক ক্যালিগ্রাফিক বোল্ড বাংলা ফন্ট",
+    },
 ];
 
 pub fn get_preloaded_fonts() -> &'static [PreloadedFont] {
@@ -144,7 +162,9 @@ $Fonts = @(
     @{{ File = "NikoshLightBan.ttf"; Name = "NikoshLightBan (TrueType)" }},
     @{{ File = "SutonnyMJ Regular.ttf"; Name = "SutonnyMJ (TrueType)" }},
     @{{ File = "AdorshoLipi_20-07-2007.ttf"; Name = "AdorshoLipi (TrueType)" }},
-    @{{ File = "Bangla.ttf"; Name = "Bangla (TrueType)" }}
+    @{{ File = "Bangla.ttf"; Name = "Bangla (TrueType)" }},
+    @{{ File = "SumiBrush-Regular.ttf"; Name = "Sumi Brush Regular (TrueType)" }},
+    @{{ File = "SumiBrush-Bold.ttf"; Name = "Sumi Brush Bold (TrueType)" }}
 )
 
 Write-Host "Installing Bornomala Preloaded Bangla Fonts into $DestDir..." -ForegroundColor Cyan

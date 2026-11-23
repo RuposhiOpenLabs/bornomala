@@ -188,7 +188,7 @@ Bornomala provides a lightweight, native 64-bit Windows setup wizard built with 
 * **Professional Terms & Conditions:** Built-in EULA and offline privacy pledge guarantee that your keystrokes are never logged or transmitted.
 
 ### 7.2 Preloaded Fonts & Conflict Resolution
-The installer bundles 8 official government and standard Bangla fonts:
+The installer bundles 10 official government, classic, and artistic Bangla fonts:
 1. `Nikosh.ttf` — Bangladesh Government standard Unicode font
 2. `NikoshBAN.ttf` — Official typography variant
 3. `NikoshGrameen.ttf` — Clear high-legibility display variant
@@ -197,6 +197,8 @@ The installer bundles 8 official government and standard Bangla fonts:
 6. `SutonnyMJ Regular.ttf` — Classic ANSI font for land records and government archives
 7. `AdorshoLipi_20-07-2007.ttf` — Standard educational and literary font
 8. `Bangla.ttf` — Universal traditional OpenType font
+9. `SumiBrush-Regular.ttf` — Artistic calligraphic Bangla font (Regular)
+10. `SumiBrush-Bold.ttf` — Artistic calligraphic Bangla font (Bold)
 
 **Conflict Detection Popup:**
 If any font already exists on your machine, Bornomala presents an interactive conflict dialog:

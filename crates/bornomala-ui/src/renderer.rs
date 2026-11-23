@@ -928,7 +928,7 @@ impl SvgRenderer {
         <text x="85" y="26" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}" text-anchor="middle">⌨️ ফিক্সড ও ফোনেটিক</text>
 
         <rect x="185" width="180" height="42" rx="8" fill="{surface}" stroke="{border}" stroke-width="1" class="float-badge" style="animation-delay: 0.2s;"/>
-        <text x="275" y="26" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}" text-anchor="middle">🔤 ৮টি প্রিলোডেড ফন্ট</text>
+        <text x="275" y="26" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}" text-anchor="middle">🔤 ১০টি প্রিলোডেড ফন্ট</text>
 
         <rect x="380" width="174" height="42" rx="8" fill="{surface}" stroke="{border}" stroke-width="1" class="float-badge" style="animation-delay: 0.4s;"/>
         <text x="467" y="26" font-family="sans-serif, 'SolaimanLipi'" font-size="12" fill="{text_primary}" text-anchor="middle">🛡️ ১০০% অফলাইন ও নিরাপদ</text>
@@ -963,7 +963,7 @@ impl SvgRenderer {
         <text x="0" y="86" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   কোনো কি-লগিং নেই, কোনো ট্র্যাকিং নেই, কোনো ইন্টারনেটে ডেটা পাঠানো হয় না।</text>
 
         <text x="0" y="116" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{green}">৩. প্রিলোডেড ফন্ট নীতিমালা (Preloaded Fonts Notice):</text>
-        <text x="0" y="136" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   সরকারি নথির সুবিধার্থে ৮টি প্রমিত বাংলা ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি ইত্যাদি) সরবরাহ করা হয়েছে।</text>
+        <text x="0" y="136" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   সরকারি নথির সুবিধার্থে ও নান্দনিক কাজের জন্য ১০টি প্রমিত বাংলা ফন্ট (নিকশ, সুতোন্নীএমজে, আদর্শলিপি, সুমিব্রাশ ইত্যাদি) সরবরাহ করা হয়েছে।</text>
 
         <text x="0" y="166" font-family="sans-serif, 'SolaimanLipi'" font-size="12" font-weight="bold" fill="{green}">৪. নিরাপত্তা ও লাইসেন্স (GPLv3 License):</text>
         <text x="0" y="186" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{text_primary}">   কোনো ক্র্যাক বা ভাইরাস নেই। ক্রিপ্টোগ্রাফিক Ed25519 স্বাক্ষর দ্বারা যাচাইকৃত।</text>
@@ -1007,7 +1007,7 @@ impl SvgRenderer {
         <rect x="16" y="73" width="20" height="20" rx="5" fill="{green}"/>
         <text x="26" y="88" font-family="sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="bold">✓</text>
         <text x="48" y="85" font-family="sans-serif, 'SolaimanLipi'" font-size="13" font-weight="bold" fill="{text_primary}">{comp_fonts}</text>
-        <text x="48" y="106" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{green}">🔤 Nikosh, NikoshBAN, NikoshLight, SutonnyMJ Regular, AdorshoLipi, Bangla (৮টি ফন্ট)</text>
+        <text x="48" y="106" font-family="sans-serif, 'SolaimanLipi'" font-size="11" fill="{green}">🔤 Nikosh, NikoshBAN, NikoshLight, SutonnyMJ, AdorshoLipi, Bangla, SumiBrush (১০টি ফন্ট)</text>
 
         <!-- Comp 3: Auto-Startup -->
         <rect y="132" width="584" height="50" rx="8" fill="{surface}" stroke="{border}" stroke-width="1"/>

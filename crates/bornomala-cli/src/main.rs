@@ -576,7 +576,7 @@ fn handle_fonts(args: &[String]) {
     match sub {
         "list" => {
             println!("==========================================================================================");
-            println!(" Bornomala (বর্ণমালা) — Preloaded Government & Classic Bangla Fonts (৮টি ফন্ট)");
+            println!(" Bornomala (বর্ণমালা) — Preloaded Government & Classic Bangla Fonts (১০টি ফন্ট)");
             println!("==========================================================================================");
             println!(
                 "{:<4} {:<28} {:<18} {:<10} {}",
@@ -601,7 +601,7 @@ fn handle_fonts(args: &[String]) {
                 );
             }
             println!("{:-<95}", "");
-            println!(" Total: 8 preloaded fonts included in installer & fonts/ directory.");
+            println!(" Total: 10 preloaded fonts included in installer & fonts/ directory.");
             println!(
                 " Auto-installed by setup wizard with conflict popup detection if already present."
             );
@@ -879,8 +879,8 @@ fn handle_setup(args: &[String]) {
     <div class="tagline">Custom Animated UI/UX • Smooth Lazy Animations • 8 Preloaded Fonts • EULA & Privacy Guarantee</div>
     <div class="badge-bar">
       <div class="badge">🛡️ ১০০% অফলাইন ও নিরাপদ</div>
-      <div class="badge">🔤 ৮টি প্রিলোডেড ফন্ট (নিকশ ও সুতোন্নী)</div>
-      <div class="badge">⚖️ মজিলা পাবলিক লাইসেন্স ২.০</div>
+      <div class="badge">🔤 ১০টি প্রিলোডেড ফন্ট (নিকশ, সুতোন্নী ও সুমিব্রাশ)</div>
+      <div class="badge">⚖️ গ্নু জেনারেল পাবলিক লাইসেন্স ৩.০</div>
       <div class="badge">🔑 কোনো কি-লগিং নেই</div>
     </div>
   </header>

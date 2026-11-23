@@ -318,7 +318,7 @@ fn test_autostart_manager_and_commands() {
 #[test]
 fn test_preloaded_fonts_catalog() {
     let fonts = get_preloaded_fonts();
-    assert_eq!(fonts.len(), 8);
+    assert_eq!(fonts.len(), 10);
 
     // Verify SutonnyMJ is marked as ANSI
     let sutonny = fonts
@@ -336,6 +336,14 @@ fn test_preloaded_fonts_catalog() {
     assert!(nikosh.is_unicode);
     assert!(!nikosh.is_ansi);
 
+    // Verify SumiBrush is marked as Unicode
+    let sumibrush = fonts
+        .iter()
+        .find(|f| f.filename == "SumiBrush-Regular.ttf")
+        .expect("SumiBrush present");
+    assert!(sumibrush.is_unicode);
+    assert!(!sumibrush.is_ansi);
+
     // Verify PowerShell script generation includes all fonts
     let ps_user = bornomala_engine::conveniences::fonts::generate_powershell_font_installer(
         "C:\\Fonts",
@@ -343,6 +351,8 @@ fn test_preloaded_fonts_catalog() {
     );
     assert!(ps_user.contains("Nikosh.ttf"));
     assert!(ps_user.contains("SutonnyMJ Regular.ttf"));
+    assert!(ps_user.contains("SumiBrush-Regular.ttf"));
+    assert!(ps_user.contains("SumiBrush-Bold.ttf"));
     assert!(ps_user.contains("HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"));
 }
 

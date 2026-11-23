@@ -1,4 +1,4 @@
-# Bornomala Preloaded Bangla Fonts Automated Installer (PowerShell)
+﻿# Bornomala Preloaded Bangla Fonts Automated Installer (PowerShell)
 # Publisher: Ruposhi Open Labs (https://github.com/RuposhiOpenLabs)
 # Lead Developer: Ryan Shelby (https://github.com/MdSagorMunshi/)
 # Support: ryn@disr.it
@@ -53,7 +53,9 @@ $Fonts = @(
     @{ File = "NikoshLightBan.ttf"; Name = "NikoshLightBan (TrueType)"; Desc = "Bengali Print Light" },
     @{ File = "SutonnyMJ Regular.ttf"; Name = "SutonnyMJ (TrueType)"; Desc = "Classic ANSI Font" },
     @{ File = "AdorshoLipi_20-07-2007.ttf"; Name = "AdorshoLipi (TrueType)"; Desc = "Educational Font" },
-    @{ File = "Bangla.ttf"; Name = "Bangla (TrueType)"; Desc = "Traditional OpenType Font" }
+    @{ File = "Bangla.ttf"; Name = "Bangla (TrueType)"; Desc = "Traditional OpenType Font" },
+    @{ File = "SumiBrush-Regular.ttf"; Name = "Sumi Brush Regular (TrueType)"; Desc = "SumiBrush Artistic Bangla Font (Regular)" },
+    @{ File = "SumiBrush-Bold.ttf"; Name = "Sumi Brush Bold (TrueType)"; Desc = "SumiBrush Artistic Bold Bangla Font" }
 )
 
 Write-Host "======================================================================" -ForegroundColor Green
