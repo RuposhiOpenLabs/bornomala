@@ -50,3 +50,7 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# Internal documentation & analysis
+docs/PHONETIC_ANALYSIS.md
+docs/PHONETIC_COMPATIBILITY.md
